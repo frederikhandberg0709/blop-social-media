@@ -1,5 +1,5 @@
 const Following: React.FC = () => {
-  return <></>;
+  return <>Following page</>;
 };
 
 export default Following;

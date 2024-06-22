@@ -3,20 +3,69 @@
 import Image from "next/image";
 import Link from "next/link";
 import NavSideBar from "./NavSideBar";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import NavProfileMenu from "./NavProfileMenu";
+import NotificationPanel from "../NotificationPanel";
 
 const MainNavBar: React.FC = () => {
-  const [navSideMenuOpen, setNavSideMenuOpen] = useState(false);
-  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [isNavSideMenuOpen, setIsNavSideMenuOpen] = useState(false);
+  const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+  const profileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
   const toggleNavSideMenu = () => {
-    setNavSideMenuOpen(!navSideMenuOpen);
+    setIsNavSideMenuOpen(!isNavSideMenuOpen);
+  };
+
+  const handleSearchFocusInput = () => {
+    searchInputRef.current?.focus();
+  };
+
+  const handleSearchFocus = () => {
+    setIsSearchFocused(true);
+  };
+
+  const handleSearchBlur = () => {
+    setIsSearchFocused(false);
+  };
+
+  const toggleNotificationPanel = () => {
+    setIsNotificationPanelOpen(!isNotificationPanelOpen);
   };
 
   const toggleProfileMenu = () => {
-    setProfileMenuOpen(!profileMenuOpen);
+    setIsProfileMenuOpen(!isProfileMenuOpen);
   };
+
+  const closeProfileMenu = () => {
+    setIsProfileMenuOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node) &&
+        profileMenuButtonRef.current &&
+        !profileMenuButtonRef.current.contains(event.target as Node)
+      ) {
+        closeProfileMenu();
+      }
+    };
+
+    if (isProfileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isProfileMenuOpen]);
 
   return (
     <>
@@ -25,7 +74,7 @@ const MainNavBar: React.FC = () => {
           {/* Branding & menu button */}
           <div className="flex items-center gap-[30px]">
             <Link
-              href=""
+              href="/home"
               className="text-white/50 hover:text-white active:text-blue-500 font-bold text-[30px] transition duration-150 ease-in-out"
             >
               BLOP!
@@ -41,17 +90,45 @@ const MainNavBar: React.FC = () => {
             </button>
           </div>
           {/* Search */}
-          <div>
-            <input
-              type="text"
-              placeholder="Search..."
-              className="bg-white bg-opacity-[6%] hover:bg-opacity-10 focus:bg-opacity-10 text-white placeholder:text-white/50 border-2 border-blue-500/10 hover:border-blue-500 focus:border-blue-500 w-[300px] focus:w-[700px] h-[45px] rounded-full px-[15px] placeholder-white outline-none transition-all duration-300 ease-in-out"
-            />
+          <div
+            onClick={handleSearchFocusInput}
+            className={`relative cursor-text border-2 w-[300px] h-[45px] rounded-full outline-none transition-all duration-300 ease-in-out ${
+              isSearchFocused
+                ? "border-blue-500 stroke-white w-[700px] bg-white bg-opacity-10"
+                : "border-blue-500/10 hover:border-blue-500 stroke-gray-500 hover:stroke-white bg-white bg-opacity-[6%] hover:bg-opacity-10"
+            }`}
+          >
+            <div className="absolute flex items-center gap-[10px] w-full h-full pl-[15px]">
+              <svg
+                width="25"
+                height="25"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m21 21l-4.343-4.343m0 0A8 8 0 1 0 5.343 5.343a8 8 0 0 0 11.314 11.314Z"
+                />
+              </svg>
+              <input
+                ref={searchInputRef}
+                onFocus={handleSearchFocus}
+                onBlur={handleSearchBlur}
+                type="text"
+                placeholder="Search..."
+                className="w-full h-full bg-transparent outline-none placeholder-gray-500"
+              />
+            </div>
           </div>
           {/* Notifications, DMs, & Profile menu */}
           <div className="flex items-center gap-[30px]">
             {/* Notification button */}
-            <button className="w-[45px] h-[45px] rounded-full p-[7px] fill-white/50 hover:fill-white active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out">
+            <button
+              onClick={toggleNotificationPanel}
+              className="w-[45px] h-[45px] rounded-full p-[7px] fill-white/50 hover:fill-white active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out"
+            >
               <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="m32.85 28.13l-.34-.3A14.37 14.37 0 0 1 30 24.9a12.63 12.63 0 0 1-1.35-4.81v-4.94A10.81 10.81 0 0 0 19.21 4.4V3.11a1.33 1.33 0 1 0-2.67 0v1.31a10.81 10.81 0 0 0-9.33 10.73v4.94a12.63 12.63 0 0 1-1.35 4.81a14.4 14.4 0 0 1-2.47 2.93l-.34.3v2.82h29.8Z"
@@ -65,7 +142,7 @@ const MainNavBar: React.FC = () => {
               </svg>
             </button>
             {/* Profile menu button */}
-            <button onClick={toggleProfileMenu}>
+            <button onClick={toggleProfileMenu} ref={profileMenuButtonRef}>
               <Image
                 src=""
                 className="rounded-full w-[50px] h-[50px] bg-white"
@@ -75,13 +152,17 @@ const MainNavBar: React.FC = () => {
           </div>
         </div>
       </nav>
-      {navSideMenuOpen && <NavSideBar />}
-      {profileMenuOpen && (
-        <NavProfileMenu
-          profilePicture={""}
-          profileName={"Profile name"}
-          username={"username"}
-        />
+      {isNavSideMenuOpen && <NavSideBar />}
+      {isNotificationPanelOpen && <NotificationPanel />}
+      {isProfileMenuOpen && (
+        <div ref={profileMenuRef}>
+          <NavProfileMenu
+            profilePicture={""}
+            profileName={"Profile name"}
+            username={"username"}
+            closeMenu={closeProfileMenu}
+          />
+        </div>
       )}
     </>
   );

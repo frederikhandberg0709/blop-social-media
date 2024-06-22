@@ -4,7 +4,7 @@ import Post from "@/components/post/PostTemplate";
 const Home: React.FC = () => {
   return (
     <>
-      <MainNavBar />
+      {/* <MainNavBar /> */}
       <div className="mt-[70px] min-h-screen py-6 flex flex-col justify-center sm:py-12">
         <div className="relative py-3 sm:max-w-xl sm:mx-auto">
           <Post
