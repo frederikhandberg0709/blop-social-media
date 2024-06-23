@@ -8,7 +8,7 @@ const NavSideBar: React.FC = () => {
   const currentPage = pathname;
 
   return (
-    <div className="fixed z-50 top-[90px] left-[20px] w-[250px] flex flex-col p-[10px] rounded-2xl bg-black border-2 border-blue-500/10 hover:border-blue-500 transition duration-150 ease-in-out">
+    <div className="">
       {/* Main Navlinks */}
       <div className="flex flex-col gap-[5px]">
         <Link

@@ -6,11 +6,17 @@ import NavSideBar from "./NavSideBar";
 import { useEffect, useRef, useState } from "react";
 import NavProfileMenu from "./NavProfileMenu";
 import NotificationPanel from "../NotificationPanel";
+import "./panel-animations.css";
 
 const MainNavBar: React.FC = () => {
-  const [isNavSideMenuOpen, setIsNavSideMenuOpen] = useState(false);
-  const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isNavSideMenuVisible, setIsNavSideMenuVisible] = useState(false);
+  const [isNavSideMenuAnimating, setIsNavSideMenuAnimating] = useState(false);
+  const [isNotificationPanelVisible, setIsNotificationPanelVisible] =
+    useState(false);
+  const [isNotificationPanelAnimating, setIsNotificationPanelAnimating] =
+    useState(false);
+  const [isProfileMenuVisible, setIsProfileMenuVisible] = useState(false);
+  const [isProfileMenuAnimating, setIsProfileMenuAnimating] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const notificationPanelRef = useRef<HTMLDivElement>(null);
   const notificationButtonRef = useRef<HTMLButtonElement>(null);
@@ -19,14 +25,22 @@ const MainNavBar: React.FC = () => {
   const profileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
   const toggleNavSideMenu = () => {
-    setIsNavSideMenuOpen(!isNavSideMenuOpen);
+    if (isNavSideMenuVisible) {
+      setIsNavSideMenuAnimating(false);
+      setTimeout(() => setIsNavSideMenuVisible(false), 300);
+    } else {
+      setIsNavSideMenuVisible(true);
+      setTimeout(() => setIsNavSideMenuAnimating(true), 10);
+    }
   };
 
   const handleResize = () => {
     if (window.innerWidth > 1140) {
-      setIsNavSideMenuOpen(true);
+      setIsNavSideMenuVisible(true);
+      setTimeout(() => setIsNavSideMenuAnimating(true), 10);
     } else {
-      setIsNavSideMenuOpen(false);
+      setIsNavSideMenuAnimating(false);
+      setTimeout(() => setIsNavSideMenuVisible(false), 300);
     }
   };
 
@@ -43,19 +57,33 @@ const MainNavBar: React.FC = () => {
   };
 
   const toggleNotificationPanel = () => {
-    setIsNotificationPanelOpen(!isNotificationPanelOpen);
+    if (isNotificationPanelVisible) {
+      setIsNotificationPanelAnimating(false);
+      setTimeout(() => setIsNotificationPanelVisible(false), 300);
+    } else {
+      setIsNotificationPanelVisible(true);
+      setTimeout(() => setIsNotificationPanelAnimating(true), 10);
+    }
   };
 
   const toggleProfileMenu = () => {
-    setIsProfileMenuOpen(!isProfileMenuOpen);
+    if (isProfileMenuVisible) {
+      setIsProfileMenuAnimating(false);
+      setTimeout(() => setIsProfileMenuVisible(false), 300);
+    } else {
+      setIsProfileMenuVisible(true);
+      setTimeout(() => setIsProfileMenuAnimating(true), 10);
+    }
   };
 
   const closeNotificationPanel = () => {
-    setIsNotificationPanelOpen(false);
+    setIsNotificationPanelAnimating(false);
+    setTimeout(() => setIsNotificationPanelVisible(false), 300);
   };
 
   const closeProfileMenu = () => {
-    setIsProfileMenuOpen(false);
+    setIsProfileMenuAnimating(false);
+    setTimeout(() => setIsProfileMenuVisible(false), 300);
   };
 
   useEffect(() => {
@@ -84,7 +112,7 @@ const MainNavBar: React.FC = () => {
       }
     };
 
-    if (isNotificationPanelOpen) {
+    if (isNotificationPanelVisible) {
       document.addEventListener(
         "mousedown",
         handleClickOutsideNotificationPanel
@@ -96,7 +124,7 @@ const MainNavBar: React.FC = () => {
       );
     }
 
-    if (isProfileMenuOpen) {
+    if (isProfileMenuVisible) {
       document.addEventListener("mousedown", handleClickOutsideProfileMenu);
     } else {
       document.removeEventListener("mousedown", handleClickOutsideProfileMenu);
@@ -110,7 +138,7 @@ const MainNavBar: React.FC = () => {
       document.removeEventListener("mousedown", handleClickOutsideProfileMenu);
       window.removeEventListener("resize", handleResize);
     };
-  }, [isNotificationPanelOpen, isProfileMenuOpen]);
+  }, [isNotificationPanelVisible, isProfileMenuVisible]);
 
   return (
     <>
@@ -198,14 +226,34 @@ const MainNavBar: React.FC = () => {
           </div>
         </div>
       </nav>
-      {isNavSideMenuOpen && <NavSideBar />}
-      {isNotificationPanelOpen && (
-        <div ref={notificationPanelRef}>
+      {isNavSideMenuVisible && (
+        <div
+          className={`fixed z-50 top-[90px] left-[20px] w-[250px] flex flex-col p-[10px] rounded-2xl bg-black border-2 border-blue-500/10 hover:border-blue-500 transition duration-150 ease-in-out ${
+            isNavSideMenuAnimating ? "navsidemenu-open" : "navsidemenu"
+          }`}
+        >
+          <NavSideBar />
+        </div>
+      )}
+      {isNotificationPanelVisible && (
+        <div
+          ref={notificationPanelRef}
+          className={`fixed top-[90px] z-50 right-[20px] rounded-[10px] p-[10px] w-[350px] bg-black border-2 border-blue-500/10 hover:border-blue-500 transition ease-in-out duration-150 ${
+            isNotificationPanelAnimating
+              ? "notification-panel-open"
+              : "notification-panel"
+          }`}
+        >
           <NotificationPanel />
         </div>
       )}
-      {isProfileMenuOpen && (
-        <div ref={profileMenuRef}>
+      {isProfileMenuVisible && (
+        <div
+          ref={profileMenuRef}
+          className={`fixed z-50 top-[90px] right-[20px] rounded-[10px] p-[10px] w-[280px] bg-black border border-blue-500/10 hover:border-blue-500 transition ease-in-out duration-150 ${
+            isProfileMenuAnimating ? "profile-menu-open" : "profile-menu"
+          }`}
+        >
           <NavProfileMenu
             profilePicture={""}
             profileName={"Profile name"}

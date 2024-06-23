@@ -1,0 +1,29 @@
+.navsidemenu {
+  transition: 250ms ease-in-out;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50px);
+}
+
+.navsidemenu-open {
+  transition: 250ms ease-in-out;
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+.notification-panel,
+.profile-menu {
+  transition: 250ms ease-in-out;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+}
+
+.notification-panel-open,
+.profile-menu-open {
+  transition: 250ms ease-in-out;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
