@@ -5,8 +5,16 @@ const Home: React.FC = () => {
   return (
     <>
       {/* <MainNavBar /> */}
-      <div className="mt-[70px] min-h-screen py-6 flex flex-col justify-center sm:py-12">
-        <div className="relative py-3 sm:max-w-xl sm:mx-auto">
+      <div className="mt-[70px] min-h-screen py-6 flex flex-col justify-start items-center sm:py-12">
+        <div className="flex flex-col gap-[15px]">
+          <div className="flex justify-between items-center">
+            {/* Page title */}
+            <h1 className="text-[30px] font-semibold">HOME</h1>
+            {/* Filters */}
+            <button className="font-medium text-white/50 hover:text-white px-[15px] py-[5px] rounded-md hover:bg-white/10 border border-transparent hover:border-blue-500/50 transition duration-150 ease-in-out">
+              Filters
+            </button>
+          </div>
           <Post
             profilePicture="https://via.placeholder.com/150"
             profileName="John Doe"

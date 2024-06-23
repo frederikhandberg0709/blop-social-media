@@ -12,12 +12,22 @@ const MainNavBar: React.FC = () => {
   const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const notificationPanelRef = useRef<HTMLDivElement>(null);
+  const notificationButtonRef = useRef<HTMLButtonElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const profileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
   const toggleNavSideMenu = () => {
     setIsNavSideMenuOpen(!isNavSideMenuOpen);
+  };
+
+  const handleResize = () => {
+    if (window.innerWidth > 1140) {
+      setIsNavSideMenuOpen(true);
+    } else {
+      setIsNavSideMenuOpen(false);
+    }
   };
 
   const handleSearchFocusInput = () => {
@@ -40,12 +50,30 @@ const MainNavBar: React.FC = () => {
     setIsProfileMenuOpen(!isProfileMenuOpen);
   };
 
+  const closeNotificationPanel = () => {
+    setIsNotificationPanelOpen(false);
+  };
+
   const closeProfileMenu = () => {
     setIsProfileMenuOpen(false);
   };
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    const handleClickOutsideNotificationPanel = (event: MouseEvent) => {
+      if (
+        notificationPanelRef.current &&
+        !notificationPanelRef.current.contains(event.target as Node) &&
+        notificationButtonRef.current &&
+        !notificationButtonRef.current.contains(event.target as Node)
+      ) {
+        closeNotificationPanel();
+      }
+    };
+
+    const handleClickOutsideProfileMenu = (event: MouseEvent) => {
       if (
         profileMenuRef.current &&
         !profileMenuRef.current.contains(event.target as Node) &&
@@ -56,16 +84,33 @@ const MainNavBar: React.FC = () => {
       }
     };
 
-    if (isProfileMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+    if (isNotificationPanelOpen) {
+      document.addEventListener(
+        "mousedown",
+        handleClickOutsideNotificationPanel
+      );
     } else {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutsideNotificationPanel
+      );
+    }
+
+    if (isProfileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutsideProfileMenu);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutsideProfileMenu);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutsideNotificationPanel
+      );
+      document.removeEventListener("mousedown", handleClickOutsideProfileMenu);
+      window.removeEventListener("resize", handleResize);
     };
-  }, [isProfileMenuOpen]);
+  }, [isNotificationPanelOpen, isProfileMenuOpen]);
 
   return (
     <>
@@ -127,6 +172,7 @@ const MainNavBar: React.FC = () => {
             {/* Notification button */}
             <button
               onClick={toggleNotificationPanel}
+              ref={notificationButtonRef}
               className="w-[45px] h-[45px] rounded-full p-[7px] fill-white/50 hover:fill-white active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out"
             >
               <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
@@ -153,7 +199,11 @@ const MainNavBar: React.FC = () => {
         </div>
       </nav>
       {isNavSideMenuOpen && <NavSideBar />}
-      {isNotificationPanelOpen && <NotificationPanel />}
+      {isNotificationPanelOpen && (
+        <div ref={notificationPanelRef}>
+          <NotificationPanel />
+        </div>
+      )}
       {isProfileMenuOpen && (
         <div ref={profileMenuRef}>
           <NavProfileMenu
