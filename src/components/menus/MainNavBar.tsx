@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import NavProfileMenu from "./NavProfileMenu";
 import NotificationPanel from "../NotificationPanel";
 import "./panel-animations.css";
+import NavSearchResults from "./NavSearchResults";
 
 const MainNavBar: React.FC = () => {
   const [isNavSideMenuVisible, setIsNavSideMenuVisible] = useState(false);
@@ -18,6 +19,7 @@ const MainNavBar: React.FC = () => {
   const [isProfileMenuVisible, setIsProfileMenuVisible] = useState(false);
   const [isProfileMenuAnimating, setIsProfileMenuAnimating] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const notificationPanelRef = useRef<HTMLDivElement>(null);
   const notificationButtonRef = useRef<HTMLButtonElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -55,6 +57,8 @@ const MainNavBar: React.FC = () => {
   const handleSearchBlur = () => {
     setIsSearchFocused(false);
   };
+
+  const toggleIsSearching = () => {};
 
   const toggleNotificationPanel = () => {
     if (isNotificationPanelVisible) {
@@ -196,12 +200,12 @@ const MainNavBar: React.FC = () => {
             </div>
           </div>
           {/* Notifications, DMs, & Profile menu */}
-          <div className="flex items-center gap-[30px]">
+          <div className="flex items-center gap-[30px] w-[163px]">
             {/* Notification button */}
             <button
               onClick={toggleNotificationPanel}
               ref={notificationButtonRef}
-              className="w-[45px] h-[45px] rounded-full p-[7px] fill-white/50 hover:fill-white active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out"
+              className="w-[45px] h-[45px] rounded-full p-[7px] fill-white/50 hover:fill-white line active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out"
             >
               <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -235,6 +239,8 @@ const MainNavBar: React.FC = () => {
           <NavSideBar />
         </div>
       )}
+      {/* Search Results */}
+      {isSearching && <NavSearchResults />}
       {isNotificationPanelVisible && (
         <div
           ref={notificationPanelRef}

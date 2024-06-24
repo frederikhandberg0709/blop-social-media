@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface NavProfileMenuProps {
   profilePicture: string;
@@ -13,6 +14,9 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
   username,
   closeMenu,
 }) => {
+  const pathname = usePathname();
+  const currentPage = pathname;
+
   return (
     <div className="flex flex-col gap-[10px]">
       <Link
@@ -36,7 +40,10 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       <Link
         href={"/profile"}
         onClick={closeMenu}
-        className="flex gap-[10px] px-[10px] py-[10px] rounded-[5px] font-medium text-white/50 hover:text-white hover:bg-gray-500/10 fill-white/50 hover:fill-white transition ease-in-out duration-150"
+        className={`flex gap-[10px] px-[10px] py-[10px] rounded-[5px] font-medium hover:bg-gray-500/10  transition ease-in-out duration-150 ${
+          (currentPage === "/profile" && "text-white fill-white") ||
+          "text-white/50 hover:text-white fill-white/50 hover:fill-white"
+        }`}
       >
         <svg
           width="25"
@@ -55,7 +62,10 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       <Link
         href={""}
         onClick={closeMenu}
-        className="flex gap-[10px] px-[10px] py-[10px] rounded-[5px] font-medium text-white/50 hover:text-white hover:bg-gray-500/10 fill-white/50 hover:fill-white transition ease-in-out duration-150"
+        className={`flex gap-[10px] px-[10px] py-[10px] rounded-[5px] font-medium hover:bg-gray-500/10 transition ease-in-out duration-150 ${
+          (currentPage === "/settings" && "text-white fill-white") ||
+          "text-white/50 hover:text-white fill-white/50 hover:fill-white"
+        }`}
       >
         <svg
           width="25"

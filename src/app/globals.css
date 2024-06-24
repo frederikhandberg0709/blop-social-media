@@ -31,16 +31,3 @@ body {
     text-wrap: balance;
   }
 }
-
-/* .notification-panel,
-.profile-menu {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-.notification-panel.open,
-.profile-menu.open {
-  opacity: 100;
-  transform: translateY(0);
-} */
