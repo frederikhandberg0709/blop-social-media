@@ -13,7 +13,7 @@ const NavSideBar: React.FC = () => {
       <div className="flex flex-col gap-[5px]">
         <Link
           href={"/home"}
-          className={`text-[20px] font-medium hover:bg-white/10 rounded-xl px-[20px] py-[10px] ${
+          className={`text-[20px] font-medium hover:bg-white/10 active:bg-white/20 rounded-xl px-[20px] py-[10px] transition duration-150 ease-in-out ${
             (currentPage === "/home" && "text-white") ||
             "text-white/50 hover:text-white"
           }`}
@@ -22,7 +22,7 @@ const NavSideBar: React.FC = () => {
         </Link>
         <Link
           href={"/discover"}
-          className={`text-[20px] font-medium hover:bg-white/10 rounded-xl px-[20px] py-[10px] ${
+          className={`text-[20px] font-medium hover:bg-white/10 active:bg-white/20 rounded-xl px-[20px] py-[10px] transition duration-150 ease-in-out ${
             (currentPage === "/discover" && "text-white") ||
             "text-white/50 hover:text-white"
           }`}
@@ -31,7 +31,7 @@ const NavSideBar: React.FC = () => {
         </Link>
         <Link
           href={"/following"}
-          className={`text-[20px] font-medium hover:bg-white/10 rounded-xl px-[20px] py-[10px] ${
+          className={`text-[20px] font-medium hover:bg-white/10 active:bg-white/20 rounded-xl px-[20px] py-[10px] transition duration-150 ease-in-out ${
             (currentPage === "/following" && "text-white") ||
             "text-white/50 hover:text-white"
           }`}

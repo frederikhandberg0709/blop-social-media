@@ -1,3 +1,4 @@
+import { Tooltip } from "@/components/Tooltip";
 import MainNavBar from "@/components/menus/MainNavBar";
 import Post from "@/components/post/PostTemplate";
 

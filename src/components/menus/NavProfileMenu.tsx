@@ -22,7 +22,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       <Link
         href={"/profile"}
         onClick={closeMenu}
-        className="flex gap-[12px] items-center p-[10px] rounded-[5px] hover:bg-gray-500/10 transition ease-in-out duration-150 group"
+        className="flex gap-[12px] items-center p-[10px] rounded-xl hover:bg-white/10 transition ease-in-out duration-150 group"
       >
         <img
           src={profilePicture}
@@ -40,7 +40,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       <Link
         href={"/profile"}
         onClick={closeMenu}
-        className={`flex gap-[10px] px-[10px] py-[10px] rounded-[5px] font-medium hover:bg-gray-500/10  transition ease-in-out duration-150 ${
+        className={`flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium hover:bg-white/10  transition ease-in-out duration-150 ${
           (currentPage === "/profile" && "text-white fill-white") ||
           "text-white/50 hover:text-white fill-white/50 hover:fill-white"
         }`}
@@ -60,9 +60,9 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
         My Profile
       </Link>
       <Link
-        href={""}
+        href={"/settings"}
         onClick={closeMenu}
-        className={`flex gap-[10px] px-[10px] py-[10px] rounded-[5px] font-medium hover:bg-gray-500/10 transition ease-in-out duration-150 ${
+        className={`flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium hover:bg-white/10 transition ease-in-out duration-150 ${
           (currentPage === "/settings" && "text-white fill-white") ||
           "text-white/50 hover:text-white fill-white/50 hover:fill-white"
         }`}
@@ -80,7 +80,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       <Link
         href={""}
         onClick={closeMenu}
-        className="flex gap-[10px] px-[10px] py-[10px] rounded-[5px] font-medium text-white/50 hover:text-white hover:bg-gray-500/10 fill-white/50 hover:fill-white transition ease-in-out duration-150"
+        className="flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium text-white/50 hover:text-white hover:bg-white/10 fill-white/50 hover:fill-white transition ease-in-out duration-150"
       >
         <svg
           width="25"
