@@ -31,7 +31,6 @@ const Settings: React.FC = () => {
         <div className="flex justify-center gap-[30px] h-full w-[1200px]">
           <div className="flex gap-[30px] sticky top-0 pt-[90px] h-[100vh]">
             <div className="w-[250px]">
-              {/* Container */}
               <div className="ml-[15px] mb-[20px] flex justify-between items-center">
                 <p className="font-bold text-[20px]">Settings</p>
                 {/* Search */}
@@ -77,8 +76,8 @@ const Settings: React.FC = () => {
             <div
               id="edit-profile"
               className={`${
-                activeSection === "edit-profile" ||
-                hoveredSection === "edit-profile"
+                hoveredSection === "edit-profile" ||
+                (!hoveredSection && activeSection === "edit-profile")
                   ? "opacity-100"
                   : "opacity-50"
               } transition-opacity duration-300 py-[25px]`}
@@ -89,8 +88,8 @@ const Settings: React.FC = () => {
             <div
               id="notifications"
               className={`${
-                activeSection === "notifications" ||
-                hoveredSection === "notifications"
+                hoveredSection === "notifications" ||
+                (!hoveredSection && activeSection === "notifications")
                   ? "opacity-100"
                   : "opacity-50"
               } transition-opacity duration-300 py-[25px]`}
@@ -101,8 +100,8 @@ const Settings: React.FC = () => {
             <div
               id="appearance"
               className={`${
-                activeSection === "appearance" ||
-                hoveredSection === "appearance"
+                hoveredSection === "appearance" ||
+                (!hoveredSection && activeSection === "appearance")
                   ? "opacity-100"
                   : "opacity-50"
               } transition-opacity duration-300 py-[25px]`}
@@ -113,8 +112,8 @@ const Settings: React.FC = () => {
             <div
               id="content-moderation"
               className={`${
-                activeSection === "content-moderation" ||
-                hoveredSection === "content-moderation"
+                hoveredSection === "content-moderation" ||
+                (!hoveredSection && activeSection === "content-moderation")
                   ? "opacity-100"
                   : "opacity-50"
               } transition-opacity duration-300 py-[25px]`}
@@ -125,8 +124,8 @@ const Settings: React.FC = () => {
             <div
               id="video-player"
               className={`${
-                activeSection === "video-player" ||
-                hoveredSection === "video-player"
+                hoveredSection === "video-player" ||
+                (!hoveredSection && activeSection === "video-player")
                   ? "opacity-100"
                   : "opacity-50"
               } transition-opacity duration-300 py-[25px]`}
@@ -137,8 +136,8 @@ const Settings: React.FC = () => {
             <div
               id="change-email"
               className={`${
-                activeSection === "change-email" ||
-                hoveredSection === "change-email"
+                hoveredSection === "change-email" ||
+                (!hoveredSection && activeSection === "change-email")
                   ? "opacity-100"
                   : "opacity-50"
               } transition-opacity duration-300 py-[25px]`}
@@ -149,8 +148,8 @@ const Settings: React.FC = () => {
             <div
               id="password-security"
               className={`${
-                activeSection === "password-security" ||
-                hoveredSection === "password-security"
+                hoveredSection === "password-security" ||
+                (!hoveredSection && activeSection === "password-security")
                   ? "opacity-100"
                   : "opacity-50"
               } transition-opacity duration-300 py-[25px]`}
@@ -161,8 +160,8 @@ const Settings: React.FC = () => {
             <div
               id="delete-account"
               className={`${
-                activeSection === "delete-account" ||
-                hoveredSection === "delete-account"
+                hoveredSection === "delete-account" ||
+                (!hoveredSection && activeSection === "delete-account")
                   ? "opacity-100"
                   : "opacity-50"
               } transition-opacity duration-300 py-[25px] mb-[100px]`}
