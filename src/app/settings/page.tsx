@@ -1,15 +1,39 @@
+"use client";
+
 import Link from "next/link";
+import EditProfile from "./(settings-sections)/EditProfile";
+import Notifications from "./(settings-sections)/Notifications";
+import Appearance from "./(settings-sections)/Appearance";
+import ContentModeration from "./(settings-sections)/ContentModeration";
+import VideoPlayer from "./(settings-sections)/VideoPlayer";
+import ChangeEmail from "./(settings-sections)/ChangeEmail";
+import PasswordSecurity from "./(settings-sections)/PasswordSecurity";
+import DeleteAccount from "./(settings-sections)/DeleteAccount";
+import useSection from "@/hooks/useSection";
 
 const Settings: React.FC = () => {
+  const sections = [
+    "edit-profile",
+    "notifications",
+    "appearance",
+    "content-moderation",
+    "video-player",
+    "change-email",
+    "password-security",
+    "delete-account",
+  ];
+
+  const { activeSection, hoveredSection } = useSection(sections);
+
   return (
     <>
-      <div className="flex justify-center h-[100vh] w-full">
+      <div className="flex justify-center w-full">
         <div className="flex justify-center gap-[30px] h-full w-[1200px]">
-          <div className="sticky mt-[90px] w-[300px]">
-            {/* Container */}
-            <div>
+          <div className="flex gap-[30px] sticky top-0 pt-[90px] h-[100vh]">
+            <div className="w-[250px]">
+              {/* Container */}
               <div className="ml-[15px] mb-[20px] flex justify-between items-center">
-                <p className="font-bold text-[20px] text-textGray">Settings</p>
+                <p className="font-bold text-[20px]">Settings</p>
                 {/* Search */}
                 {/* <TooltipBottom text="Search" topStyle="top-[45px]">
         <div className="p-[5px] border border-1 border-[#1D1D1D] bg-[#0C0C0C] rounded-md cursor-pointer hover:border-selectedPurple hover:bg-darkPurple/30 transition ease-in-out duration-200">
@@ -28,47 +52,124 @@ const Settings: React.FC = () => {
       </TooltipBottom> */}
               </div>
               <div className="flex flex-col">
-                <Link
-                  href="#edit-profile"
-                  className="pl-[15px] py-[10px] rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition duration-150 ease-in-out"
-                >
-                  Edit Profile
-                </Link>
-                <Link
-                  href="#notifications"
-                  className="pl-[15px] py-[10px] rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition duration-150 ease-in-out"
-                >
-                  Notifications
-                </Link>
-                <Link
-                  href="#appearance"
-                  className="pl-[15px] py-[10px] rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition duration-150 ease-in-out"
-                >
-                  Appearance
-                </Link>
-                <Link
-                  href="#your-account"
-                  className="pl-[15px] py-[10px] rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition duration-150 ease-in-out"
-                >
-                  Your Account
-                </Link>
-                <Link
-                  href="#content-moderation"
-                  className="pl-[15px] py-[10px] rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition duration-150 ease-in-out"
-                >
-                  Content Moderation
-                </Link>
-                <Link
-                  href="#video-player"
-                  className="pl-[15px] py-[10px] rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition duration-150 ease-in-out"
-                >
-                  Video Player
-                </Link>
+                {sections.map((section) => (
+                  <Link
+                    key={section}
+                    href={`#${section}`}
+                    className={`pl-[15px] py-[10px] rounded-xl ${
+                      // activeSection === section ? "text-white" : "text-white/50"
+                      hoveredSection === section ||
+                      (!hoveredSection && activeSection === section)
+                        ? "text-white"
+                        : "text-white/50"
+                    } hover:text-white hover:bg-white/10 active:bg-white/20 transition duration-150 ease-in-out`}
+                  >
+                    {section
+                      .replace("-", " ")
+                      .replace(/\b\w/g, (l) => l.toUpperCase())}
+                  </Link>
+                ))}
               </div>
             </div>
+            <div className="h-full w-[1.5px] bg-white/10 absolute right-0"></div>
           </div>
-          <div className="h-full w-[1.5px] bg-white/10"></div>
-          <div className="flex flex-col w-full mt-[90px]">hello</div>
+          <div className="w-full mt-[90px]">
+            <div
+              id="edit-profile"
+              className={`${
+                activeSection === "edit-profile" ||
+                hoveredSection === "edit-profile"
+                  ? "opacity-100"
+                  : "opacity-50"
+              } transition-opacity duration-300 py-[25px]`}
+            >
+              <EditProfile />
+            </div>
+
+            <div
+              id="notifications"
+              className={`${
+                activeSection === "notifications" ||
+                hoveredSection === "notifications"
+                  ? "opacity-100"
+                  : "opacity-50"
+              } transition-opacity duration-300 py-[25px]`}
+            >
+              <Notifications />
+            </div>
+
+            <div
+              id="appearance"
+              className={`${
+                activeSection === "appearance" ||
+                hoveredSection === "appearance"
+                  ? "opacity-100"
+                  : "opacity-50"
+              } transition-opacity duration-300 py-[25px]`}
+            >
+              <Appearance />
+            </div>
+
+            <div
+              id="content-moderation"
+              className={`${
+                activeSection === "content-moderation" ||
+                hoveredSection === "content-moderation"
+                  ? "opacity-100"
+                  : "opacity-50"
+              } transition-opacity duration-300 py-[25px]`}
+            >
+              <ContentModeration />
+            </div>
+
+            <div
+              id="video-player"
+              className={`${
+                activeSection === "video-player" ||
+                hoveredSection === "video-player"
+                  ? "opacity-100"
+                  : "opacity-50"
+              } transition-opacity duration-300 py-[25px]`}
+            >
+              <VideoPlayer />
+            </div>
+
+            <div
+              id="change-email"
+              className={`${
+                activeSection === "change-email" ||
+                hoveredSection === "change-email"
+                  ? "opacity-100"
+                  : "opacity-50"
+              } transition-opacity duration-300 py-[25px]`}
+            >
+              <ChangeEmail />
+            </div>
+
+            <div
+              id="password-security"
+              className={`${
+                activeSection === "password-security" ||
+                hoveredSection === "password-security"
+                  ? "opacity-100"
+                  : "opacity-50"
+              } transition-opacity duration-300 py-[25px]`}
+            >
+              <PasswordSecurity />
+            </div>
+
+            <div
+              id="delete-account"
+              className={`${
+                activeSection === "delete-account" ||
+                hoveredSection === "delete-account"
+                  ? "opacity-100"
+                  : "opacity-50"
+              } transition-opacity duration-300 py-[25px] mb-[100px]`}
+            >
+              <DeleteAccount />
+            </div>
+          </div>
         </div>
       </div>
     </>

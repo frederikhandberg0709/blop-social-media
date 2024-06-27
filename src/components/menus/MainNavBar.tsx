@@ -157,7 +157,7 @@ const MainNavBar: React.FC = () => {
       <nav className="fixed z-[99] w-full top-0 left-0 right-0 flex justify-center items-center px-[50px] bg-black">
         <div className="flex justify-between items-center w-full py-[10px]">
           {/* Branding & menu button */}
-          <div className="flex items-center gap-[30px]">
+          <div className="flex items-center gap-[30px] w-[200px]">
             <Link
               href="/home"
               className="text-white/50 hover:text-white active:text-blue-500 font-bold text-[30px] transition duration-150 ease-in-out"
