@@ -50,7 +50,7 @@ const NavSideBar: React.FC = () => {
         <div className="flex flex-col gap-[5px]">
           <Link
             href=""
-            className="flex items-center gap-[10px] text-[20px] hover:bg-white/10 rounded-xl px-[20px] py-[10px]"
+            className="flex items-center gap-[10px] text-[17px] hover:bg-white/10 rounded-xl px-[20px] py-[10px]"
           >
             <Image
               src=""
@@ -61,7 +61,7 @@ const NavSideBar: React.FC = () => {
           </Link>
           <Link
             href=""
-            className="flex items-center gap-[10px] text-[20px] hover:bg-white/10 rounded-xl px-[20px] py-[10px]"
+            className="flex items-center gap-[10px] text-[17px] hover:bg-white/10 rounded-xl px-[20px] py-[10px]"
           >
             <Image
               src=""
@@ -72,7 +72,7 @@ const NavSideBar: React.FC = () => {
           </Link>
           <Link
             href=""
-            className="flex items-center gap-[10px] text-[20px] hover:bg-white/10 rounded-xl px-[20px] py-[10px]"
+            className="flex items-center gap-[10px] text-[17px] hover:bg-white/10 rounded-xl px-[20px] py-[10px]"
           >
             <Image
               src=""

@@ -29,8 +29,8 @@ const Settings: React.FC = () => {
     <>
       <div className="flex justify-center w-full">
         <div className="flex justify-center gap-[30px] h-full w-[1200px]">
-          <div className="flex gap-[30px] sticky top-0 pt-[90px] h-[100vh]">
-            <div className="w-[250px]">
+          <div className="flex gap-[30px] sticky top-0 pt-[70px] h-[100vh]">
+            <div className="w-[250px] mt-[20px]">
               <div className="ml-[15px] mb-[20px] flex justify-between items-center">
                 <p className="font-bold text-[20px]">Settings</p>
                 {/* Search */}
@@ -70,7 +70,7 @@ const Settings: React.FC = () => {
                 ))}
               </div>
             </div>
-            <div className="h-full w-[1.5px] bg-white/10 absolute right-0"></div>
+            <div className="h-full w-[1.5px] bg-white/10 relative right-0"></div>
           </div>
           <div className="w-full mt-[90px]">
             <div
