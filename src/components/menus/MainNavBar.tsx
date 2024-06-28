@@ -219,14 +219,20 @@ const MainNavBar: React.FC = () => {
             </div>
           </div>
           {/* Create Post, Notifications, DMs, & Profile menu */}
-          <div className="flex items-center gap-[30px] w-[200px]">
+          <div className="flex items-center justify-end gap-[30px] w-[200px]">
             {/* Create Post */}
             <Tooltip text={"Create Post"} position="bottom" offset="60">
-              <button className="h-[45px] w-[45px] rounded-full p-[7px] fill-white/50 hover:fill-white active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                  <path d="M12 4a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5a1 1 0 0 1 1-1z" />
-                </svg>
-              </button>
+              <Link href={"/create-post"} className="rounded-full">
+                <div className="h-[45px] w-[45px] p-[7px] rounded-full fill-white/50 hover:fill-white active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className=""
+                  >
+                    <path d="M12 4a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5a1 1 0 0 1 1-1z" />
+                  </svg>
+                </div>
+              </Link>
             </Tooltip>
             {/* Notification button */}
             <Tooltip

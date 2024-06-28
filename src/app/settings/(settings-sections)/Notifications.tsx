@@ -33,11 +33,9 @@ const Notifications: React.FC = () => {
     <div>
       <h1 className="font-bold text-[25px]">Notifications</h1>
       {/* Push Notifications */}
-      <div className="flex flex-col gap-[30px]">
+      <div className="flex flex-col gap-[30px] mt-[30px]">
         <div>
-          <h2 className="font-semibold text-[20px] mt-[30px]">
-            Push Notifications
-          </h2>
+          <h2 className="font-semibold text-[20px]">Push Notifications</h2>
           <p className="mt-2 mb-3">
             Enable or disable push notifications. Push notifications are sent
             directly to your device to keep you updated with the latest activity
