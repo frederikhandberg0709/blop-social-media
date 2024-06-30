@@ -8,7 +8,7 @@ const NavSideBar: React.FC = () => {
   const currentPage = pathname;
 
   return (
-    <div className="">
+    <div className="flex flex-col gap-[15px]">
       {/* Main Navlinks */}
       <div className="flex flex-col gap-[5px]">
         <Link
@@ -39,10 +39,11 @@ const NavSideBar: React.FC = () => {
           Following
         </Link>
       </div>
+      <div className="w-full h-[1px] bg-white/5"></div>
       {/* Following List */}
       <div>
         <div>
-          <h1 className="text-white/50 text-[15px] font-bold px-[20px] pt-[20px] pb-[10px]">
+          <h1 className="text-white/50 text-[15px] font-bold px-[20px] pb-[10px]">
             FOLLOWING
           </h1>
           {/* <p className="text-white/50 text-[15px]">{followingCount}</p> */}
