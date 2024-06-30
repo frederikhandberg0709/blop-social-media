@@ -35,12 +35,20 @@ const PostTemplate: React.FC<PostProps> = ({
             className="rounded-full h-[40px] w-[40px] object-cover"
           />
           <div className="flex flex-col gap-[1px]">
-            {/* Profile name */}
-            <div className="font-bold text-[13px] group-hover:text-blue-500">
-              {profileName}
-            </div>
-            {/* Username */}
-            <div className="text-[13px] text-gray-500">@{username}</div>
+            {/* If user has profile name */}
+            {profileName ? (
+              <>
+                <div className="font-bold text-[13px] group-hover:text-blue-500">
+                  {profileName}
+                </div>
+                <div className="text-[13px] text-gray-500">@{username}</div>
+              </>
+            ) : (
+              // No profile name, only show username
+              <div className="font-bold text-[15px] group-hover:text-blue-500">
+                @{username}
+              </div>
+            )}
           </div>
         </Link>
         <div className="flex items-center gap-[15px]">
