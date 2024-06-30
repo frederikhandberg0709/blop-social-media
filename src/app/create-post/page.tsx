@@ -4,8 +4,10 @@ import Link from "next/link";
 import React, { useRef, useState } from "react";
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import PostReactionBtns from "@/components/buttons/PostReactionBtns";
+import { useRouter } from "next/navigation";
 
 const CreatePost: React.FC = () => {
+  const router = useRouter();
   const [title, setTitle] = useState<string>("");
   const [text, setText] = useState<string>("");
   const [characterCount, setCharacterCount] = useState<number>(0);
@@ -90,7 +92,7 @@ const CreatePost: React.FC = () => {
     if (!text.trim()) return;
 
     try {
-      const response = await fetch("/api", {
+      const response = await fetch("/api/create-post", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -113,6 +115,8 @@ const CreatePost: React.FC = () => {
       setText("");
       setCharacterCount(0);
       setWordCount(0);
+
+      router.push(`/post/${post.id}`);
     } catch (error) {
       console.error("Error creating post:", error);
     }
@@ -168,6 +172,7 @@ const CreatePost: React.FC = () => {
             </div>
           </div>
           <div className="w-full h-[1px] bg-white/5"></div>
+          {/* Change below with PostTemplate */}
           <div>
             <h1 className="font-bold mb-[20px] text-white/50">Preview Post</h1>
             <div className="flex flex-col gap-[10px] sm:border border-gray-900 hover:border-gray-800 transition duration-200 bg-black sm:p-[15px] sm:rounded-[15px]">

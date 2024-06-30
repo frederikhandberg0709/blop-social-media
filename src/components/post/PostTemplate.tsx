@@ -1,10 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import PostReactionBtns from "../buttons/PostReactionBtns";
 
 interface PostProps {
-  profilePicture: string;
-  profileName: string;
+  profilePicture: string | null;
+  profileName: string | null;
   username: string;
   timestamp: string;
   textContent: string;
@@ -12,7 +11,7 @@ interface PostProps {
   videoContent?: string;
 }
 
-const Post: React.FC<PostProps> = ({
+const PostTemplate: React.FC<PostProps> = ({
   profilePicture,
   profileName,
   username,
@@ -21,12 +20,17 @@ const Post: React.FC<PostProps> = ({
   imageContent,
   videoContent,
 }) => {
+  const defaultProfilePicture = "/default-profile.png";
+
   return (
-    <div className="flex flex-col gap-[10px] sm:w-[600px] w-[90%] sm:border border-gray-900 hover:border-gray-800 transition duration-200 bg-black sm:p-[15px] sm:rounded-[15px]">
+    <div className="flex flex-col gap-[10px] sm:w-[800px] w-[90%] sm:border border-gray-900 hover:border-gray-800 transition duration-200 bg-black sm:p-[15px] sm:rounded-[15px]">
       <div className="flex items-center justify-between">
-        <Link href={""} className="flex items-center gap-[10px] group">
+        <Link
+          href={`/profile/${username}`}
+          className="flex items-center gap-[10px] group"
+        >
           <img
-            src={profilePicture}
+            src={profilePicture || defaultProfilePicture}
             alt={`${profileName}'s profile picture`}
             className="rounded-full h-[40px] w-[40px] object-cover"
           />
@@ -78,4 +82,4 @@ const Post: React.FC<PostProps> = ({
   );
 };
 
-export default Post;
+export default PostTemplate;
