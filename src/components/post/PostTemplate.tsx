@@ -1,5 +1,6 @@
 import Link from "next/link";
 import PostReactionBtns from "../buttons/PostReactionBtns";
+import React from "react";
 
 interface PostProps {
   profilePicture: string | null;
@@ -20,7 +21,66 @@ const PostTemplate: React.FC<PostProps> = ({
   imageContent,
   videoContent,
 }) => {
-  const defaultProfilePicture = "/default-profile.png";
+  const defaultProfilePicture =
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRg5CvxCysqjZrsTPUjcl5sN3HIzePiCWM7KQ&s";
+
+  const parseTextWithMedia = (inputText: string) => {
+    const mediaRegex = /(https:\/\/.*?\.(jpg|jpeg|png|gif|mp4|avi|mov))/g;
+    let parts = [];
+    let lastIndex = 0;
+
+    let match;
+    while ((match = mediaRegex.exec(inputText)) !== null) {
+      const textBeforeMedia = inputText.slice(lastIndex, match.index);
+      parts.push(
+        textBeforeMedia.split("\n").map((line, index, array) => (
+          <React.Fragment key={`${lastIndex}-${index}`}>
+            {line}
+            {index < array.length + 1 && <br />}
+          </React.Fragment>
+        ))
+      );
+
+      const mediaLink = match[0];
+      const isImage = /\.(jpg|jpeg|png|gif)$/.test(mediaLink);
+      if (isImage) {
+        parts.push(
+          <img
+            key={mediaLink}
+            src={mediaLink}
+            alt="User uploaded content"
+            className="rounded-[10px]"
+          />
+        );
+      } else {
+        parts.push(
+          <video
+            key={mediaLink}
+            src={mediaLink}
+            className="rounded-[10px]"
+            width="100%"
+            controls
+            autoPlay
+            muted
+          />
+        );
+      }
+
+      lastIndex = mediaRegex.lastIndex;
+    }
+
+    const remainingText = inputText.slice(lastIndex);
+    parts.push(
+      remainingText.split("\n").map((line, index, array) => (
+        <React.Fragment key={`${lastIndex}-${index}`}>
+          {line}
+          {index < array.length - 1 && <br />}
+        </React.Fragment>
+      ))
+    );
+
+    return parts;
+  };
 
   return (
     <div className="flex flex-col gap-[10px] sm:w-[800px] w-[90%] sm:border border-gray-900 hover:border-gray-800 transition duration-200 bg-black sm:p-[15px] sm:rounded-[15px]">
@@ -60,25 +120,8 @@ const PostTemplate: React.FC<PostProps> = ({
       </div>
       <div className="flex flex-col gap-[10px]">
         <p className="text-[15px] leading-normal overflow-x-hidden">
-          {textContent}
+          {parseTextWithMedia(textContent)}
         </p>
-        {imageContent && (
-          <div className="">
-            <img
-              src={imageContent}
-              alt="Post image"
-              className="w-full rounded-md"
-            />
-          </div>
-        )}
-        {videoContent && (
-          <div className="">
-            <video controls className="w-full rounded-md">
-              <source src={videoContent} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        )}
       </div>
       <PostReactionBtns
         likeCount={0}

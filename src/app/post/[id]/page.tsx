@@ -1,37 +1,35 @@
 import { notFound } from "next/navigation";
-import prisma from "@/db/prisma";
-import Post from "@/components/post/PostTemplate";
+import PostDetailClient from "@/components/post/PostDetailClient";
 
 interface PostDetailProps {
   params: { id: string };
 }
 
 const PostDetail = async ({ params }: PostDetailProps) => {
-  const post = await prisma.post.findUnique({
-    where: { id: params.id },
-    include: {
-      user: true,
-    },
-  });
+  const response = await fetch(
+    `http://localhost:3000/api/fetch-post/${params.id}`,
+    {
+      method: "GET",
+    }
+  );
 
-  if (!post) {
+  if (!response.ok) {
     notFound();
   }
 
-  return (
-    <div className="flex justify-center mt-[90px] mb-[100px]">
-      <div className="flex flex-col gap-[30px] w-[800px]">
-        <h1 className="text-[25px] font-semibold">Post Detail</h1>
-        <Post
-          profilePicture={post.user.profilePicture}
-          profileName={post.user.profileName}
-          username={post.user.username}
-          timestamp={new Date(post.createdAt).toLocaleString()}
-          textContent={post.content}
-        />
-      </div>
-    </div>
-  );
+  const post = await response.json();
+
+  const postProps = {
+    id: post.id,
+    profilePicture: post.user.profilePicture,
+    profileName: post.user.profileName,
+    username: post.user.username,
+    timestamp: new Date(post.createdAt).toLocaleString(),
+    title: post.title,
+    textContent: post.content,
+  };
+
+  return <PostDetailClient post={postProps} />;
 };
 
 export default PostDetail;

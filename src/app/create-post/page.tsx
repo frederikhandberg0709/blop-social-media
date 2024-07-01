@@ -116,7 +116,7 @@ const CreatePost: React.FC = () => {
       setCharacterCount(0);
       setWordCount(0);
 
-      router.push(`/post/${post.id}`);
+      router.push(`/post/${post.id}?success=true`);
     } catch (error) {
       console.error("Error creating post:", error);
     }
