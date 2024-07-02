@@ -19,9 +19,13 @@ model User {
   email          String    @unique
   password       String
   createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
   profileName    String?
   profilePicture String?
   profileBanner  String?
+  bio            String?
+  following      Follow[]  @relation("following")
+  followers      Follow[]  @relation("followers")
   posts          Post[]
   comments       Comment[]
   likes          Like[]
@@ -56,4 +60,14 @@ model Like {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   createdAt DateTime @default(now())
+}
+
+model Follow {
+  followerId  String
+  followingId String
+  follower    User     @relation("followers", fields: [followerId], references: [id])
+  following   User     @relation("following", fields: [followingId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@id([followerId, followingId])
 }

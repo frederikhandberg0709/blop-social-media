@@ -20,7 +20,7 @@ const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
     <>
       {success === "true" && (
         <div className="fixed top-[90px] left-1/2 -translate-x-1/2 text-[17px] font-semibold bg-gradient-to-b from-blue-500 to-blue-800 rounded-full px-[20px] py-[10px]">
-          Your new post has been successfully publised!
+          Your new post has been successfully published!
         </div>
       )}
       <div className="flex justify-center mt-[90px] mb-[100px]">

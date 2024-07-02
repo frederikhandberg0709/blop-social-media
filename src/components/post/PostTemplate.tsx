@@ -24,7 +24,9 @@ const PostTemplate: React.FC<PostProps> = ({
   const defaultProfilePicture =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRg5CvxCysqjZrsTPUjcl5sN3HIzePiCWM7KQ&s";
 
-  const parseTextWithMedia = (inputText: string) => {
+  const parseTextWithMedia = (inputText: string | undefined) => {
+    if (!inputText) return null;
+
     const mediaRegex = /(https:\/\/.*?\.(jpg|jpeg|png|gif|mp4|avi|mov))/g;
     let parts = [];
     let lastIndex = 0;

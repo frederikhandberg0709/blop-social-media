@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 interface PostData {
   id: string;
   title: string;
-  text: string;
+  content: string;
   createdAt: string;
   user: {
     displayName: string;
@@ -21,7 +21,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch("/api");
+        const response = await fetch("/api/fetch-all-posts");
         if (!response.ok) {
           throw new Error("Failed to fetch posts");
         }
@@ -56,7 +56,7 @@ const Home: React.FC = () => {
               profileName={post.user.displayName}
               username={post.user.username}
               timestamp={new Date(post.createdAt).toLocaleString()}
-              textContent={post.text}
+              textContent={post.content}
             />
           ))}
           {/* <Post
