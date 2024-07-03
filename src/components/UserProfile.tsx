@@ -1,6 +1,41 @@
-import Link from "next/link";
+"use client";
 
-const Profile: React.FC = () => {
+import FollowButton from "@/components/buttons/FollowButton";
+import { User } from "@/types/User";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+interface UserProfileProps {
+  user: User;
+  currentUserId: string;
+}
+
+const UserProfile: React.FC<UserProfileProps> = ({ user, currentUserId }) => {
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchFollowStatus = async () => {
+      try {
+        const response = await fetch(
+          `/api/follow-status?followerId=${currentUserId}&followingId=${user.id}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch follow status");
+        }
+        const data = await response.json();
+        setIsFollowing(data.isFollowing);
+      } catch (error) {
+        console.error("Error fetching follow status:", error);
+      }
+    };
+
+    fetchFollowStatus();
+  }, [currentUserId, user.id]);
+
+  const handleFollowChange = (newIsFollowing: boolean) => {
+    setIsFollowing(newIsFollowing);
+  };
+
   return (
     <>
       <div className="mt-[60px] flex justify-center">
@@ -17,9 +52,12 @@ const Profile: React.FC = () => {
                 className="h-[130px] w-[130px] rounded-full border-[4px] border-black"
               />
               <div className="flex items-center gap-[20px] mt-[20px]">
-                <button className="font-semibold px-[20px] py-[10px] rounded-full bg-slate-400">
-                  FOLLOW
-                </button>
+                <FollowButton
+                  followerId={currentUserId}
+                  followingId={user.id}
+                  isFollowing={isFollowing}
+                  onFollowChange={handleFollowChange}
+                />
                 <button className="flex gap-[10px] font-semibold px-[20px] py-[10px] rounded-full bg-[#EAB308]/25 active:bg-[#EAB308]/50 transition ease-in-out duration-200">
                   <svg
                     width="16"
@@ -52,13 +90,13 @@ const Profile: React.FC = () => {
               </div>
             </div>
             {/* Profile name */}
-            <p className="font-bold text-[20px] mt-[10px]">Profile name</p>
-            {/* Username */}
-            <p className="text-[15px]">@username</p>
-            {/* Description */}
-            <p className="text-[15px] mt-[10px]">
-              Hey Nostr! I write about stuff like BTC and Nostr ⚡️
+            <p className="font-bold text-[20px] mt-[10px]">
+              {user.profileName || user.username}
             </p>
+            {/* Username */}
+            <p className="text-[15px]">@{user.username}</p>
+            {/* Description */}
+            <p className="text-[15px] mt-[10px]">{user.bio}</p>
           </div>
           {/* Profile stats */}
           <div className="flex gap-[30px]">
@@ -67,21 +105,25 @@ const Profile: React.FC = () => {
               className="flex flex-col items-center opacity-50 hover:opacity-100 transition"
             >
               <span>FOLLOWERS</span>
-              <span className="font-bold text-[20px]">2,7K</span>
+              <span className="font-bold text-[20px]">
+                {user.followersCount}
+              </span>
             </Link>
             <Link
               href="#"
               className="flex flex-col items-center opacity-50 hover:opacity-100 transition"
             >
               <span>FOLLOWING</span>
-              <span className="font-bold text-[20px]">143</span>
+              <span className="font-bold text-[20px]">
+                {user.followingCount}
+              </span>
             </Link>
             <Link
               href="#"
               className="flex flex-col items-center opacity-50 hover:opacity-100 transition"
             >
-              <span>NOTES</span>
-              <span className="font-bold text-[20px]">68</span>
+              <span>POSTS</span>
+              <span className="font-bold text-[20px]">{user.postsCount}</span>
             </Link>
           </div>
           {/* Content menu */}
@@ -108,4 +150,4 @@ const Profile: React.FC = () => {
   );
 };
 
-export default Profile;
+export default UserProfile;
