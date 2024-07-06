@@ -62,9 +62,9 @@ export default function RegistrationForm() {
       /> */}
       <button
         type="submit"
-        className="text-white bg-blue-600 relative bottom-0 hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)] px-4 py-2 mt-[50px] rounded-xl transition-all duration-150 ease-in-out"
+        className="font-semibold text-white bg-blue-600 relative bottom-0 hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)] px-4 py-2 mt-[50px] rounded-xl transition-all duration-150 ease-in-out"
       >
-        Continue
+        Register
       </button>
     </form>
   );

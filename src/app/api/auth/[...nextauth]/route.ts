@@ -3,30 +3,39 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcrypt";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import argon2 from "argon2";
 
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  pages: {
+    signIn: "/login",
+  },
   providers: [
     CredentialsProvider({
-      name: "Sign in",
+      // name: "Sign in",
       credentials: {
-        email: {
-          label: "Email",
-          type: "email",
-          placeholder: "hello@example.com",
+        identifier: {
+          // label: "Email",
+          // type: "email",
+          // placeholder: "hello@example.com",
         },
-        password: { label: "Password", type: "password" },
+        password: {
+          // label: "Password", type: "password"
+        },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) {
+        if (!credentials?.identifier || !credentials.password) {
           return null;
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.user.findFirst({
           where: {
-            email: credentials.email,
+            OR: [
+              { email: credentials.identifier },
+              { username: credentials.identifier },
+            ],
           },
         });
 
@@ -34,10 +43,23 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const isPasswordValid = await compare(
-          credentials.password,
-          user.password
+        console.log(`Found user: ${user.email}`);
+
+        const isPasswordValid = await argon2.verify(
+          user.password,
+          credentials.password
         );
+        if (!isPasswordValid) {
+          console.log("Invalid password");
+          return null;
+        }
+
+        console.log("Password is valid");
+
+        // const isPasswordValid = await compare(
+        //   credentials.password,
+        //   user.password
+        // );
 
         if (!isPasswordValid) {
           return null;
@@ -46,8 +68,8 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id + "",
           email: user.email,
+          username: user.username,
           name: user.profileName,
-          randomKey: "Hey cool",
         };
       },
     }),
