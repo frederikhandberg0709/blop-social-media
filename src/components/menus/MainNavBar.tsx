@@ -9,6 +9,7 @@ import NotificationPanel from "../NotificationPanel";
 import "./panel-animations.css";
 import NavSearchResults from "./NavSearchResults";
 import { Tooltip } from "../Tooltip";
+import { useSession } from "next-auth/react";
 
 const MainNavBar: React.FC = () => {
   const [isNavSideMenuVisible, setIsNavSideMenuVisible] = useState(false);
@@ -27,6 +28,12 @@ const MainNavBar: React.FC = () => {
   const notificationButtonRef = useRef<HTMLButtonElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const profileMenuButtonRef = useRef<HTMLButtonElement>(null);
+
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
 
   const toggleNavSideMenu = () => {
     if (isNavSideMenuVisible) {
@@ -317,7 +324,7 @@ const MainNavBar: React.FC = () => {
           <NavProfileMenu
             profilePicture={""}
             profileName={"Profile name"}
-            username={"username"}
+            username={session.user.username}
             closeMenu={closeProfileMenu}
           />
         </div>

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import prisma from "@/db/prisma";
+import { prisma } from "@/db/prisma";
 import UserProfile from "@/components/UserProfile";
 import { User } from "@/types/User";
 

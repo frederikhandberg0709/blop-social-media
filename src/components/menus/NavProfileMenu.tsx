@@ -20,7 +20,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
   return (
     <div className="flex flex-col gap-[10px]">
       <Link
-        href={"/profile"}
+        href={`/profile/${username}`}
         onClick={closeMenu}
         className="flex gap-[12px] items-center p-[10px] rounded-xl hover:bg-white/10 transition ease-in-out duration-150 group"
       >
@@ -38,7 +38,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       </Link>
       <div className="w-full h-[1px] bg-blue-500/10"></div>
       <Link
-        href={"/profile"}
+        href={`/profile/${username}`}
         onClick={closeMenu}
         className={`flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium hover:bg-white/10  transition ease-in-out duration-150 ${
           (currentPage === "/profile" && "text-white fill-white") ||

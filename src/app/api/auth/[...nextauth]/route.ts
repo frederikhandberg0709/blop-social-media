@@ -1,6 +1,5 @@
 import { prisma } from "@/db/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { compare } from "bcrypt";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import argon2 from "argon2";
@@ -16,14 +15,8 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       // name: "Sign in",
       credentials: {
-        identifier: {
-          // label: "Email",
-          // type: "email",
-          // placeholder: "hello@example.com",
-        },
-        password: {
-          // label: "Password", type: "password"
-        },
+        identifier: {},
+        password: {},
       },
       async authorize(credentials) {
         if (!credentials?.identifier || !credentials.password) {
@@ -56,11 +49,6 @@ export const authOptions: NextAuthOptions = {
 
         console.log("Password is valid");
 
-        // const isPasswordValid = await compare(
-        //   credentials.password,
-        //   user.password
-        // );
-
         if (!isPasswordValid) {
           return null;
         }
@@ -68,33 +56,25 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id + "",
           email: user.email,
-          username: user.username,
           name: user.profileName,
+          username: user.username,
         };
       },
     }),
   ],
   callbacks: {
-    session: ({ session, token }) => {
+    async session({ session, token }) {
       console.log("Session Callback", { session, token });
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id,
-          randomKey: token.randomKey,
-        },
-      };
+      session.user.id = token.id as string;
+      session.user.username = token.username as string;
+      return session;
     },
-    jwt: ({ token, user }) => {
+
+    async jwt({ token, user }) {
       console.log("JWT Callback", { token, user });
       if (user) {
-        const u = user as unknown as any;
-        return {
-          ...token,
-          id: u.id,
-          randomKey: u.randomKey,
-        };
+        token.id = user.id;
+        token.username = user.username;
       }
       return token;
     },
