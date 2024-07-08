@@ -1,10 +1,11 @@
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface NavProfileMenuProps {
-  profilePicture: string;
-  profileName: string;
-  username: string;
+  profilePicture: string | null;
+  profileName: string | null;
+  username: string | null;
   closeMenu: () => void;
 }
 
@@ -17,6 +18,10 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
   const pathname = usePathname();
   const currentPage = pathname;
 
+  const logout = async () => {
+    await signOut();
+  };
+
   return (
     <div className="flex flex-col gap-[10px]">
       <Link
@@ -25,7 +30,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
         className="flex gap-[12px] items-center p-[10px] rounded-xl hover:bg-white/10 transition ease-in-out duration-150 group"
       >
         <img
-          src={profilePicture}
+          src={profilePicture || "/images/default_profile.jpg"}
           alt="Profile picture"
           className="rounded-full w-[40px] h-[40px] object-cover"
         />
@@ -77,9 +82,8 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
         </svg>{" "}
         Settings
       </Link>
-      <Link
-        href={""}
-        onClick={closeMenu}
+      <button
+        onClick={logout}
         className="flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium text-white/50 hover:text-white hover:bg-white/10 fill-white/50 hover:fill-white transition ease-in-out duration-150"
       >
         <svg
@@ -92,7 +96,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
           <path d="m20.65 11.65l-2.79-2.79a.501.501 0 0 0-.86.35V11h-7c-.55 0-1 .45-1 1s.45 1 1 1h7v1.79c0 .45.54.67.85.35l2.79-2.79c.2-.19.2-.51.01-.7z" />
         </svg>{" "}
         Logout
-      </Link>
+      </button>
     </div>
   );
 };

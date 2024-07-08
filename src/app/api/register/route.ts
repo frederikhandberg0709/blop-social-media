@@ -32,9 +32,7 @@
 // }
 
 import { NextResponse } from "next/server";
-// import { hash } from "bcrypt";
 import { prisma } from "@/db/prisma";
-// import { sql } from "@vercel/postgres";
 import argon2 from "argon2";
 
 export async function POST(request: Request) {
@@ -46,11 +44,7 @@ export async function POST(request: Request) {
 
     console.log({ email, password });
 
-    // const hashedPassword = await hash(password, 10);
     const hashedPassword = await argon2.hash(password);
-
-    // const response =
-    //   await sql`INSERT INTO users (email, password) VALUES (${email}, ${hashedPassword})`;
 
     const user = await prisma.user.create({
       data: {

@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import argon2 from "argon2";
+import { Adapter } from "next-auth/adapters";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -79,7 +80,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
   },
-  // adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma) as Adapter,
 };
 
 const handler = NextAuth(authOptions);

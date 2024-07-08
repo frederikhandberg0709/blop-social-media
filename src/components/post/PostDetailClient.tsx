@@ -10,6 +10,7 @@ interface PostProps {
   username: string;
   timestamp: string;
   textContent: string;
+  likesCount: number;
 }
 
 const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
@@ -31,6 +32,7 @@ const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
             username={post.username}
             timestamp={post.timestamp}
             textContent={post.textContent}
+            likesCount={post.likesCount}
           />
           {/* Comments */}
         </div>

@@ -1,8 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import PostReactionBtns from "../buttons/PostReactionBtns";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface PostProps {
+  id: string;
   profilePicture: string | null;
   profileName: string | null;
   username: string;
@@ -10,9 +14,12 @@ interface PostProps {
   textContent: string;
   imageContent?: string;
   videoContent?: string;
+  initialLikesCount: number;
+  userLiked: boolean;
 }
 
 const PostTemplate: React.FC<PostProps> = ({
+  id,
   profilePicture,
   profileName,
   username,
@@ -20,7 +27,81 @@ const PostTemplate: React.FC<PostProps> = ({
   textContent,
   imageContent,
   videoContent,
+  initialLikesCount,
+  userLiked,
 }) => {
+  const { data: session } = useSession();
+  const [likesCount, setLikesCount] = useState(initialLikesCount);
+  const [liked, setLiked] = useState(userLiked);
+
+  useEffect(() => {
+    const fetchLikesCount = async () => {
+      try {
+        const userId = session?.user?.id;
+        const response = await fetch(
+          `/api/likes-count?postId=${id}&userId=${userId}`
+        );
+        const data = await response.json();
+        setLikesCount(data.likesCount);
+        setLiked(data.userLiked);
+      } catch (error) {
+        console.error("Error fetching likes count:", error);
+      }
+    };
+
+    fetchLikesCount();
+  }, [id]);
+
+  const handleLike = async () => {
+    if (!session) {
+      return alert("You need to be logged in to like posts");
+    }
+
+    try {
+      const response = await fetch("/api/like-post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ postId: id, userId: session.user.id }),
+      });
+
+      if (response.ok) {
+        setLikesCount(likesCount + 1);
+        setLiked(true);
+      } else {
+        console.error("Failed to like post");
+      }
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
+  };
+
+  const handleUnlike = async () => {
+    if (!session) {
+      return alert("You need to be logged in to unlike posts");
+    }
+
+    try {
+      const response = await fetch("/api/unlike-post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ postId: id, userId: session.user.id }),
+      });
+
+      if (response.ok) {
+        setLikesCount(likesCount - 1);
+        setLiked(false);
+      } else {
+        console.error("Failed to unlike post");
+      }
+    } catch (error) {
+      console.error("Error unliking post:", error);
+    }
+  };
+
   const defaultProfilePicture =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRg5CvxCysqjZrsTPUjcl5sN3HIzePiCWM7KQ&s";
 
@@ -126,10 +207,13 @@ const PostTemplate: React.FC<PostProps> = ({
         </p>
       </div>
       <PostReactionBtns
-        likeCount={0}
-        commentCount={0}
-        shareCount={0}
-        donateCount={0}
+        likesCount={likesCount}
+        commentsCount={0}
+        sharesCount={0}
+        donationCount={0}
+        liked={liked}
+        onLike={handleLike}
+        onUnlike={handleUnlike}
       />
     </div>
   );

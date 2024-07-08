@@ -2,24 +2,6 @@ import LoginForm from "./LoginForm";
 import Link from "next/link";
 
 const LogInPage = () => {
-  // const [identifier, setIdentifier] = useState("");
-  // const [password, setPassword] = useState("");
-
-  // const handleSubmit = async (e: any) => {
-  //   e.preventDefault();
-  //   const res = await signIn("credentials", {
-  //     identifier,
-  //     password,
-  //     redirect: false,
-  //   });
-
-  //   if (res?.error) {
-  //     alert(res.error);
-  //   } else {
-  //     window.location.href = "/";
-  //   }
-  // };
-
   return (
     <div className="mt-[150px] w-full flex flex-col items-center justify-center">
       <div className="w-fit">
@@ -48,12 +30,5 @@ const LogInPage = () => {
     </div>
   );
 };
-
-// export async function getServerSideProps() {
-//   const providers = await getProviders();
-//   return {
-//     props: { providers },
-//   };
-// }
 
 export default LogInPage;

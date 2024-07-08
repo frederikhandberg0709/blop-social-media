@@ -8,6 +8,8 @@ interface PostData {
   title: string;
   content: string;
   createdAt: string;
+  likesCount: number;
+  userLiked: boolean;
   user: {
     displayName: string;
     username: string;
@@ -52,11 +54,14 @@ const Home: React.FC = () => {
           {posts.map((post) => (
             <PostTemplate
               key={post.id}
+              id={post.id}
               profilePicture={post.user.profilePicture}
               profileName={post.user.displayName}
               username={post.user.username}
               timestamp={new Date(post.createdAt).toLocaleString()}
               textContent={post.content}
+              initialLikesCount={post.likesCount ?? 0}
+              userLiked={post.userLiked}
             />
           ))}
           {/* <Post

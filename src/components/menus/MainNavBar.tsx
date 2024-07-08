@@ -322,9 +322,9 @@ const MainNavBar: React.FC = () => {
           }`}
         >
           <NavProfileMenu
-            profilePicture={""}
-            profileName={"Profile name"}
-            username={session.user.username}
+            profilePicture={session?.user.profilePicture || null}
+            profileName={session?.user.profileName || null}
+            username={session?.user.username || null}
             closeMenu={closeProfileMenu}
           />
         </div>

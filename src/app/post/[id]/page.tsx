@@ -27,6 +27,7 @@ const PostDetail = async ({ params }: PostDetailProps) => {
     timestamp: new Date(post.createdAt).toLocaleString(),
     title: post.title,
     textContent: post.content,
+    likesCount: post.likes,
   };
 
   return <PostDetailClient post={postProps} />;
