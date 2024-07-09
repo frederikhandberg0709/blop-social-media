@@ -14,12 +14,24 @@ export async function GET(req: NextRequest) {
       where: { postId },
     });
 
-    const userLiked = await prisma.like.findFirst({
-      where: {
-        postId,
-        userId,
-      },
-    });
+    let userLiked = false;
+    if (userId) {
+      const liked = await prisma.like.findFirst({
+        where: {
+          postId,
+          userId,
+        },
+      });
+      userLiked = !!liked;
+    }
+
+    // OLD CODE. TEST NEW BEFORE DELETING THIS BELOW!
+    // const userLiked = await prisma.like.findFirst({
+    //   where: {
+    //     postId,
+    //     userId,
+    //   },
+    // });
 
     return NextResponse.json(
       {
@@ -29,6 +41,8 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    console.error("Failed to fetch likes count:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch likes count" },
       { status: 500 }

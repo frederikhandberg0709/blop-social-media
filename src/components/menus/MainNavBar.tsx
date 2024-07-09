@@ -31,6 +31,8 @@ const MainNavBar: React.FC = () => {
 
   const { data: session, status } = useSession();
 
+  const loggedIn = session ? true : false;
+
   if (status === "loading") {
     return <p>Loading...</p>;
   }
@@ -225,59 +227,77 @@ const MainNavBar: React.FC = () => {
               />
             </div>
           </div>
-          {/* Create Post, Notifications, DMs, & Profile menu */}
-          <div className="flex items-center justify-end gap-[30px] w-[200px]">
-            {/* Create Post */}
-            <Tooltip text={"Create Post"} position="bottom" offset="60">
-              <Link href={"/create-post"} className="rounded-full">
-                <div className="h-[45px] w-[45px] p-[7px] rounded-full fill-white/50 hover:fill-white active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    className=""
-                  >
-                    <path d="M12 4a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5a1 1 0 0 1 1-1z" />
-                  </svg>
-                </div>
-              </Link>
-            </Tooltip>
-            {/* Notification button */}
-            <Tooltip
-              text={
-                isNotificationPanelVisible
-                  ? "Close Notifications"
-                  : "Notifications"
-              }
-              position="bottom"
-              offset="60"
-            >
-              <button
-                onClick={toggleNotificationPanel}
-                ref={notificationButtonRef}
-                className="w-[45px] h-[45px] rounded-full p-[7px] fill-white/50 hover:fill-white line active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out"
+          {!loggedIn && (
+            <div className="flex items-center gap-[30px]">
+              <Link
+                href={"/login"}
+                className="font-semibold text-white border-2 border-blue-500 hover:border-blue-700 hover:bg-blue-700 px-4 py-2 rounded-xl transition-all duration-150 ease-in-out"
               >
-                <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="m32.85 28.13l-.34-.3A14.37 14.37 0 0 1 30 24.9a12.63 12.63 0 0 1-1.35-4.81v-4.94A10.81 10.81 0 0 0 19.21 4.4V3.11a1.33 1.33 0 1 0-2.67 0v1.31a10.81 10.81 0 0 0-9.33 10.73v4.94a12.63 12.63 0 0 1-1.35 4.81a14.4 14.4 0 0 1-2.47 2.93l-.34.3v2.82h29.8Z"
-                    className="clr-i-solid clr-i-solid-path-1"
-                  />
-                  <path
-                    d="M15.32 32a2.65 2.65 0 0 0 5.25 0Z"
-                    className="clr-i-solid clr-i-solid-path-2"
-                  />
-                  <path fill="none" d="M0 0h36v36H0z" />
-                </svg>
+                Login
+              </Link>
+              <Link
+                href={"/create-account"}
+                className="font-semibold text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-xl transition-all duration-150 ease-in-out"
+              >
+                Create Account
+              </Link>
+            </div>
+          )}
+          {loggedIn && (
+            /* Create Post, Notifications, DMs, & Profile menu */
+            <div className="flex items-center justify-end gap-[30px] w-[200px]">
+              {/* Create Post */}
+              <Tooltip text={"Create Post"} position="bottom" offset="60">
+                <Link href={"/create-post"} className="rounded-full">
+                  <div className="h-[45px] w-[45px] p-[7px] rounded-full fill-white/50 hover:fill-white active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      className=""
+                    >
+                      <path d="M12 4a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5a1 1 0 0 1 1-1z" />
+                    </svg>
+                  </div>
+                </Link>
+              </Tooltip>
+              {/* Notification button */}
+              <Tooltip
+                text={
+                  isNotificationPanelVisible
+                    ? "Close Notifications"
+                    : "Notifications"
+                }
+                position="bottom"
+                offset="60"
+              >
+                <button
+                  onClick={toggleNotificationPanel}
+                  ref={notificationButtonRef}
+                  className="w-[45px] h-[45px] rounded-full p-[7px] fill-white/50 hover:fill-white line active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out"
+                >
+                  <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="m32.85 28.13l-.34-.3A14.37 14.37 0 0 1 30 24.9a12.63 12.63 0 0 1-1.35-4.81v-4.94A10.81 10.81 0 0 0 19.21 4.4V3.11a1.33 1.33 0 1 0-2.67 0v1.31a10.81 10.81 0 0 0-9.33 10.73v4.94a12.63 12.63 0 0 1-1.35 4.81a14.4 14.4 0 0 1-2.47 2.93l-.34.3v2.82h29.8Z"
+                      className="clr-i-solid clr-i-solid-path-1"
+                    />
+                    <path
+                      d="M15.32 32a2.65 2.65 0 0 0 5.25 0Z"
+                      className="clr-i-solid clr-i-solid-path-2"
+                    />
+                    <path fill="none" d="M0 0h36v36H0z" />
+                  </svg>
+                </button>
+              </Tooltip>
+              {/* Profile menu button */}
+              <button onClick={toggleProfileMenu} ref={profileMenuButtonRef}>
+                <Image
+                  src=""
+                  className="rounded-full w-[50px] h-[50px] bg-white"
+                  alt="Profile picture"
+                />
               </button>
-            </Tooltip>
-            {/* Profile menu button */}
-            <button onClick={toggleProfileMenu} ref={profileMenuButtonRef}>
-              <Image
-                src=""
-                className="rounded-full w-[50px] h-[50px] bg-white"
-                alt="Profile picture"
-              />
-            </button>
-          </div>
+            </div>
+          )}
         </div>
       </nav>
       {isNavSideMenuVisible && (
