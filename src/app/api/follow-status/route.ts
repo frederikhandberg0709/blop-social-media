@@ -1,26 +1,30 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/db/prisma";
 
-export async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === "GET") {
-    const { followerId, followingId } = req.query;
+export async function GET(req: NextRequest) {
+  const followerId = req.nextUrl.searchParams.get("followerId");
+  const followingId = req.nextUrl.searchParams.get("followingId");
 
-    try {
-      const follow = await prisma.follow.findUnique({
-        where: {
-          followerId_followingId: {
-            followerId: followerId as string,
-            followingId: followingId as string,
-          },
+  if (!followerId || !followingId) {
+    return NextResponse.json(
+      { error: "Both followerId and followingId are required" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const follow = await prisma.follow.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId: followerId,
+          followingId: followingId,
         },
-      });
+      },
+    });
 
-      res.status(200).json({ isFollowing: !!follow });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch follow status" });
-    }
-  } else {
-    res.setHeader("Allow", ["GET"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    return NextResponse.json({ isFollowing: !!follow }, { status: 200 });
+  } catch (error) {
+    const err = error as Error;
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

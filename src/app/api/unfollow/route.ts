@@ -1,27 +1,22 @@
-// Not implemented yet
-
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/db/prisma";
 
-export async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === "POST") {
-    const { followerId, followingId } = req.body;
+export async function POST(req: NextRequest) {
+  const { followerId, followingId } = await req.json();
 
-    try {
-      await prisma.follow.delete({
-        where: {
-          followerId_followingId: {
-            followerId,
-            followingId,
-          },
+  try {
+    const unfollow = await prisma.follow.delete({
+      where: {
+        followerId_followingId: {
+          followerId,
+          followingId,
         },
-      });
-      res.status(200).json({ message: "Unfollowed successfully" });
-    } catch (error) {
-      res.status(500).json({ error: "Failed to unfollow user" });
-    }
-  } else {
-    res.setHeader("Allow", ["POST"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+      },
+    });
+
+    return NextResponse.json(unfollow, { status: 201 });
+  } catch (error) {
+    const err = error as Error;
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

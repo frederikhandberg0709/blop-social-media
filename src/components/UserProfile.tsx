@@ -2,22 +2,25 @@
 
 import FollowButton from "@/components/buttons/FollowButton";
 import { User } from "@/types/User";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface UserProfileProps {
   user: User;
-  currentUserId: string;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ user, currentUserId }) => {
+const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
+  const { data: session } = useSession();
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
   useEffect(() => {
+    if (!session) return;
+
     const fetchFollowStatus = async () => {
       try {
         const response = await fetch(
-          `/api/follow-status?followerId=${currentUserId}&followingId=${user.id}`
+          `/api/follow-status?followerId=${session.user.id}&followingId=${user.id}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch follow status");
@@ -30,7 +33,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, currentUserId }) => {
     };
 
     fetchFollowStatus();
-  }, [currentUserId, user.id]);
+  }, [session, user.id]);
 
   const handleFollowChange = (newIsFollowing: boolean) => {
     setIsFollowing(newIsFollowing);
@@ -53,7 +56,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, currentUserId }) => {
               />
               <div className="flex items-center gap-[20px] mt-[20px]">
                 <FollowButton
-                  followerId={currentUserId}
+                  followerId={session?.user.id || ""}
                   followingId={user.id}
                   isFollowing={isFollowing}
                   onFollowChange={handleFollowChange}
@@ -94,7 +97,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, currentUserId }) => {
               {user.profileName || user.username}
             </p>
             {/* Username */}
-            <p className="text-[15px]">@{user.username}</p>
+            <p className="text-[15px] text-white/50">@{user.username}</p>
             {/* Description */}
             <p className="text-[15px] mt-[10px]">{user.bio}</p>
           </div>

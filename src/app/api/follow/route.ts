@@ -1,25 +1,20 @@
-// Not implemented yet
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/db/prisma";
 
-// import { NextApiRequest, NextApiResponse } from "next";
-// import prisma from "@/db/prisma";
+export async function POST(req: NextRequest) {
+  const { followerId, followingId } = await req.json();
 
-// export async function handler(req: NextApiRequest, res: NextApiResponse) {
-//   if (req.method === "POST") {
-//     const { followerId, followingId } = req.body;
+  try {
+    const follow = await prisma.follow.create({
+      data: {
+        followerId,
+        followingId,
+      },
+    });
 
-//     try {
-//       const follow = await prisma.follow.create({
-//         data: {
-//           followerId,
-//           followingId,
-//         },
-//       });
-//       res.status(201).json(follow);
-//     } catch (error) {
-//       res.status(500).json({ error: "Failed to follow user" });
-//     }
-//   } else {
-//     res.setHeader("Allow", ["POST"]);
-//     res.status(405).end(`Method ${req.method} Not Allowed`);
-//   }
-// }
+    return NextResponse.json(follow, { status: 201 });
+  } catch (error) {
+    const err = error as Error;
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}

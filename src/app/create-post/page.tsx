@@ -5,8 +5,10 @@ import React, { useRef, useState } from "react";
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import PostReactionBtns from "@/components/buttons/PostReactionBtns";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const CreatePost: React.FC = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const [title, setTitle] = useState<string>("");
   const [text, setText] = useState<string>("");
@@ -98,7 +100,7 @@ const CreatePost: React.FC = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: "1", // Replace with dynamic value later
+          userId: session?.user.id,
           title,
           text,
         }),
@@ -215,10 +217,10 @@ const CreatePost: React.FC = () => {
               <h1 className="text-[20px] font-bold">{title}</h1>
               <p>{parseTextWithMedia(text)}</p>
               <PostReactionBtns
-                likeCount={0}
-                commentCount={0}
-                shareCount={0}
-                donateCount={0}
+                likesCount={0}
+                commentsCount={0}
+                sharesCount={0}
+                donationCount={0}
               />
             </div>
           </div>

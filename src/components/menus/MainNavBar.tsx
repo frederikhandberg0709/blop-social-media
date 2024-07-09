@@ -31,7 +31,7 @@ const MainNavBar: React.FC = () => {
 
   const { data: session, status } = useSession();
 
-  const loggedIn = session ? true : false;
+  const isLoggedIn = session ? true : false;
 
   if (status === "loading") {
     return <p>Loading...</p>;
@@ -166,7 +166,11 @@ const MainNavBar: React.FC = () => {
       <nav className="fixed z-[99] w-full top-0 left-0 right-0 flex justify-center items-center px-[50px] bg-black">
         <div className="flex justify-between items-center w-full py-[10px]">
           {/* Branding & menu button */}
-          <div className="flex items-center gap-[30px] w-[200px]">
+          <div
+            className={`flex items-center gap-[30px] ${
+              isLoggedIn ? "w-[200px]" : "w-[264px]"
+            }`}
+          >
             <Link
               href="/home"
               className="text-white/50 hover:text-white active:text-blue-500 font-bold text-[30px] transition duration-150 ease-in-out"
@@ -227,11 +231,11 @@ const MainNavBar: React.FC = () => {
               />
             </div>
           </div>
-          {!loggedIn && (
+          {!isLoggedIn && (
             <div className="flex items-center gap-[30px]">
               <Link
                 href={"/login"}
-                className="font-semibold text-white border-2 border-blue-500 hover:border-blue-700 hover:bg-blue-700 px-4 py-2 rounded-xl transition-all duration-150 ease-in-out"
+                className="font-semibold text-white border-[3px] border-blue-500 hover:border-blue-700 hover:bg-blue-700 px-4 py-2 rounded-xl transition-all duration-150 ease-in-out"
               >
                 Login
               </Link>
@@ -243,7 +247,7 @@ const MainNavBar: React.FC = () => {
               </Link>
             </div>
           )}
-          {loggedIn && (
+          {isLoggedIn && (
             /* Create Post, Notifications, DMs, & Profile menu */
             <div className="flex items-center justify-end gap-[30px] w-[200px]">
               {/* Create Post */}
