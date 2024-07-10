@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 interface PostData {
   id: string;
-  title: string;
+  title: (string | React.ReactElement | React.ReactElement[])[];
   content: string;
   createdAt: string;
   likesCount: number;
@@ -65,15 +65,6 @@ const Home: React.FC = () => {
               userLiked={post.userLiked}
             />
           ))}
-          {/* <Post
-            profilePicture="https://via.placeholder.com/150"
-            profileName="John Doe"
-            username="johndoe"
-            timestamp="June 22, 2024"
-            textContent="This is a sample post with text, an image, and a video."
-            imageContent="https://via.placeholder.com/600x400"
-            videoContent="https://www.w3schools.com/html/mov_bbb.mp4"
-          /> */}
         </div>
       </div>
     </>

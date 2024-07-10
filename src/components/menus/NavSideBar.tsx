@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import SideMenuFollowList from "../SideMenuFollowList";
 
 const NavSideBar: React.FC = () => {
   const pathname = usePathname();
@@ -41,49 +42,7 @@ const NavSideBar: React.FC = () => {
       </div>
       <div className="w-full h-[1px] bg-white/5"></div>
       {/* Following List */}
-      <div>
-        <div>
-          <h1 className="text-white/50 text-[15px] font-bold px-[20px] pb-[10px]">
-            FOLLOWING
-          </h1>
-          {/* <p className="text-white/50 text-[15px]">{followingCount}</p> */}
-        </div>
-        <div className="flex flex-col gap-[5px]">
-          <Link
-            href=""
-            className="flex items-center gap-[10px] text-[17px] hover:bg-white/10 rounded-xl px-[20px] py-[10px]"
-          >
-            <Image
-              src=""
-              className="bg-white rounded-full h-[30px] w-[30px]"
-              alt="Profile picture"
-            />
-            User 1
-          </Link>
-          <Link
-            href=""
-            className="flex items-center gap-[10px] text-[17px] hover:bg-white/10 rounded-xl px-[20px] py-[10px]"
-          >
-            <Image
-              src=""
-              className="bg-white rounded-full h-[30px] w-[30px]"
-              alt="Profile picture"
-            />
-            User 2
-          </Link>
-          <Link
-            href=""
-            className="flex items-center gap-[10px] text-[17px] hover:bg-white/10 rounded-xl px-[20px] py-[10px]"
-          >
-            <Image
-              src=""
-              className="bg-white rounded-full h-[30px] w-[30px]"
-              alt="Profile picture"
-            />
-            User 3
-          </Link>
-        </div>
-      </div>
+      <SideMenuFollowList />
       <p>{pathname}</p>
     </div>
   );
