@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import Post from "@/components/post/PostTemplate";
+import { useEffect, useState } from "react";
 
 interface PostProps {
   id: string;
@@ -17,9 +18,23 @@ const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
 
+  const [showSuccessMessage, setShowSuccessMessage] = useState(
+    success === "true"
+  );
+
+  useEffect(() => {
+    if (success === "true") {
+      const timer = setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
   return (
     <>
-      {success === "true" && (
+      {showSuccessMessage && (
         <div className="fixed top-[90px] left-1/2 -translate-x-1/2 text-[17px] font-semibold bg-gradient-to-b from-blue-500 to-blue-800 rounded-full px-[20px] py-[10px]">
           Your new post has been successfully published!
         </div>

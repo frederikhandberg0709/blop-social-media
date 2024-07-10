@@ -11,6 +11,7 @@ interface PostProps {
   profileName: string | null;
   username: string;
   timestamp: string;
+  title: (string | React.ReactElement | React.ReactElement[])[];
   textContent: string;
   imageContent?: string;
   videoContent?: string;
@@ -24,6 +25,7 @@ const PostTemplate: React.FC<PostProps> = ({
   profileName,
   username,
   timestamp,
+  title,
   textContent,
   imageContent,
   videoContent,
@@ -202,6 +204,7 @@ const PostTemplate: React.FC<PostProps> = ({
         </div>
       </div>
       <div className="flex flex-col gap-[10px]">
+        <h1 className="text-[20px] font-bold">{title}</h1>
         <p className="text-[15px] leading-normal overflow-x-hidden">
           {parseTextWithMedia(textContent)}
         </p>

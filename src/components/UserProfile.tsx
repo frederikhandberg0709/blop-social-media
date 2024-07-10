@@ -61,7 +61,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
                   isFollowing={isFollowing}
                   onFollowChange={handleFollowChange}
                 />
-                <button className="flex gap-[10px] font-semibold px-[20px] py-[10px] rounded-full bg-[#EAB308]/25 active:bg-[#EAB308]/50 transition ease-in-out duration-200">
+                <button className="flex gap-[10px] font-semibold px-4 py-2 rounded-full bg-indigo-500 active:bg-indigo-700 transition ease-in-out duration-200">
                   <svg
                     width="16"
                     height="23"
@@ -74,7 +74,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
                       fill="#EAB308"
                     />
                   </svg>{" "}
-                  ZAP
+                  Donate
                 </button>
                 <div className="flex items-center justify-center h-[40px] w-[40px] rounded-full hover:bg-gray-700/40 cursor-pointer">
                   <svg

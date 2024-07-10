@@ -59,6 +59,7 @@ const Home: React.FC = () => {
               profileName={post.user.displayName}
               username={post.user.username}
               timestamp={new Date(post.createdAt).toLocaleString()}
+              title={post.title}
               textContent={post.content}
               initialLikesCount={post.likesCount ?? 0}
               userLiked={post.userLiked}

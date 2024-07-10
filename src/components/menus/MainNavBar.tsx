@@ -306,7 +306,7 @@ const MainNavBar: React.FC = () => {
       </nav>
       {isNavSideMenuVisible && (
         <div
-          className={`fixed z-50 top-[90px] left-[20px] w-[250px] flex flex-col p-[10px] rounded-2xl bg-black border-2 border-blue-500/20 hover:border-blue-500 transition duration-150 ease-in-out ${
+          className={`fixed z-50 top-[90px] left-[20px] w-[250px] flex flex-col p-[10px] rounded-2xl bg-black border-2 border-gray-900/50 hover:border-gray-900 transition duration-150 ease-in-out ${
             isNavSideMenuAnimating ? "navsidemenu-open" : "navsidemenu"
           }`}
         >
@@ -329,7 +329,7 @@ const MainNavBar: React.FC = () => {
       {isNotificationPanelVisible && (
         <div
           ref={notificationPanelRef}
-          className={`fixed top-[90px] z-50 right-[20px] rounded-[10px] p-[10px] w-[350px] bg-black border-2 border-blue-500/20 hover:border-blue-500 transition ease-in-out duration-150 ${
+          className={`fixed top-[90px] z-50 right-[20px] rounded-[10px] p-[10px] w-[350px] bg-black border-2 border-gray-900/50 hover:border-gray-900 transition ease-in-out duration-150 ${
             isNotificationPanelAnimating
               ? "notification-panel-open"
               : "notification-panel"
@@ -341,7 +341,7 @@ const MainNavBar: React.FC = () => {
       {isProfileMenuVisible && (
         <div
           ref={profileMenuRef}
-          className={`fixed z-50 top-[90px] right-[20px] rounded-[10px] p-[10px] w-[280px] bg-black border-2 border-blue-500/20 hover:border-blue-500 transition ease-in-out duration-150 ${
+          className={`fixed z-50 top-[90px] right-[20px] rounded-[10px] p-[10px] w-[280px] bg-black border-2 border-gray-900/50 hover:border-gray-900 transition ease-in-out duration-150 ${
             isProfileMenuAnimating ? "profile-menu-open" : "profile-menu"
           }`}
         >

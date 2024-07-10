@@ -6,6 +6,7 @@ import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import PostReactionBtns from "@/components/buttons/PostReactionBtns";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import PostTemplate from "@/components/post/PostTemplate";
 
 const CreatePost: React.FC = () => {
   const { data: session } = useSession();
@@ -177,52 +178,17 @@ const CreatePost: React.FC = () => {
           {/* Change below with PostTemplate */}
           <div>
             <h1 className="font-bold mb-[20px] text-white/50">Preview Post</h1>
-            <div className="flex flex-col gap-[10px] sm:border border-gray-900 hover:border-gray-800 transition duration-200 bg-black sm:p-[15px] sm:rounded-[15px]">
-              <div className="flex items-center justify-between">
-                <Link
-                  href="https://primal.net/p/npub1nj0crmtetu84a7j43yegy358mp8u0e4ye7ndkhtd8dg0edll4mpqn52gqz"
-                  className="flex gap-[10px] group"
-                >
-                  {/* Profile picture */}
-                  <img
-                    // src={userData?.picture}
-                    src=""
-                    alt="Frederik Diamond"
-                    width={40}
-                    height={40}
-                    className="rounded-full h-[40px] w-[40px] object-cover"
-                  />
-                  <div className="flex flex-col gap-[1px]">
-                    {/* Profile name */}
-                    <p className="font-bold text-[13px] group-hover:text-blue-500">
-                      {/* {userData?.display_name} */}
-                      Profile Name
-                    </p>
-                    {/* Username */}
-                    <p className="text-[13px] text-gray-500">
-                      {/* @{userData?.name} */}
-                      @username
-                    </p>
-                  </div>
-                </Link>
-                <div className="flex items-center gap-[15px]">
-                  {/* Time ago posted */}
-                  <p className="text-[15px] text-right text-textGray">
-                    {/* {event.created_at * 1000} */}
-                    {/* {convertTimestamp(event)} */}
-                  </p>
-                  {/* <PostDropdownMenu /> */}
-                </div>
-              </div>
-              <h1 className="text-[20px] font-bold">{title}</h1>
-              <p>{parseTextWithMedia(text)}</p>
-              <PostReactionBtns
-                likesCount={0}
-                commentsCount={0}
-                sharesCount={0}
-                donationCount={0}
-              />
-            </div>
+            <PostTemplate
+              id={""}
+              profilePicture={null}
+              profileName={null}
+              username={""}
+              timestamp={""}
+              title={parseTextWithMedia(title)}
+              textContent={text}
+              initialLikesCount={0}
+              userLiked={false}
+            />
           </div>
         </div>
       </div>

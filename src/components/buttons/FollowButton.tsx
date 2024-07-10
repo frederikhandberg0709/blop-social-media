@@ -62,7 +62,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({
       onClick={isFollowing ? handleUnfollow : handleFollow}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`py-2 px-4 min-w-[106px] font-semibold text-center rounded-full transition duration-150 ease-in-out ${
+      className={`px-4 py-2 min-w-[106px] font-semibold text-center rounded-full transition duration-150 ease-in-out ${
         isFollowing
           ? "bg-green-500 hover:bg-red-500"
           : "bg-blue-500 hover:bg-blue-700"
