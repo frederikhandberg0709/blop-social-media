@@ -183,16 +183,19 @@ const PostTemplate: React.FC<PostProps> = ({
             {/* If user has profile name */}
             {profileName ? (
               <>
-                <div className="font-bold text-[13px] group-hover:text-blue-500">
+                <div className="font-bold text-[15px] group-hover:text-blue-500">
                   {profileName}
                 </div>
-                <div className="text-[13px] text-gray-500">@{username}</div>
+                <div className="text-[12px] text-gray-500">@{username}</div>
               </>
             ) : (
               // No profile name, only show username
-              <div className="font-bold text-[15px] group-hover:text-blue-500">
-                @{username}
-              </div>
+              <>
+                <div className="font-bold text-[15px] group-hover:text-blue-500">
+                  {username}
+                </div>
+                <div className="text-[12px] text-gray-500">@{username}</div>
+              </>
             )}
           </div>
         </Link>

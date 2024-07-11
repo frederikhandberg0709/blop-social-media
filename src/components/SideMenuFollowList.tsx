@@ -41,11 +41,11 @@ export default function SideMenuFollowList() {
 
   return (
     <div>
-      <div>
-        <h1 className="text-white/50 text-[15px] font-bold px-[20px] pb-[10px]">
+      <div className="flex items-center gap-4 pb-[10px]">
+        <h1 className="text-white/50 text-[15px] font-bold pl-[20px]">
           FOLLOWING
         </h1>
-        {/* <p className="text-white/50 text-[15px]">{followingCount}</p> */}
+        <p className="text-white/50 text-[15px]">{following.length}</p>
       </div>
       <div className="flex flex-col gap-[5px]">
         {following.map((user) => (

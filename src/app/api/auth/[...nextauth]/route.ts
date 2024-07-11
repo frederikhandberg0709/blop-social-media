@@ -59,6 +59,8 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.profileName,
           username: user.username,
+          profilePicture: user.profilePicture,
+          profileBanner: user.profileBanner,
         };
       },
     }),
@@ -68,6 +70,8 @@ export const authOptions: NextAuthOptions = {
       console.log("Session Callback", { session, token });
       session.user.id = token.id as string;
       session.user.username = token.username as string;
+      session.user.profilePicture = token.profilePicture as string;
+      session.user.profileBanner = token.profileBanner as string;
       return session;
     },
 
@@ -76,6 +80,8 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.username = user.username;
+        token.profilePicture = user.profilePicture;
+        token.profileBanner = user.profileBanner;
       }
       return token;
     },
