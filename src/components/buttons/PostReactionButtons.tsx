@@ -1,4 +1,4 @@
-interface PostReactionBtnsProps {
+interface PostReactionButtonsProps {
   likesCount: number;
   commentsCount: number;
   sharesCount: number;
@@ -8,7 +8,7 @@ interface PostReactionBtnsProps {
   onUnlike: () => void;
 }
 
-const PostReactionBtns: React.FC<PostReactionBtnsProps> = ({
+const PostReactionButtons: React.FC<PostReactionButtonsProps> = ({
   likesCount,
   commentsCount,
   sharesCount,
@@ -68,4 +68,4 @@ const PostReactionBtns: React.FC<PostReactionBtnsProps> = ({
   );
 };
 
-export default PostReactionBtns;
+export default PostReactionButtons;

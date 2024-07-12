@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import PostReactionBtns from "../buttons/PostReactionBtns";
+import PostReactionButtons from "../buttons/PostReactionButtons";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
@@ -212,7 +212,7 @@ const PostTemplate: React.FC<PostProps> = ({
           {parseTextWithMedia(textContent)}
         </p>
       </div>
-      <PostReactionBtns
+      <PostReactionButtons
         likesCount={likesCount}
         commentsCount={0}
         sharesCount={0}
