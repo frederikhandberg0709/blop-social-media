@@ -54,14 +54,21 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        return {
-          id: user.id + "",
-          email: user.email,
-          name: user.profileName,
-          username: user.username,
-          profilePicture: user.profilePicture,
-          profileBanner: user.profileBanner,
-        };
+        if (
+          user &&
+          (await argon2.verify(user.password, credentials?.password))
+        ) {
+          return {
+            id: user.id + "",
+            email: user.email,
+            name: user.profileName,
+            username: user.username,
+            profilePicture: user.profilePicture,
+            profileBanner: user.profileBanner,
+            color: user.color,
+          };
+        }
+        return null;
       },
     }),
   ],
@@ -72,6 +79,7 @@ export const authOptions: NextAuthOptions = {
       session.user.username = token.username as string;
       session.user.profilePicture = token.profilePicture as string;
       session.user.profileBanner = token.profileBanner as string;
+      session.user.color = token.color as string;
       return session;
     },
 
@@ -82,6 +90,7 @@ export const authOptions: NextAuthOptions = {
         token.username = user.username;
         token.profilePicture = user.profilePicture;
         token.profileBanner = user.profileBanner;
+        token.color = user.color;
       }
       return token;
     },

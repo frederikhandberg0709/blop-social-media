@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
         bio: true,
         profilePicture: true,
         profileBanner: true,
+        color: true,
       },
     });
 

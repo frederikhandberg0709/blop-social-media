@@ -8,12 +8,14 @@ declare module "next-auth" {
       profileName?: string;
       profilePicture?: string;
       profileBanner?: string;
+      color?: string;
     } & DefaultSession["user"];
   }
 
   interface User extends DefaultUser {
     profilePicture?: string;
     profileBanner?: string;
+    color?: string;
   }
 
   interface User {
