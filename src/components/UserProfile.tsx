@@ -43,14 +43,17 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
     <>
       <div className="mt-[60px] flex justify-center">
         {/* Banner */}
-        {/* <div className="absolute left-0 right-0 top-0 w-full h-[350px] -z-10 bg-slate-800"></div> */}
-        <div className="absolute left-[50px] right-[50px] top-[100px] h-[350px] -z-10 rounded-3xl bg-slate-800"></div>
+        <img
+          src={user.profileBanner}
+          alt=""
+          className="absolute m-auto top-[100px] h-[350px] -z-10 rounded-3xl"
+        />
         <div className="flex flex-col gap-[30px] w-[650px] mt-[350px]">
           <div>
             <div className="flex items-center gap-[50px]">
               {/* Profile picture */}
               <img
-                src="https://primal.b-cdn.net/media-cache?s=o&a=1&u=https%3A%2F%2Fpbs.twimg.com%2Fprofile_images%2F1466655107387379715%2FmQ_gUEyM.jpg"
+                src={user.profilePicture}
                 alt="Profile picture"
                 className="h-[130px] w-[130px] rounded-full border-[4px] border-black"
               />

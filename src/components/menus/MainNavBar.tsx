@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import NavSideBar from "./NavSideBar";
 import { useEffect, useRef, useState } from "react";
@@ -203,7 +202,7 @@ const MainNavBar: React.FC = () => {
             className={`relative cursor-text border-2 w-[300px] h-[45px] rounded-full outline-none transition-all duration-300 ease-in-out ${
               isSearchFocused
                 ? "border-blue-500 stroke-white w-[700px] bg-white bg-opacity-10"
-                : "border-blue-500/20 hover:border-blue-500 stroke-gray-500 hover:stroke-white bg-white bg-opacity-[6%] hover:bg-opacity-10"
+                : "border-gray-900 hover:border-gray-800 stroke-gray-500 hover:stroke-white bg-white bg-opacity-[5%] hover:bg-opacity-10"
             }`}
           >
             <div className="absolute flex items-center gap-[10px] w-full h-full pl-[15px]">
@@ -294,8 +293,8 @@ const MainNavBar: React.FC = () => {
               </Tooltip>
               {/* Profile menu button */}
               <button onClick={toggleProfileMenu} ref={profileMenuButtonRef}>
-                <Image
-                  src=""
+                <img
+                  src={session?.user.profilePicture}
                   className="rounded-full w-[50px] h-[50px] bg-white"
                   alt="Profile picture"
                 />
@@ -306,7 +305,7 @@ const MainNavBar: React.FC = () => {
       </nav>
       {isNavSideMenuVisible && (
         <div
-          className={`fixed z-50 top-[90px] left-[20px] w-[250px] flex flex-col p-[10px] rounded-2xl bg-black border-2 border-gray-900/50 hover:border-gray-900 transition duration-150 ease-in-out ${
+          className={`fixed z-50 top-[90px] left-[20px] w-[250px] flex flex-col p-[10px] rounded-2xl bg-black border-2 border-gray-900 hover:border-gray-800 transition duration-150 ease-in-out ${
             isNavSideMenuAnimating ? "navsidemenu-open" : "navsidemenu"
           }`}
         >
@@ -321,7 +320,7 @@ const MainNavBar: React.FC = () => {
           // onFocus={handleSearchFocus}
           // onBlur={handleSearchBlur}
           tabIndex={-1}
-          className={`fixed left-1/2 ml-[-350px] top-[80px] h-[500px] w-[700px] bg-black/80 border-2 border-blue-500 backdrop-blur-2xl z-50 rounded-[15px]`}
+          className={`fixed left-1/2 ml-[-350px] top-[80px] h-[500px] w-[700px] bg-black/80 border-2 border-gray-900 backdrop-blur-2xl z-50 rounded-[15px]`}
         >
           <NavSearchResults />
         </div>
@@ -329,7 +328,7 @@ const MainNavBar: React.FC = () => {
       {isNotificationPanelVisible && (
         <div
           ref={notificationPanelRef}
-          className={`fixed top-[90px] z-50 right-[20px] rounded-[10px] p-[10px] w-[350px] bg-black border-2 border-gray-900/50 hover:border-gray-900 transition ease-in-out duration-150 ${
+          className={`fixed top-[90px] z-50 right-[20px] rounded-[10px] p-[10px] w-[350px] bg-black border-2 border-gray-900 hover:border-gray-800 transition ease-in-out duration-150 ${
             isNotificationPanelAnimating
               ? "notification-panel-open"
               : "notification-panel"
@@ -341,7 +340,7 @@ const MainNavBar: React.FC = () => {
       {isProfileMenuVisible && (
         <div
           ref={profileMenuRef}
-          className={`fixed z-50 top-[90px] right-[20px] rounded-[10px] p-[10px] w-[280px] bg-black border-2 border-gray-900/50 hover:border-gray-900 transition ease-in-out duration-150 ${
+          className={`fixed z-50 top-[90px] right-[20px] rounded-[10px] p-[10px] w-[280px] bg-black border-2 border-gray-900 hover:border-gray-800 transition ease-in-out duration-150 ${
             isProfileMenuAnimating ? "profile-menu-open" : "profile-menu"
           }`}
         >

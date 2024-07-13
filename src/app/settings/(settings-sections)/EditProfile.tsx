@@ -85,8 +85,8 @@ const EditProfile: React.FC = () => {
   return (
     <div>
       <h1 className="font-bold text-[25px]">Edit Profile</h1>
-      <div className="flex flex-col gap-[30px] mt-[30px]">
-        <p>
+      <div className="flex flex-col gap-[30px] mt-5">
+        <p className="text-base text-white/75">
           Customize and personalize your public appearance by editing your
           profile. This includes updating your profile name, username, profile
           picture, and profile banner.
@@ -100,7 +100,7 @@ const EditProfile: React.FC = () => {
               value={session?.user.profilePicture}
               // onChange={(e) => setProfileName(e.target.value)}
               placeholder="Image Link"
-              className="px-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none"
+              className="px-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none transition duration-150 ease-in-out"
             />
           </div>
           <div className="flex items-center gap-8 mt-5">
@@ -125,7 +125,7 @@ const EditProfile: React.FC = () => {
                 value={session?.user.profileBanner}
                 // onChange={(e) => setProfileName(e.target.value)}
                 placeholder="Image Link"
-                className="px-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none"
+                className="px-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none transition duration-150 ease-in-out"
               />
               {/* <p>{session?.user.profileBanner}</p> */}
             </div>
@@ -147,7 +147,7 @@ const EditProfile: React.FC = () => {
             value={profileName || session?.user.username}
             onChange={(e) => setProfileName(e.target.value)}
             placeholder="Profile Name"
-            className="px-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none"
+            className="px-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none transition duration-150 ease-in-out"
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -159,7 +159,7 @@ const EditProfile: React.FC = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Username"
-              className="pl-[35px] pr-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none"
+              className="pl-[35px] pr-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none transition duration-150 ease-in-out"
             />
           </div>
         </div>
@@ -169,7 +169,7 @@ const EditProfile: React.FC = () => {
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             placeholder="Bio"
-            className="px-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none"
+            className="px-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none transition duration-150 ease-in-out"
           />
         </div>
       </div>

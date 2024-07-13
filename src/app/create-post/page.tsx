@@ -7,10 +7,15 @@ import PostReactionButtons from "@/components/buttons/PostReactionButtons";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import PostTemplate from "@/components/post/PostTemplate";
+import DangerButton from "@/components/buttons/DangerButton";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
+import StyledInput from "@/components/StyledInput";
+import { useTheme } from "@/context/ThemeContext";
 
 const CreatePost: React.FC = () => {
   const { data: session } = useSession();
   const router = useRouter();
+  const { borderColor } = useTheme();
   const [title, setTitle] = useState<string>("");
   const [text, setText] = useState<string>("");
   const [characterCount, setCharacterCount] = useState<number>(0);
@@ -136,15 +141,26 @@ const CreatePost: React.FC = () => {
               placeholder="Title of post (optional)..."
               value={title}
               onChange={handleTitleChange}
-              className="mt-[30px] p-[15px] w-full bg-transparent outline-none border-2 border-blue-500/20 hover:border-blue-500 focus:border-blue-500 rounded-xl transition duration-150 ease-in-out"
+              className="mt-[30px] p-[15px] w-full bg-transparent outline-none border-2 rounded-xl transition duration-300 ease-in-out input"
+              style={{ "--border-color": borderColor } as React.CSSProperties}
+              // onFocus={(e) => (e.target.style.borderColor = borderColor)}
+              // onBlur={(e) => (e.target.style.borderColor = `${borderColor}33`)}
+              // onMouseEnter={(e) =>
+              //   (e.currentTarget.style.borderColor = borderColor)
+              // }
+              // onMouseLeave={(e) =>
+              //   (e.currentTarget.style.borderColor = `${borderColor}33`)
+              // }
             />
             <textarea
               placeholder="Write your post here..."
               value={text}
               onChange={handleTextChange}
               ref={textareaRef}
-              className="my-[30px] p-[15px] min-h-[400px] w-full bg-transparent outline-none border-2 border-blue-500/20 hover:border-blue-500 focus:border-blue-500 rounded-xl overflow-hidden transition duration-150 ease-in-out"
+              className="my-[30px] p-[15px] min-h-[400px] w-full bg-transparent outline-none border-2 rounded-xl overflow-hidden transition duration-150 ease-in-out input"
+              style={{ "--border-color": borderColor } as React.CSSProperties}
             />
+
             <div className="flex justify-between items-center gap-[30px]">
               <div className="flex gap-[30px]">
                 <p className="text-white/50">
@@ -159,30 +175,21 @@ const CreatePost: React.FC = () => {
                 >
                   Save Draft
                 </Link>
-                <button
-                  onClick={createPost}
-                  className="text-center font-semibold w-[100px] py-[12px] bg-blue-500 rounded-xl transition duration-150 ease-in-out"
-                >
-                  Publish
-                </button>
-                <Link
-                  href={""}
-                  className="text-center font-semibold w-[100px] py-[12px] bg-red-600 rounded-xl transition duration-150 ease-in-out"
-                >
-                  Cancel
-                </Link>
+                <PrimaryButton onClick={createPost}>Publish</PrimaryButton>
+                <DangerButton>Cancel</DangerButton>
               </div>
             </div>
           </div>
           <div className="w-full h-[1px] bg-white/5"></div>
-          {/* Change below with PostTemplate */}
           <div>
             <h1 className="font-bold mb-[20px] text-white/50">Preview Post</h1>
             <PostTemplate
-              id={""}
+              id={session?.user.id || ""}
               profilePicture={null}
-              profileName={null}
-              username={""}
+              profileName={
+                session?.user.profileName || session?.user.username || ""
+              }
+              username={session?.user.username || ""}
               timestamp={""}
               title={parseTextWithMedia(title)}
               textContent={text}

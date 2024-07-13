@@ -5,6 +5,8 @@ import MainNavBar from "@/components/menus/MainNavBar";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import NextAuthProvider from "@/components/NextAuthProvider";
+// import { ColorProvider } from "@/context/ColorContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,8 +26,10 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NextAuthProvider session={session}>
-          <MainNavBar />
-          {children}
+          <ThemeProvider>
+            <MainNavBar />
+            {children}
+          </ThemeProvider>
         </NextAuthProvider>
       </body>
     </html>

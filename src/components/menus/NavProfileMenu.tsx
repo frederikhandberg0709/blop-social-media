@@ -36,7 +36,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
         />
         <div className="group">
           <p className="font-bold text-[15px] group-hover:text-blue-500">
-            {profileName}
+            {profileName ?? username}
           </p>
           <p className="text-[14px] text-gray-500">@{username}</p>
         </div>

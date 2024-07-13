@@ -6,6 +6,7 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --border-color: #3b82f6;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -30,4 +31,16 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.input {
+  border-color: var(--border-color) 20; /* 20% opacity */
+}
+
+.input:hover {
+  border-color: var(--border-color);
+}
+
+.input:focus {
+  border-color: var(--border-color);
 }
