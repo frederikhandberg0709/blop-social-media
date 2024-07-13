@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import PostReactionButtons from "@/components/buttons/PostReactionButtons";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,7 @@ import { useSession } from "next-auth/react";
 import PostTemplate from "@/components/post/PostTemplate";
 import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
-import { useTheme } from "@/context/ThemeContext";
+import useUserColor from "@/hooks/useUserColor";
 
 const CreatePost: React.FC = () => {
   const { data: session } = useSession();
@@ -18,12 +18,12 @@ const CreatePost: React.FC = () => {
   const [text, setText] = useState<string>("");
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [borderColor, setBorderColor] = useState<string>("#3b82f6"); // debug
-  const [isPostTitleFocused, setIsPostTitleFocused] = useState<boolean>(false); // debug
-  const [isPostTitleHovered, setIsPostTitleHovered] = useState<boolean>(false); // debug
+  const [isPostTitleFocused, setIsPostTitleFocused] = useState<boolean>(false);
+  const [isPostTitleHovered, setIsPostTitleHovered] = useState<boolean>(false);
   const [isPostTextFocused, setIsPostTextFocused] = useState<boolean>(false);
   const [isPostTextHovered, setIsPostTextHovered] = useState<boolean>(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const borderColor = useUserColor();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -50,19 +50,6 @@ const CreatePost: React.FC = () => {
     if (isPostTextFocused || isPostTextHovered) return borderColor;
     return `${borderColor}33`; // 20% opacity
   };
-
-  useEffect(() => {
-    if (session?.user.id) {
-      fetch(`/api/user-color?userId=${session.user.id}`)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.color) {
-            setBorderColor(data.color);
-          }
-        })
-        .catch((error) => console.error("Error fetching user color:", error));
-    }
-  }, [session]);
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = event.target.value;

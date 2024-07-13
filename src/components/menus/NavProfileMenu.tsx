@@ -1,4 +1,4 @@
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -15,6 +15,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
   username,
   closeMenu,
 }) => {
+  const { data: session } = useSession();
   const pathname = usePathname();
   const currentPage = pathname;
 
@@ -46,7 +47,8 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
         href={`/profile/${username}`}
         onClick={closeMenu}
         className={`flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium hover:bg-white/10 active:bg-white/20  transition ease-in-out duration-150 ${
-          (currentPage === "/profile" && "text-white fill-white") ||
+          (currentPage === `/profile/${session?.user.username}` &&
+            "text-white fill-white") ||
           "text-white/50 hover:text-white fill-white/50 hover:fill-white"
         }`}
       >
