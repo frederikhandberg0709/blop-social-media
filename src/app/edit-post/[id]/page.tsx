@@ -4,15 +4,10 @@ import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
-// import { useTheme } from "@/context/ThemeContext";
 import PostHistory from "@/components/PostHistory";
 import useUserColor from "@/hooks/useUserColor";
 import PostTemplate from "@/components/post/PostTemplate";
 import DangerButton from "@/components/buttons/DangerButton";
-
-// interface EditPostProps {
-//   postId: string;
-// }
 
 const EditPost: React.FC = () => {
   const { id } = useParams();
@@ -24,6 +19,8 @@ const EditPost: React.FC = () => {
   );
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
+  const [initialTitle, setInitialTitle] = useState<string>("");
+  const [initialContent, setInitialContent] = useState<string>("");
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
   const borderColor = useUserColor();
@@ -134,6 +131,8 @@ const EditPost: React.FC = () => {
         setPost(data);
         setTitle(data.title || "");
         setContent(data.content);
+        setInitialTitle(data.title || "");
+        setInitialContent(data.content);
       } catch (error) {
         console.error("Error fetching post:", error);
       }
@@ -174,6 +173,10 @@ const EditPost: React.FC = () => {
     } catch (error) {
       console.error("Error updating post:", error);
     }
+  };
+
+  const isPostChanged = () => {
+    return title !== initialTitle || content !== initialContent;
   };
 
   return (
@@ -223,7 +226,7 @@ const EditPost: React.FC = () => {
               <div className="flex gap-[30px]">
                 <PrimaryButton
                   onClick={handleUpdatePost}
-                  disabled={!content.trim()}
+                  disabled={!isPostChanged() || !content.trim()}
                 >
                   Update Post
                 </PrimaryButton>
