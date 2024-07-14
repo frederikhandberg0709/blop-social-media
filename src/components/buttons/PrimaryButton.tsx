@@ -1,16 +1,19 @@
-import { ReactNode } from "react";
+"use client";
+
+import { ButtonHTMLAttributes, ReactNode, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import useUserColor from "@/hooks/useUserColor";
 import { darkenColor } from "@/utils/darkenColor";
 
-interface PrimaryButtonProps {
+interface PrimaryButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  onClick?: () => void;
 }
 
 export default function PrimaryButton({
   children,
   onClick,
+  className,
+  disabled,
   ...props
 }: PrimaryButtonProps) {
   const userColor = useUserColor();
@@ -19,12 +22,17 @@ export default function PrimaryButton({
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className={twMerge(
-        "font-semibold text-base text-white px-4 py-2 rounded-xl transition-all duration-150 ease-in-out"
+        "font-semibold text-base text-white px-4 py-2 rounded-xl transition-all duration-150 ease-in-out",
+        disabled ? "cursor-not-allowed" : "",
+        className
       )}
       style={
         {
+          // backgroundColor: buttonColor,
           backgroundColor: userColor,
+          opacity: disabled ? 0.5 : 1,
         } as React.CSSProperties
       }
       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}

@@ -7,9 +7,10 @@ interface PostDetailProps {
 
 const PostDetail = async ({ params }: PostDetailProps) => {
   const response = await fetch(
-    `http://localhost:3000/api/fetch-post/${params.id}`,
+    `${process.env.NEXTAUTH_URL}/api/fetch-post/${params.id}`,
     {
       method: "GET",
+      cache: "no-store",
     }
   );
 

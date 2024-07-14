@@ -1,8 +1,15 @@
 import { prisma } from "@/db/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function PUT(req: NextRequest) {
   const { postId, title, content } = await req.json();
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   if (!postId || !content) {
     return NextResponse.json(
@@ -19,6 +26,11 @@ export async function PUT(req: NextRequest) {
 
     if (!currentPost) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    // Check if the current user is the owner of the post
+    if (currentPost.userId !== session.user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     // Create a new post revision

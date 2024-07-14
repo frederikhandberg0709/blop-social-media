@@ -15,13 +15,15 @@ const CreatePost: React.FC = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [title, setTitle] = useState<string>("");
-  const [text, setText] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
   const [isPostTitleFocused, setIsPostTitleFocused] = useState<boolean>(false);
   const [isPostTitleHovered, setIsPostTitleHovered] = useState<boolean>(false);
-  const [isPostTextFocused, setIsPostTextFocused] = useState<boolean>(false);
-  const [isPostTextHovered, setIsPostTextHovered] = useState<boolean>(false);
+  const [isPostContentFocused, setIsPostContentFocused] =
+    useState<boolean>(false);
+  const [isPostContentHovered, setIsPostContentHovered] =
+    useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const borderColor = useUserColor();
 
@@ -29,17 +31,17 @@ const CreatePost: React.FC = () => {
     setTitle(event.target.value);
   };
 
-  useAutosizeTextArea(textareaRef.current, text);
+  useAutosizeTextArea(textareaRef.current, content);
 
   const handlePostTitleFocus = () => setIsPostTitleFocused(true);
   const handlePostTitleBlur = () => setIsPostTitleFocused(false);
   const handlePostTitleMouseOver = () => setIsPostTitleHovered(true);
   const handlePostTitleMouseOut = () => setIsPostTitleHovered(false);
 
-  const handlePostTextFocus = () => setIsPostTextFocused(true);
-  const handlePostTextBlur = () => setIsPostTextFocused(false);
-  const handlePostTextMouseOver = () => setIsPostTextHovered(true);
-  const handlePostTextMouseOut = () => setIsPostTextHovered(false);
+  const handlePostContentFocus = () => setIsPostContentFocused(true);
+  const handlePostContentBlur = () => setIsPostContentFocused(false);
+  const handlePostContentMouseOver = () => setIsPostContentHovered(true);
+  const handlePostContentMouseOut = () => setIsPostContentHovered(false);
 
   const calculateTitleBorderColor = () => {
     if (isPostTitleFocused || isPostTitleHovered) return borderColor;
@@ -47,18 +49,18 @@ const CreatePost: React.FC = () => {
   };
 
   const calculateTextBorderColor = () => {
-    if (isPostTextFocused || isPostTextHovered) return borderColor;
+    if (isPostContentFocused || isPostContentHovered) return borderColor;
     return `${borderColor}33`; // 20% opacity
   };
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = event.target.value;
-    setText(newText);
+    setContent(newText);
     setCharacterCount(newText.length);
     setWordCount(newText ? newText.trim().split(/\s+/).length : 0);
 
     const val = event.target?.value;
-    setText(val);
+    setContent(val);
   };
 
   const parseTextWithMedia = (inputText: string) => {
@@ -118,8 +120,9 @@ const CreatePost: React.FC = () => {
 
     return parts;
   };
+
   const createPost = async () => {
-    if (!text.trim()) return;
+    if (!content.trim()) return;
 
     try {
       const response = await fetch("/api/create-post", {
@@ -130,7 +133,7 @@ const CreatePost: React.FC = () => {
         body: JSON.stringify({
           userId: session?.user.id,
           title,
-          text,
+          content,
         }),
       });
 
@@ -142,7 +145,7 @@ const CreatePost: React.FC = () => {
       console.log("Post created:", post);
 
       setTitle("");
-      setText("");
+      setContent("");
       setCharacterCount(0);
       setWordCount(0);
 
@@ -175,7 +178,7 @@ const CreatePost: React.FC = () => {
             />
             <textarea
               placeholder="Write your post here..."
-              value={text}
+              value={content}
               onChange={handleTextChange}
               ref={textareaRef}
               className="my-[30px] p-[15px] min-h-[400px] w-full bg-transparent outline-none rounded-xl overflow-hidden transition duration-150 ease-in-out"
@@ -183,10 +186,10 @@ const CreatePost: React.FC = () => {
                 borderColor: calculateTextBorderColor(),
                 borderWidth: "2px",
               }}
-              onFocus={handlePostTextFocus}
-              onBlur={handlePostTextBlur}
-              onMouseOver={handlePostTextMouseOver}
-              onMouseOut={handlePostTextMouseOut}
+              onFocus={handlePostContentFocus}
+              onBlur={handlePostContentBlur}
+              onMouseOver={handlePostContentMouseOver}
+              onMouseOut={handlePostContentMouseOut}
             />
 
             <div className="flex justify-between items-center gap-[30px]">
@@ -203,7 +206,9 @@ const CreatePost: React.FC = () => {
                 >
                   Save Draft
                 </Link>
-                <PrimaryButton onClick={createPost}>Publish</PrimaryButton>
+                <PrimaryButton onClick={createPost} disabled={!content.trim()}>
+                  Publish
+                </PrimaryButton>
                 <DangerButton>Cancel</DangerButton>
               </div>
             </div>
@@ -220,7 +225,7 @@ const CreatePost: React.FC = () => {
               username={session?.user.username || ""}
               timestamp={""}
               title={parseTextWithMedia(title)}
-              textContent={text}
+              textContent={content}
               initialLikesCount={0}
               userLiked={false}
             />

@@ -35,7 +35,7 @@ const PostHistory: React.FC<PostHistoryProps> = ({ postId }) => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold">Post History</h2>
+      <h2 className="font-bold mb-[20px] text-white/50">Post History</h2>
       {revisions.length > 0 ? (
         <ul>
           {revisions.map((revision) => (
@@ -49,7 +49,7 @@ const PostHistory: React.FC<PostHistoryProps> = ({ postId }) => {
           ))}
         </ul>
       ) : (
-        <p>No revisions found</p>
+        <p className="opacity-50">No revisions found.</p>
       )}
     </div>
   );

@@ -10,6 +10,7 @@ interface PostProps {
   profileName: string | null;
   username: string;
   timestamp: string;
+  title: (string | React.ReactElement | React.ReactElement[])[];
   textContent: string;
   likesCount: number;
 }
@@ -46,6 +47,7 @@ const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
             profileName={post.profileName}
             username={post.username}
             timestamp={post.timestamp}
+            title={post.title}
             textContent={post.textContent}
             likesCount={post.likesCount}
           />
