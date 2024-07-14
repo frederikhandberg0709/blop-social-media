@@ -25,14 +25,12 @@ export default function PrimaryButton({
       disabled={disabled}
       className={twMerge(
         "font-semibold text-base text-white px-4 py-2 rounded-xl transition-all duration-150 ease-in-out",
-        disabled ? "cursor-not-allowed" : "",
+        disabled ? "cursor-not-allowed opacity-50" : "",
         className
       )}
       style={
         {
-          // backgroundColor: buttonColor,
           backgroundColor: userColor,
-          opacity: disabled ? 0.5 : 1,
         } as React.CSSProperties
       }
       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = hoverColor)}

@@ -8,6 +8,7 @@ import PrimaryButton from "@/components/buttons/PrimaryButton";
 import PostHistory from "@/components/PostHistory";
 import useUserColor from "@/hooks/useUserColor";
 import PostTemplate from "@/components/post/PostTemplate";
+import DangerButton from "@/components/buttons/DangerButton";
 
 // interface EditPostProps {
 //   postId: string;
@@ -199,7 +200,8 @@ const EditPost: React.FC = () => {
             <textarea
               placeholder="Write your post here..."
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={handleTextChange}
+              // onChange={(e) => setContent(e.target.value)}
               className="my-[30px] p-[15px] min-h-[400px] w-full bg-transparent outline-none border-2 rounded-xl overflow-hidden transition duration-150 ease-in-out border-dynamic"
               style={{
                 borderColor: calculateTextBorderColor(),
@@ -211,12 +213,23 @@ const EditPost: React.FC = () => {
               onMouseOut={handlePostContentMouseOut}
             />
 
-            <PrimaryButton
-              onClick={handleUpdatePost}
-              disabled={!content.trim()}
-            >
-              Update Post
-            </PrimaryButton>
+            <div className="flex justify-between items-center gap-[30px]">
+              <div className="flex gap-[30px]">
+                <p className="text-white/50">
+                  Character count: {characterCount}
+                </p>
+                <p className="text-white/50">Word count: {wordCount}</p>
+              </div>
+              <div className="flex gap-[30px]">
+                <PrimaryButton
+                  onClick={handleUpdatePost}
+                  disabled={!content.trim()}
+                >
+                  Update Post
+                </PrimaryButton>
+                <DangerButton>Cancel</DangerButton>
+              </div>
+            </div>
           </div>
           <div className="w-full h-[1px] bg-white/5"></div>
           <div className="flex gap-5">
