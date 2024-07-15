@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface User {
   id: string;
@@ -13,6 +14,8 @@ interface User {
 export default function SideMenuFollowList() {
   const { data: session } = useSession();
   const [following, setFollowing] = useState<User[]>([]);
+  const pathname = usePathname();
+  const currentPage = pathname;
 
   useEffect(() => {
     if (!session) return;
@@ -52,7 +55,10 @@ export default function SideMenuFollowList() {
           <Link
             key={user.id}
             href={`/profile/${user.username}`}
-            className="flex items-center gap-[10px] text-[17px] hover:bg-white/10 rounded-xl px-[20px] py-[10px]"
+            className={`flex items-center gap-[10px] text-[17px] hover:bg-white/10 active:bg-white/20 rounded-xl px-[20px] py-[10px] transition duration-150 ease-in-out ${
+              (currentPage === `/profile/${user.username}` && "text-white") ||
+              "text-white/50 hover:text-white"
+            }`}
           >
             <Image
               src=""

@@ -1,6 +1,7 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 interface NavProfileMenuProps {
   profilePicture: string | null;
@@ -18,10 +19,47 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
   const { data: session } = useSession();
   const pathname = usePathname();
   const currentPage = pathname;
+  const [view, setView] = useState<"menu" | "switch">("menu");
+
+  const handleSwitchAccount = () => {
+    setView("switch");
+  };
 
   const logout = async () => {
     await signOut();
   };
+
+  if (view === "switch") {
+    return (
+      <div className="flex flex-col gap-[10px]">
+        <div className="flex gap-5">
+          <button
+            onClick={() => setView("menu")}
+            className="flex gap-[10px] w-full px-[10px] py-[10px] rounded-xl font-bold text-white/50 hover:text-white hover:bg-white/10 active:bg-white/20 transition ease-in-out duration-150"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="25"
+              height="25"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="m3.55 12l7.35 7.35q.375.375.363.875t-.388.875q-.375.375-.875.375t-.875-.375l-7.7-7.675q-.3-.3-.45-.675T.825 12q0-.375.15-.75t.45-.675l7.7-7.7q.375-.375.888-.363t.887.388q.375.375.375.875t-.375.875L3.55 12Z"
+              />
+            </svg>{" "}
+            Switch Account
+          </button>
+        </div>
+        <Link
+          href={"#"}
+          className="font-semibold text-md text-center bg-gradient-to-b from-blue-500 to-blue-900 py-3 rounded-md hover:from-blue-700 hover:to-blue-900"
+        >
+          Link Account
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-[10px]">
@@ -46,7 +84,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       <Link
         href={`/profile/${username}`}
         onClick={closeMenu}
-        className={`flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium hover:bg-white/10 active:bg-white/20  transition ease-in-out duration-150 ${
+        className={`flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium hover:bg-white/10 active:bg-white/20 transition ease-in-out duration-150 ${
           (currentPage === `/profile/${session?.user.username}` &&
             "text-white fill-white") ||
           "text-white/50 hover:text-white fill-white/50 hover:fill-white"
@@ -66,6 +104,23 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
         </svg>{" "}
         My Profile
       </Link>
+      <button
+        onClick={handleSwitchAccount}
+        className="flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium text-white/50 hover:text-white hover:bg-white/10 active:bg-white/20  transition ease-in-out duration-150"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="25"
+          height="25"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="currentColor"
+            d="M14.293 2.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414-1.414L16.586 8H5a1 1 0 0 1 0-2h11.586l-2.293-2.293a1 1 0 0 1 0-1.414zm-4.586 10a1 1 0 0 1 0 1.414L7.414 16H19a1 1 0 1 1 0 2H7.414l2.293 2.293a1 1 0 0 1-1.414 1.414l-4-4a1 1 0 0 1 0-1.414l4-4a1 1 0 0 1 1.414 0z"
+          />
+        </svg>{" "}
+        Switch Account
+      </button>
       <Link
         href={"/settings"}
         onClick={closeMenu}
