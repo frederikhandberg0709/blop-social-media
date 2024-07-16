@@ -35,7 +35,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
         <div className="flex gap-5">
           <button
             onClick={() => setView("menu")}
-            className="flex w-full gap-[10px] rounded-xl px-[10px] py-[10px] font-bold text-white/50 transition duration-150 ease-in-out hover:bg-white/10 hover:text-white active:bg-white/20"
+            className="flex w-full gap-[10px] rounded-xl px-[10px] py-[10px] font-bold text-black/50 transition duration-150 ease-in-out hover:bg-black/10 hover:text-black active:bg-black/20 dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +53,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
         </div>
         <Link
           href={"#"}
-          className="text-md rounded-md bg-gradient-to-b from-blue-500 to-blue-900 py-3 text-center font-semibold hover:from-blue-700 hover:to-blue-900"
+          className="text-md rounded-md bg-gradient-to-b from-blue-500 to-blue-900 py-3 text-center font-semibold text-white hover:from-blue-700 hover:to-blue-900"
         >
           Link Account
         </Link>
@@ -106,7 +106,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       </Link>
       <button
         onClick={handleSwitchAccount}
-        className="flex gap-[10px] rounded-xl px-[10px] py-[10px] font-medium text-black/50 transition duration-150 ease-in-out hover:bg-black/10 hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
+        className="flex gap-[10px] rounded-xl px-[10px] py-[10px] font-medium text-black/50 transition duration-150 ease-in-out hover:bg-black/10 hover:text-black active:bg-black/20 dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +124,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       <Link
         href={"/settings"}
         onClick={closeMenu}
-        className={`flex gap-[10px] rounded-xl px-[10px] py-[10px] font-medium transition duration-150 ease-in-out hover:bg-white/10 active:bg-white/20 ${
+        className={`flex gap-[10px] rounded-xl px-[10px] py-[10px] font-medium transition duration-150 ease-in-out active:bg-black/20 dark:hover:bg-white/10 dark:active:bg-white/20 ${
           (currentPage === "/settings" &&
             "fill-black text-black dark:fill-white dark:text-white") ||
           "fill-black/50 text-black/50 hover:bg-black/10 hover:fill-black hover:text-black dark:fill-white/50 dark:text-white/50 dark:hover:fill-white dark:hover:text-white"

@@ -202,7 +202,7 @@ const MainNavBar: React.FC = () => {
             className={`relative h-[45px] w-[300px] cursor-text rounded-full border-2 outline-none transition-all duration-300 ease-in-out ${
               isSearchFocused
                 ? "w-[700px] border-blue-500 bg-white bg-opacity-10 stroke-black dark:stroke-white"
-                : "border-gray-900 bg-white stroke-gray-500 hover:border-gray-800 hover:bg-opacity-10 hover:stroke-black dark:bg-opacity-[5%] dark:hover:stroke-white"
+                : "bg-white stroke-gray-500 hover:border-gray-800 hover:bg-opacity-10 hover:stroke-black dark:border-gray-900 dark:bg-opacity-[5%] dark:hover:stroke-white"
             }`}
           >
             <div className="absolute flex h-full w-full items-center gap-[10px] pl-[15px]">
@@ -234,7 +234,7 @@ const MainNavBar: React.FC = () => {
             <div className="flex items-center gap-[30px]">
               <Link
                 href={"/login"}
-                className="rounded-xl border-[3px] border-blue-500 px-4 py-2 font-semibold text-white transition-all duration-150 ease-in-out hover:border-blue-700 hover:bg-blue-700"
+                className="rounded-xl border-[3px] border-blue-500 px-4 py-2 font-semibold text-black transition-all duration-150 ease-in-out hover:border-blue-700 hover:bg-blue-700 hover:text-white dark:text-white"
               >
                 Login
               </Link>

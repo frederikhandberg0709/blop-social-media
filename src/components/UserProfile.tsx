@@ -20,7 +20,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
     const fetchFollowStatus = async () => {
       try {
         const response = await fetch(
-          `/api/follow-status?followerId=${session.user.id}&followingId=${user.id}`
+          `/api/follow-status?followerId=${session.user.id}&followingId=${user.id}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch follow status");
@@ -46,25 +46,25 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
         <img
           src={user.profileBanner}
           alt=""
-          className="absolute m-auto top-[100px] h-[350px] -z-10 rounded-3xl"
+          className="absolute top-[100px] -z-10 m-auto h-[350px] rounded-3xl"
         />
-        <div className="flex flex-col gap-[30px] w-[650px] mt-[350px]">
+        <div className="mt-[350px] flex w-[650px] flex-col gap-[30px]">
           <div>
             <div className="flex items-center gap-[50px]">
               {/* Profile picture */}
               <img
                 src={user.profilePicture}
                 alt="Profile picture"
-                className="h-[130px] w-[130px] rounded-full border-[4px] border-black"
+                className="h-[130px] w-[130px] rounded-full border-[4px] border-white dark:border-black"
               />
-              <div className="flex items-center gap-[20px] mt-[20px]">
+              <div className="mt-[20px] flex items-center gap-[20px]">
                 <FollowButton
                   followerId={session?.user.id || ""}
                   followingId={user.id}
                   isFollowing={isFollowing}
                   onFollowChange={handleFollowChange}
                 />
-                <button className="flex gap-[10px] font-semibold px-4 py-2 rounded-full bg-indigo-500 active:bg-indigo-700 transition ease-in-out duration-200">
+                <button className="flex gap-[10px] rounded-full bg-indigo-500 px-4 py-2 font-semibold transition duration-200 ease-in-out active:bg-indigo-700">
                   <svg
                     width="16"
                     height="23"
@@ -79,7 +79,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
                   </svg>{" "}
                   Donate
                 </button>
-                <div className="flex items-center justify-center h-[40px] w-[40px] rounded-full hover:bg-gray-700/40 cursor-pointer">
+                <div className="flex h-[40px] w-[40px] cursor-pointer items-center justify-center rounded-full hover:bg-gray-700/40">
                   <svg
                     width="24"
                     height="24"
@@ -96,57 +96,57 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
               </div>
             </div>
             {/* Profile name */}
-            <p className="font-bold text-[20px] mt-[10px]">
+            <p className="mt-[10px] text-[20px] font-bold">
               {user.profileName || user.username}
             </p>
             {/* Username */}
-            <p className="text-[15px] text-white/50">@{user.username}</p>
+            <p className="text-[15px] opacity-50">@{user.username}</p>
             {/* Description */}
-            <p className="text-[15px] mt-[10px]">{user.bio}</p>
+            <p className="mt-[10px] text-[15px]">{user.bio}</p>
           </div>
           {/* Profile stats */}
           <div className="flex gap-[30px]">
             <Link
               href="#"
-              className="flex flex-col items-center opacity-50 hover:opacity-100 transition"
+              className="flex flex-col items-center opacity-50 transition hover:opacity-100"
             >
               <span>FOLLOWERS</span>
-              <span className="font-bold text-[20px]">
+              <span className="text-[20px] font-bold">
                 {user.followersCount}
               </span>
             </Link>
             <Link
               href="#"
-              className="flex flex-col items-center opacity-50 hover:opacity-100 transition"
+              className="flex flex-col items-center opacity-50 transition hover:opacity-100"
             >
               <span>FOLLOWING</span>
-              <span className="font-bold text-[20px]">
+              <span className="text-[20px] font-bold">
                 {user.followingCount}
               </span>
             </Link>
             <Link
               href="#"
-              className="flex flex-col items-center opacity-50 hover:opacity-100 transition"
+              className="flex flex-col items-center opacity-50 transition hover:opacity-100"
             >
               <span>POSTS</span>
-              <span className="font-bold text-[20px]">{user.postsCount}</span>
+              <span className="text-[20px] font-bold">{user.postsCount}</span>
             </Link>
           </div>
           {/* Content menu */}
           <div className="flex gap-[25px]">
-            <button className="px-[20px] py-[5px] rounded-full bg-[#2d104a]">
+            <button className="rounded-full bg-[#2d104a] px-[20px] py-[5px]">
               All
             </button>
-            <button className="px-[20px] py-[5px] rounded-full bg-[#2d104a]">
+            <button className="rounded-full bg-[#2d104a] px-[20px] py-[5px]">
               Notes
             </button>
-            <button className="px-[20px] py-[5px] rounded-full bg-gray-700">
+            <button className="rounded-full bg-gray-700 px-[20px] py-[5px]">
               Pictures
             </button>
-            <button className="px-[20px] py-[5px] rounded-full bg-gray-700">
+            <button className="rounded-full bg-gray-700 px-[20px] py-[5px]">
               Videos
             </button>
-            <button className="px-[20px] py-[5px] rounded-full bg-gray-700">
+            <button className="rounded-full bg-gray-700 px-[20px] py-[5px]">
               Livestreams
             </button>
           </div>

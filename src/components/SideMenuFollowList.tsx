@@ -23,7 +23,7 @@ export default function SideMenuFollowList() {
     const fetchFollowing = async () => {
       try {
         const response = await fetch(
-          `/api/following?userId=${session.user.id}`
+          `/api/following?userId=${session.user.id}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch following list");
@@ -45,24 +45,27 @@ export default function SideMenuFollowList() {
   return (
     <div>
       <div className="flex items-center gap-4 pb-[10px]">
-        <h1 className="text-white/50 text-[15px] font-bold pl-[20px]">
+        <h1 className="pl-[20px] text-[15px] font-bold text-black/50 dark:text-white/50">
           FOLLOWING
         </h1>
-        <p className="text-white/50 text-[15px]">{following.length}</p>
+        <p className="text-[15px] text-black/50 dark:text-white/50">
+          {following.length}
+        </p>
       </div>
       <div className="flex flex-col gap-[5px]">
         {following.map((user) => (
           <Link
             key={user.id}
             href={`/profile/${user.username}`}
-            className={`flex items-center gap-[10px] text-[17px] hover:bg-white/10 active:bg-white/20 rounded-xl px-[20px] py-[10px] transition duration-150 ease-in-out ${
-              (currentPage === `/profile/${user.username}` && "text-white") ||
-              "text-white/50 hover:text-white"
+            className={`flex items-center gap-[10px] rounded-xl px-[20px] py-[10px] text-[17px] transition duration-150 ease-in-out hover:bg-black/10 active:bg-black/20 dark:hover:bg-white/10 dark:active:bg-white/20 ${
+              (currentPage === `/profile/${user.username}` &&
+                "text-black dark:text-white") ||
+              "text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
             }`}
           >
             <Image
               src=""
-              className="bg-white rounded-full h-[30px] w-[30px]"
+              className="h-[30px] w-[30px] rounded-full bg-white"
               alt="Profile picture"
             />
             {user.profileName || user.username}

@@ -29,33 +29,33 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col items-center mt-[50px]"
+      className="mt-[50px] flex flex-col items-center"
     >
       <input
         type="text"
         name="email"
         placeholder="Email or Username"
         required
-        className="mt-[20px] px-[20px] py-[12px] w-[400px] rounded-xl text-white bg-white/10 hover:bg-white/20 focus:bg-white/20 transition duration-200 ease-in-out outline-none"
+        className="mt-[20px] w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
       />
       <input
         type="password"
         name="password"
         placeholder="Password"
         required
-        className="mt-[20px] px-[20px] py-[12px] w-[400px] rounded-xl text-white bg-white/10 hover:bg-white/20 focus:bg-white/20 transition duration-200 ease-in-out outline-none"
+        className="mt-[20px] w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
       />
-      <div className="text-end w-full mt-2">
+      <div className="mt-2 w-full text-end">
         <Link
           href={"#"}
-          className="font-semibold text-[13px] text-white hover:text-blue-500"
+          className="text-[13px] font-semibold hover:text-blue-500"
         >
           Forgot password?
         </Link>
       </div>
       <button
         type="submit"
-        className="font-semibold text-white bg-blue-600 relative bottom-0 hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)] px-4 py-2 mt-[40px] rounded-xl transition-all duration-150 ease-in-out"
+        className="relative bottom-0 mt-[40px] rounded-xl bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-150 ease-in-out hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]"
       >
         Login
       </button>

@@ -23,25 +23,25 @@ export default function RegistrationForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col items-center mt-[50px]"
+      className="mt-[50px] flex flex-col items-center"
     >
       <input
         type="text"
         name="email"
         placeholder="Email"
-        className="px-[20px] py-[12px] w-[400px] rounded-xl text-white bg-white/10 hover:bg-white/20 focus:bg-white/20 transition duration-200 ease-in-out outline-none"
+        className="w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
       />
       <input
         type="text"
         name="username"
         placeholder="Username"
-        className="mt-[20px] px-[20px] py-[12px] w-[400px] rounded-xl text-white bg-white/10 hover:bg-white/20 focus:bg-white/20 transition duration-200 ease-in-out outline-none"
+        className="mt-[20px] w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
       />
       <input
         type="password"
         name="password"
         placeholder="Password"
-        className="mt-[20px] px-[20px] py-[12px] w-[400px] rounded-xl text-white bg-white/10 hover:bg-white/20 focus:bg-white/20 transition duration-200 ease-in-out outline-none"
+        className="mt-[20px] w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
       />
       {/* <div className="w-full">
         <p className="text-[17px] font-semibold">Password Strength</p>
@@ -62,7 +62,7 @@ export default function RegistrationForm() {
       /> */}
       <button
         type="submit"
-        className="font-semibold text-white bg-blue-600 relative bottom-0 hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)] px-4 py-2 mt-[50px] rounded-xl transition-all duration-150 ease-in-out"
+        className="relative bottom-0 mt-[50px] rounded-xl bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-150 ease-in-out hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]"
       >
         Register
       </button>
