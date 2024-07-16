@@ -35,7 +35,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
         <div className="flex gap-5">
           <button
             onClick={() => setView("menu")}
-            className="flex gap-[10px] w-full px-[10px] py-[10px] rounded-xl font-bold text-white/50 hover:text-white hover:bg-white/10 active:bg-white/20 transition ease-in-out duration-150"
+            className="flex w-full gap-[10px] rounded-xl px-[10px] py-[10px] font-bold text-white/50 transition duration-150 ease-in-out hover:bg-white/10 hover:text-white active:bg-white/20"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +53,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
         </div>
         <Link
           href={"#"}
-          className="font-semibold text-md text-center bg-gradient-to-b from-blue-500 to-blue-900 py-3 rounded-md hover:from-blue-700 hover:to-blue-900"
+          className="text-md rounded-md bg-gradient-to-b from-blue-500 to-blue-900 py-3 text-center font-semibold hover:from-blue-700 hover:to-blue-900"
         >
           Link Account
         </Link>
@@ -66,28 +66,28 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       <Link
         href={`/profile/${username}`}
         onClick={closeMenu}
-        className="flex gap-[12px] items-center p-[10px] rounded-xl hover:bg-white/10 active:bg-white/20 transition ease-in-out duration-150 group"
+        className="group flex items-center gap-[12px] rounded-xl p-[10px] transition duration-150 ease-in-out hover:bg-black/10 dark:hover:bg-white/10 dark:active:bg-white/20"
       >
         <img
           src={profilePicture || "/images/default_profile.jpg"}
           alt="Profile picture"
-          className="rounded-full w-[40px] h-[40px] object-cover"
+          className="h-[40px] w-[40px] rounded-full object-cover"
         />
         <div className="group">
-          <p className="font-bold text-[15px] group-hover:text-blue-500">
+          <p className="text-[15px] font-bold group-hover:text-blue-500">
             {profileName ?? username}
           </p>
           <p className="text-[14px] text-gray-500">@{username}</p>
         </div>
       </Link>
-      <div className="w-full h-[1px] bg-blue-500/10"></div>
+      <div className="h-[1px] w-full bg-blue-500/10"></div>
       <Link
         href={`/profile/${username}`}
         onClick={closeMenu}
-        className={`flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium hover:bg-white/10 active:bg-white/20 transition ease-in-out duration-150 ${
+        className={`flex gap-[10px] rounded-xl px-[10px] py-[10px] font-medium transition duration-150 ease-in-out active:bg-black/20 dark:hover:bg-white/10 dark:active:bg-white/20 ${
           (currentPage === `/profile/${session?.user.username}` &&
-            "text-white fill-white") ||
-          "text-white/50 hover:text-white fill-white/50 hover:fill-white"
+            "fill-black text-black dark:fill-white dark:text-white") ||
+          "fill-black/50 text-black/50 hover:bg-black/10 hover:fill-black hover:text-black dark:fill-white/50 dark:text-white/50 dark:hover:fill-white dark:hover:text-white"
         }`}
       >
         <svg
@@ -106,7 +106,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       </Link>
       <button
         onClick={handleSwitchAccount}
-        className="flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium text-white/50 hover:text-white hover:bg-white/10 active:bg-white/20  transition ease-in-out duration-150"
+        className="flex gap-[10px] rounded-xl px-[10px] py-[10px] font-medium text-black/50 transition duration-150 ease-in-out hover:bg-black/10 hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -124,9 +124,10 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       <Link
         href={"/settings"}
         onClick={closeMenu}
-        className={`flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium hover:bg-white/10 active:bg-white/20 transition ease-in-out duration-150 ${
-          (currentPage === "/settings" && "text-white fill-white") ||
-          "text-white/50 hover:text-white fill-white/50 hover:fill-white"
+        className={`flex gap-[10px] rounded-xl px-[10px] py-[10px] font-medium transition duration-150 ease-in-out hover:bg-white/10 active:bg-white/20 ${
+          (currentPage === "/settings" &&
+            "fill-black text-black dark:fill-white dark:text-white") ||
+          "fill-black/50 text-black/50 hover:bg-black/10 hover:fill-black hover:text-black dark:fill-white/50 dark:text-white/50 dark:hover:fill-white dark:hover:text-white"
         }`}
       >
         <svg
@@ -141,7 +142,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
       </Link>
       <button
         onClick={logout}
-        className="flex gap-[10px] px-[10px] py-[10px] rounded-xl font-medium text-white/50 hover:text-white hover:bg-white/10 active:bg-white/20 fill-white/50 hover:fill-white transition ease-in-out duration-150"
+        className="flex gap-[10px] rounded-xl fill-black/50 px-[10px] py-[10px] font-medium text-black/50 transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black hover:text-black active:bg-black/20 dark:fill-white/50 dark:text-white/50 dark:hover:bg-white/10 dark:hover:fill-white dark:hover:text-white dark:active:bg-white/20"
       >
         <svg
           width="25"

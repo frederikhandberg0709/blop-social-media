@@ -5,6 +5,7 @@ import MainNavBar from "@/components/menus/MainNavBar";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import NextAuthProvider from "@/components/NextAuthProvider";
+import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,12 +22,14 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <NextAuthProvider session={session}>
-          <MainNavBar />
-          {children}
-        </NextAuthProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} bg-white dark:bg-black`}>
+        <Providers>
+          <NextAuthProvider session={session}>
+            <MainNavBar />
+            {children}
+          </NextAuthProvider>
+        </Providers>
       </body>
     </html>
   );

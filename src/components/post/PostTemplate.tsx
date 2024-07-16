@@ -41,7 +41,7 @@ const PostTemplate: React.FC<PostProps> = ({
       try {
         const userId = session?.user?.id;
         const response = await fetch(
-          `/api/likes-count?postId=${id}&userId=${userId}`
+          `/api/likes-count?postId=${id}&userId=${userId}`,
         );
         const data = await response.json();
         setLikesCount(data.likesCount);
@@ -123,7 +123,7 @@ const PostTemplate: React.FC<PostProps> = ({
             {line}
             {index < array.length + 1 && <br />}
           </React.Fragment>
-        ))
+        )),
       );
 
       const mediaLink = match[0];
@@ -135,7 +135,7 @@ const PostTemplate: React.FC<PostProps> = ({
             src={mediaLink}
             alt="User uploaded content"
             className="rounded-[10px]"
-          />
+          />,
         );
       } else {
         parts.push(
@@ -147,7 +147,7 @@ const PostTemplate: React.FC<PostProps> = ({
             controls
             autoPlay
             muted
-          />
+          />,
         );
       }
 
@@ -161,29 +161,29 @@ const PostTemplate: React.FC<PostProps> = ({
           {line}
           {index < array.length - 1 && <br />}
         </React.Fragment>
-      ))
+      )),
     );
 
     return parts;
   };
 
   return (
-    <div className="flex flex-col gap-[10px] sm:w-[800px] w-[90%] sm:border border-gray-900 hover:border-gray-800 transition duration-200 bg-black sm:p-[15px] sm:rounded-[15px]">
+    <div className="flex w-[90%] flex-col gap-[10px] border-gray-200 transition duration-200 hover:border-gray-300 dark:border-gray-900 dark:hover:border-gray-800 sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
       <div className="flex items-center justify-between">
         <Link
           href={`/profile/${username}`}
-          className="flex items-center gap-[10px] group"
+          className="group flex items-center gap-[10px]"
         >
           <img
             src={profilePicture || defaultProfilePicture}
             alt={`${profileName}'s profile picture`}
-            className="rounded-full h-[40px] w-[40px] object-cover"
+            className="h-[40px] w-[40px] rounded-full object-cover"
           />
           <div className="flex flex-col gap-[1px]">
             {/* If user has profile name */}
             {profileName ? (
               <>
-                <div className="font-bold text-[15px] group-hover:text-blue-500">
+                <div className="text-[15px] font-bold group-hover:text-blue-500">
                   {profileName}
                 </div>
                 <div className="text-[12px] text-gray-500">@{username}</div>
@@ -191,7 +191,7 @@ const PostTemplate: React.FC<PostProps> = ({
             ) : (
               // No profile name, only show username
               <>
-                <div className="font-bold text-[15px] group-hover:text-blue-500">
+                <div className="text-[15px] font-bold group-hover:text-blue-500">
                   {username}
                 </div>
                 <div className="text-[12px] text-gray-500">@{username}</div>
@@ -200,7 +200,7 @@ const PostTemplate: React.FC<PostProps> = ({
           </div>
         </Link>
         <div className="flex items-center gap-[15px]">
-          <div className="text-[15px] text-right text-gray-500">
+          <div className="text-right text-[15px] text-gray-500">
             {timestamp}
           </div>
           {/* Dropdown button */}
@@ -208,7 +208,7 @@ const PostTemplate: React.FC<PostProps> = ({
       </div>
       <div className="flex flex-col gap-[10px]">
         <h1 className="text-[20px] font-bold">{title}</h1>
-        <p className="text-[15px] leading-normal overflow-x-hidden">
+        <p className="overflow-x-hidden text-[15px] leading-normal">
           {parseTextWithMedia(textContent)}
         </p>
       </div>

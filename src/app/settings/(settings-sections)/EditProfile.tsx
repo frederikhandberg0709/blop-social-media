@@ -84,30 +84,30 @@ const EditProfile: React.FC = () => {
 
   return (
     <div>
-      <h1 className="font-bold text-[25px]">Edit Profile</h1>
-      <div className="flex flex-col gap-[30px] mt-5">
-        <p className="text-base text-white/75">
+      <h1 className="text-[25px] font-bold">Edit Profile</h1>
+      <div className="mt-5 flex flex-col gap-[30px]">
+        <p className="text-base opacity-75">
           Customize and personalize your public appearance by editing your
           profile. This includes updating your profile name, username, profile
           picture, and profile banner.
         </p>
         <div>
           <p className="text-[20px] font-semibold">Profile Picture</p>
-          <div className="flex flex-col gap-2 mt-3">
-            <p className="text-white/50">Image Link</p>
+          <div className="mt-3 flex flex-col gap-2">
+            <p className="opacity-50">Image Link</p>
             <input
               type="text"
               value={session?.user.profilePicture}
               // onChange={(e) => setProfileName(e.target.value)}
               placeholder="Image Link"
-              className="px-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none transition duration-150 ease-in-out"
+              className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
             />
           </div>
-          <div className="flex items-center gap-8 mt-5">
+          <div className="mt-5 flex items-center gap-8">
             <img
               src={session?.user.profilePicture}
               alt=""
-              className="h-[90px] w-[90px] rounded-full mt-2"
+              className="mt-2 h-[90px] w-[90px] rounded-full"
             />
             <div className="flex gap-6">
               <PrimaryButton>Upload</PrimaryButton>
@@ -117,7 +117,7 @@ const EditProfile: React.FC = () => {
         </div>
         <div>
           <p className="text-[20px] font-semibold">Profile Banner</p>
-          <div className="flex justify-between items-end mt-3">
+          <div className="mt-3 flex items-end justify-between">
             <div className="flex flex-col gap-2">
               <p className="text-white/50">Image Link</p>
               <input
@@ -125,7 +125,7 @@ const EditProfile: React.FC = () => {
                 value={session?.user.profileBanner}
                 // onChange={(e) => setProfileName(e.target.value)}
                 placeholder="Image Link"
-                className="px-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none transition duration-150 ease-in-out"
+                className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
               />
               {/* <p>{session?.user.profileBanner}</p> */}
             </div>
@@ -137,29 +137,29 @@ const EditProfile: React.FC = () => {
           <img
             src={session?.user.profileBanner}
             alt=""
-            className="h-[300px] max-w-[1000px] rounded-3xl mt-5"
+            className="mt-5 h-[300px] max-w-[1000px] rounded-3xl"
           />
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-white/50">Profile Name</p>
+          <p className="opacity-50">Profile Name</p>
           <input
             type="text"
             value={profileName || session?.user.username}
             onChange={(e) => setProfileName(e.target.value)}
             placeholder="Profile Name"
-            className="px-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none transition duration-150 ease-in-out"
+            className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
           />
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-white/50">Username</p>
+          <p className="opacity-50">Username</p>
           <div className="relative flex items-center">
-            <div className="absolute z-10 left-4 mb-[3px] select-none">@</div>
+            <div className="absolute left-4 z-10 mb-[3px] select-none">@</div>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Username"
-              className="pl-[35px] pr-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none transition duration-150 ease-in-out"
+              className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent py-2 pl-[35px] pr-4 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
             />
           </div>
         </div>
@@ -169,7 +169,7 @@ const EditProfile: React.FC = () => {
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             placeholder="Bio"
-            className="px-4 py-2 w-[400px] rounded-xl border-2 border-white/5 hover:border-white/15 focus:border-white/15 bg-transparent outline-none transition duration-150 ease-in-out"
+            className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
           />
         </div>
       </div>

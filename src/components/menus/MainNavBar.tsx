@@ -135,12 +135,12 @@ const MainNavBar: React.FC = () => {
     if (isNotificationPanelVisible) {
       document.addEventListener(
         "mousedown",
-        handleClickOutsideNotificationPanel
+        handleClickOutsideNotificationPanel,
       );
     } else {
       document.removeEventListener(
         "mousedown",
-        handleClickOutsideNotificationPanel
+        handleClickOutsideNotificationPanel,
       );
     }
 
@@ -153,7 +153,7 @@ const MainNavBar: React.FC = () => {
     return () => {
       document.removeEventListener(
         "mousedown",
-        handleClickOutsideNotificationPanel
+        handleClickOutsideNotificationPanel,
       );
       document.removeEventListener("mousedown", handleClickOutsideProfileMenu);
       window.removeEventListener("resize", handleResize);
@@ -162,8 +162,8 @@ const MainNavBar: React.FC = () => {
 
   return (
     <>
-      <nav className="fixed z-[99] w-full top-0 left-0 right-0 flex justify-center items-center px-[50px] bg-black">
-        <div className="flex justify-between items-center w-full py-[10px]">
+      <nav className="fixed left-0 right-0 top-0 z-[99] flex w-full items-center justify-center bg-white px-[50px] dark:bg-black">
+        <div className="flex w-full items-center justify-between py-[10px]">
           {/* Branding & menu button */}
           <div
             className={`flex items-center gap-[30px] ${
@@ -172,7 +172,7 @@ const MainNavBar: React.FC = () => {
           >
             <Link
               href="/home"
-              className="text-white/50 hover:text-white active:text-blue-500 font-bold text-[30px] transition duration-150 ease-in-out"
+              className="text-[30px] font-bold text-black/50 transition duration-150 ease-in-out hover:text-black active:text-blue-500 dark:text-white/50 dark:hover:text-white"
             >
               BLOP!
             </Link>
@@ -184,7 +184,7 @@ const MainNavBar: React.FC = () => {
             >
               <button
                 onClick={toggleNavSideMenu}
-                className="w-[45px] h-[45px] rounded-full p-[5px] fill-white/50 hover:fill-white active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out"
+                className="h-[45px] w-[45px] rounded-full fill-black/50 p-[5px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black active:fill-blue-500 dark:fill-white/50 dark:hover:bg-white/10 dark:hover:fill-white"
               >
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M4 18h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zm0-5h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zM3 7c0 .55.45 1 1 1h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1z" />
@@ -199,13 +199,13 @@ const MainNavBar: React.FC = () => {
             onFocus={handleSearchFocus}
             onBlur={handleSearchBlur}
             tabIndex={-1}
-            className={`relative cursor-text border-2 w-[300px] h-[45px] rounded-full outline-none transition-all duration-300 ease-in-out ${
+            className={`relative h-[45px] w-[300px] cursor-text rounded-full border-2 outline-none transition-all duration-300 ease-in-out ${
               isSearchFocused
-                ? "border-blue-500 stroke-white w-[700px] bg-white bg-opacity-10"
-                : "border-gray-900 hover:border-gray-800 stroke-gray-500 hover:stroke-white bg-white bg-opacity-[5%] hover:bg-opacity-10"
+                ? "w-[700px] border-blue-500 bg-white bg-opacity-10 stroke-black dark:stroke-white"
+                : "border-gray-900 bg-white stroke-gray-500 hover:border-gray-800 hover:bg-opacity-10 hover:stroke-black dark:bg-opacity-[5%] dark:hover:stroke-white"
             }`}
           >
-            <div className="absolute flex items-center gap-[10px] w-full h-full pl-[15px]">
+            <div className="absolute flex h-full w-full items-center gap-[10px] pl-[15px]">
               <svg
                 width="25"
                 height="25"
@@ -226,7 +226,7 @@ const MainNavBar: React.FC = () => {
                 // onBlur={handleSearchBlur}
                 type="text"
                 placeholder="Search..."
-                className="w-full h-full bg-transparent outline-none placeholder-gray-500"
+                className="h-full w-full bg-transparent placeholder-gray-500 outline-none"
               />
             </div>
           </div>
@@ -234,13 +234,13 @@ const MainNavBar: React.FC = () => {
             <div className="flex items-center gap-[30px]">
               <Link
                 href={"/login"}
-                className="font-semibold text-white border-[3px] border-blue-500 hover:border-blue-700 hover:bg-blue-700 px-4 py-2 rounded-xl transition-all duration-150 ease-in-out"
+                className="rounded-xl border-[3px] border-blue-500 px-4 py-2 font-semibold text-white transition-all duration-150 ease-in-out hover:border-blue-700 hover:bg-blue-700"
               >
                 Login
               </Link>
               <Link
                 href={"/create-account"}
-                className="font-semibold text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-xl transition-all duration-150 ease-in-out"
+                className="rounded-xl bg-blue-500 px-4 py-2 font-semibold text-white transition-all duration-150 ease-in-out hover:bg-blue-700"
               >
                 Create Account
               </Link>
@@ -248,11 +248,11 @@ const MainNavBar: React.FC = () => {
           )}
           {isLoggedIn && (
             /* Create Post, Notifications, DMs, & Profile menu */
-            <div className="flex items-center justify-end gap-[30px] w-[200px]">
+            <div className="flex w-[200px] items-center justify-end gap-[30px]">
               {/* Create Post */}
               <Tooltip text={"Create Post"} position="bottom" offset="60">
                 <Link href={"/create-post"} className="rounded-full">
-                  <div className="h-[45px] w-[45px] p-[7px] rounded-full fill-white/50 hover:fill-white active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out">
+                  <div className="darkhover:fill-white h-[45px] w-[45px] rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black active:fill-blue-500 dark:fill-white/50 dark:hover:bg-white/10">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -276,7 +276,7 @@ const MainNavBar: React.FC = () => {
                 <button
                   onClick={toggleNotificationPanel}
                   ref={notificationButtonRef}
-                  className="w-[45px] h-[45px] rounded-full p-[7px] fill-white/50 hover:fill-white line active:fill-blue-500 hover:bg-white/10 transition duration-150 ease-in-out"
+                  className="line darkhover:fill-white h-[45px] w-[45px] rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black active:fill-blue-500 dark:fill-white/50 dark:hover:bg-white/10"
                 >
                   <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -295,7 +295,7 @@ const MainNavBar: React.FC = () => {
               <button onClick={toggleProfileMenu} ref={profileMenuButtonRef}>
                 <img
                   src={session?.user.profilePicture}
-                  className="rounded-full w-[50px] h-[50px] bg-white"
+                  className="h-[50px] w-[50px] rounded-full bg-white"
                   alt="Profile picture"
                 />
               </button>
@@ -305,7 +305,7 @@ const MainNavBar: React.FC = () => {
       </nav>
       {isNavSideMenuVisible && (
         <div
-          className={`fixed z-50 top-[90px] left-[20px] w-[250px] flex flex-col p-[10px] rounded-2xl bg-black border-2 border-gray-900 hover:border-gray-800 transition duration-150 ease-in-out ${
+          className={`fixed left-[20px] top-[90px] z-50 flex w-[250px] flex-col rounded-2xl border-2 border-gray-200 bg-white p-[10px] transition duration-150 ease-in-out hover:border-gray-300 dark:border-gray-900 dark:bg-black dark:hover:border-gray-800 ${
             isNavSideMenuAnimating ? "navsidemenu-open" : "navsidemenu"
           }`}
         >
@@ -320,7 +320,7 @@ const MainNavBar: React.FC = () => {
           // onFocus={handleSearchFocus}
           // onBlur={handleSearchBlur}
           tabIndex={-1}
-          className={`fixed left-1/2 ml-[-350px] top-[80px] h-[500px] w-[700px] bg-black/80 border-2 border-gray-900 backdrop-blur-2xl z-50 rounded-[15px]`}
+          className={`fixed left-1/2 top-[80px] z-50 ml-[-350px] h-[500px] w-[700px] rounded-[15px] border-2 border-gray-900 bg-black/80 backdrop-blur-2xl`}
         >
           <NavSearchResults />
         </div>
@@ -328,7 +328,7 @@ const MainNavBar: React.FC = () => {
       {isNotificationPanelVisible && (
         <div
           ref={notificationPanelRef}
-          className={`fixed top-[90px] z-50 right-[20px] rounded-[10px] p-[10px] w-[350px] bg-black border-2 border-gray-900 hover:border-gray-800 transition ease-in-out duration-150 ${
+          className={`fixed right-[20px] top-[90px] z-50 w-[350px] rounded-[10px] border-2 border-gray-900 bg-black p-[10px] transition duration-150 ease-in-out hover:border-gray-800 ${
             isNotificationPanelAnimating
               ? "notification-panel-open"
               : "notification-panel"
@@ -340,7 +340,7 @@ const MainNavBar: React.FC = () => {
       {isProfileMenuVisible && (
         <div
           ref={profileMenuRef}
-          className={`fixed z-50 top-[90px] right-[20px] rounded-[10px] p-[10px] w-[280px] bg-black border-2 border-gray-900 hover:border-gray-800 transition ease-in-out duration-150 ${
+          className={`fixed right-[20px] top-[90px] z-50 w-[280px] rounded-[10px] border-2 border-gray-200 bg-white p-[10px] transition duration-150 ease-in-out hover:border-gray-300 dark:border-gray-900 dark:bg-black dark:hover:border-gray-800 ${
             isProfileMenuAnimating ? "profile-menu-open" : "profile-menu"
           }`}
         >
