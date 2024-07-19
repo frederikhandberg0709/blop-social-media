@@ -4,6 +4,7 @@ import Link from "next/link";
 import PostReactionButtons from "../buttons/PostReactionButtons";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { formatDate } from "@/utils/formattedDate";
 
 interface PostProps {
   id: string;
@@ -201,6 +202,8 @@ const PostTemplate: React.FC<PostProps> = ({
         </Link>
         <div className="flex items-center gap-[15px]">
           <div className="text-right text-[15px] text-gray-500">
+            {/* {formattedDate} */}
+            {/* {formatDate(timestamp)} */}
             {timestamp}
           </div>
           {/* Dropdown button */}

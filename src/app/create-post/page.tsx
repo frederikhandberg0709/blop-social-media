@@ -77,7 +77,7 @@ const CreatePost: React.FC = () => {
             {line}
             {index < array.length + 1 && <br />}
           </React.Fragment>
-        ))
+        )),
       );
 
       const mediaLink = match[0];
@@ -89,7 +89,7 @@ const CreatePost: React.FC = () => {
             src={mediaLink}
             alt="User uploaded content"
             className="rounded-[10px]"
-          />
+          />,
         );
       } else {
         parts.push(
@@ -101,7 +101,7 @@ const CreatePost: React.FC = () => {
             controls
             autoPlay
             muted
-          />
+          />,
         );
       }
 
@@ -115,7 +115,7 @@ const CreatePost: React.FC = () => {
           {line}
           {index < array.length - 1 && <br />}
         </React.Fragment>
-      ))
+      )),
     );
 
     return parts;
@@ -134,6 +134,7 @@ const CreatePost: React.FC = () => {
           userId: session?.user.id,
           title,
           content,
+          timestamp: new Date().toISOString(),
         }),
       });
 
@@ -157,8 +158,8 @@ const CreatePost: React.FC = () => {
 
   return (
     <>
-      <div className="flex justify-center mt-[90px] mb-[100px]">
-        <div className="flex flex-col gap-[30px] w-[800px]">
+      <div className="mb-[100px] mt-[90px] flex justify-center">
+        <div className="flex w-[800px] flex-col gap-[30px]">
           <div>
             <h1 className="text-[25px] font-semibold">Create Post</h1>
             <input
@@ -166,7 +167,7 @@ const CreatePost: React.FC = () => {
               placeholder="Title of post (optional)..."
               value={title}
               onChange={handleTitleChange}
-              className="mt-[30px] p-[15px] w-full bg-transparent outline-none rounded-xl transition duration-300 ease-in-out"
+              className="mt-[30px] w-full rounded-xl bg-transparent p-[15px] outline-none transition duration-300 ease-in-out"
               style={{
                 borderColor: calculateTitleBorderColor(),
                 borderWidth: "2px",
@@ -181,7 +182,7 @@ const CreatePost: React.FC = () => {
               value={content}
               onChange={handleTextChange}
               ref={textareaRef}
-              className="my-[30px] p-[15px] min-h-[400px] w-full bg-transparent outline-none rounded-xl overflow-hidden transition duration-150 ease-in-out"
+              className="my-[30px] min-h-[400px] w-full overflow-hidden rounded-xl bg-transparent p-[15px] outline-none transition duration-150 ease-in-out"
               style={{
                 borderColor: calculateTextBorderColor(),
                 borderWidth: "2px",
@@ -192,7 +193,7 @@ const CreatePost: React.FC = () => {
               onMouseOut={handlePostContentMouseOut}
             />
 
-            <div className="flex justify-between items-center gap-[30px]">
+            <div className="flex items-center justify-between gap-[30px]">
               <div className="flex gap-[30px]">
                 <p className="text-white/50">
                   Character count: {characterCount}
@@ -202,7 +203,7 @@ const CreatePost: React.FC = () => {
               <div className="flex gap-[30px]">
                 <Link
                   href={""}
-                  className="text-center font-semibold w-[100px] py-[12px] text-green-500 hover:text-white hover:bg-green-700 rounded-xl transition duration-150 ease-in-out"
+                  className="w-[100px] rounded-xl py-[12px] text-center font-semibold text-green-500 transition duration-150 ease-in-out hover:bg-green-700 hover:text-white"
                 >
                   Save Draft
                 </Link>
@@ -213,9 +214,9 @@ const CreatePost: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="w-full h-[1px] bg-white/5"></div>
+          <div className="h-[1px] w-full bg-white/5"></div>
           <div>
-            <h1 className="font-bold mb-[20px] text-white/50">Preview Post</h1>
+            <h1 className="mb-[20px] font-bold text-white/50">Preview Post</h1>
             <PostTemplate
               id={session?.user.id || ""}
               profilePicture={null}
@@ -223,7 +224,7 @@ const CreatePost: React.FC = () => {
                 session?.user.profileName || session?.user.username || ""
               }
               username={session?.user.username || ""}
-              timestamp={""}
+              timestamp={new Date().toISOString()}
               title={parseTextWithMedia(title)}
               textContent={content}
               initialLikesCount={0}

@@ -63,8 +63,8 @@ export default function SideMenuFollowList() {
               "text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
             }`}
           >
-            <Image
-              src=""
+            <img
+              src={user.profilePicture || ""}
               className="h-[30px] w-[30px] rounded-full bg-white"
               alt="Profile picture"
             />

@@ -1,6 +1,7 @@
 "use client";
 
 import PostTemplate from "@/components/post/PostTemplate";
+import { formatDate } from "@/utils/formattedDate";
 import { useEffect, useState } from "react";
 
 interface PostData {
@@ -41,13 +42,13 @@ const Home: React.FC = () => {
   return (
     <>
       {/* <MainNavBar /> */}
-      <div className="mt-[70px] min-h-screen py-6 flex flex-col justify-start items-center sm:py-12">
-        <div className="flex flex-col gap-[15px] w-[800px]">
-          <div className="flex justify-between items-center">
+      <div className="mt-[70px] flex min-h-screen flex-col items-center justify-start py-6 sm:py-12">
+        <div className="flex w-[800px] flex-col gap-[15px]">
+          <div className="flex items-center justify-between">
             {/* Page title */}
             <h1 className="text-[30px] font-semibold">HOME</h1>
             {/* Filters */}
-            <button className="font-medium text-white/50 hover:text-white px-[15px] py-[5px] rounded-md hover:bg-white/10 border border-transparent hover:border-blue-500/50 transition duration-150 ease-in-out">
+            <button className="rounded-md border border-transparent px-[15px] py-[5px] font-medium text-black/50 transition duration-150 ease-in-out hover:border-blue-500/50 hover:bg-black/10 hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white">
               Filters
             </button>
           </div>
@@ -58,7 +59,9 @@ const Home: React.FC = () => {
               profilePicture={post.user.profilePicture}
               profileName={post.user.displayName}
               username={post.user.username}
-              timestamp={new Date(post.createdAt).toLocaleString()}
+              // timestamp={new Date(post.createdAt).toLocaleString()}
+              // timestamp={post.createdAt}
+              timestamp={formatDate(post.createdAt)}
               title={post.title}
               textContent={post.content}
               initialLikesCount={post.likesCount ?? 0}

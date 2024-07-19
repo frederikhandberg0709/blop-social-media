@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import Post from "@/components/post/PostTemplate";
 import { useEffect, useState } from "react";
+import { formatDate } from "@/utils/formattedDate";
 
 interface PostProps {
   id: string;
@@ -20,7 +21,7 @@ const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
   const success = searchParams.get("success");
 
   const [showSuccessMessage, setShowSuccessMessage] = useState(
-    success === "true"
+    success === "true",
   );
 
   useEffect(() => {
@@ -36,17 +37,18 @@ const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
   return (
     <>
       {showSuccessMessage && (
-        <div className="fixed top-[90px] left-1/2 -translate-x-1/2 text-[17px] font-semibold bg-gradient-to-b from-blue-500 to-blue-800 rounded-full px-[20px] py-[10px]">
+        <div className="fixed left-1/2 top-[90px] -translate-x-1/2 rounded-full bg-gradient-to-b from-blue-500 to-blue-800 px-[20px] py-[10px] text-[17px] font-semibold">
           Your new post has been successfully published!
         </div>
       )}
-      <div className="flex justify-center mt-[90px] mb-[100px]">
-        <div className="flex flex-col gap-[30px] w-[800px]">
+      <div className="mb-[100px] mt-[90px] flex justify-center">
+        <div className="flex w-[800px] flex-col gap-[30px]">
           <Post
             profilePicture={post.profilePicture}
             profileName={post.profileName}
             username={post.username}
-            timestamp={post.timestamp}
+            timestamp={formatDate(post.timestamp)}
+            // timestamp={post.timestamp}
             title={post.title}
             textContent={post.textContent}
             likesCount={post.likesCount}

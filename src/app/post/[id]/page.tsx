@@ -11,7 +11,7 @@ const PostDetail = async ({ params }: PostDetailProps) => {
     {
       method: "GET",
       cache: "no-store",
-    }
+    },
   );
 
   if (!response.ok) {
@@ -25,7 +25,7 @@ const PostDetail = async ({ params }: PostDetailProps) => {
     profilePicture: post.user.profilePicture,
     profileName: post.user.profileName,
     username: post.user.username,
-    timestamp: new Date(post.createdAt).toLocaleString(),
+    timestamp: post.createdAt,
     title: post.title,
     textContent: post.content,
     likesCount: post.likes,
