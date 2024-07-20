@@ -5,6 +5,7 @@ import PostReactionButtons from "../buttons/PostReactionButtons";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { formatDate } from "@/utils/formattedDate";
+import PostDropdownMenu from "../menus/PostDropdownMenu";
 
 interface PostProps {
   id: string;
@@ -169,7 +170,7 @@ const PostTemplate: React.FC<PostProps> = ({
   };
 
   return (
-    <div className="flex w-[90%] flex-col gap-[10px] border-gray-200 transition duration-200 hover:border-gray-300 dark:border-gray-900 dark:hover:border-gray-800 sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
+    <div className="flex w-[90%] flex-col gap-[10px] border-gray-200 transition duration-200 hover:border-gray-400/75 dark:border-gray-900 dark:hover:border-gray-800 sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
       <div className="flex items-center justify-between">
         <Link
           href={`/profile/${username}`}
@@ -202,11 +203,10 @@ const PostTemplate: React.FC<PostProps> = ({
         </Link>
         <div className="flex items-center gap-[15px]">
           <div className="text-right text-[15px] text-gray-500">
-            {/* {formattedDate} */}
-            {/* {formatDate(timestamp)} */}
             {timestamp}
           </div>
           {/* Dropdown button */}
+          <PostDropdownMenu />
         </div>
       </div>
       <div className="flex flex-col gap-[10px]">
@@ -224,6 +224,49 @@ const PostTemplate: React.FC<PostProps> = ({
         onLike={handleLike}
         onUnlike={handleUnlike}
       />
+      <div className="flex flex-col gap-2">
+        <h2 className="text-md font-bold text-black/50 dark:text-white/50">
+          Comments
+        </h2>
+        <div className="flex flex-col items-start gap-2">
+          <Link
+            href={`/profile/${session?.user.username}`}
+            className="group flex items-center gap-[10px]"
+          >
+            <img
+              src={session?.user.profilePicture || defaultProfilePicture}
+              alt={`${session?.user.profileName}'s profile picture`}
+              className="h-[40px] w-[40px] rounded-full object-cover"
+            />
+            <div className="flex flex-col gap-[1px]">
+              {/* If user has profile name */}
+              {session?.user.profileName ? (
+                <>
+                  <div className="text-[15px] font-bold group-hover:text-blue-500">
+                    {session?.user.profileName}
+                  </div>
+                  <div className="text-[12px] text-gray-500">
+                    @{session?.user.username}
+                  </div>
+                </>
+              ) : (
+                // No profile name, only show username
+                <>
+                  <div className="text-[15px] font-bold group-hover:text-blue-500">
+                    {session?.user.username}
+                  </div>
+                  <div className="text-[12px] text-gray-500">
+                    @{session?.user.username}
+                  </div>
+                </>
+              )}
+            </div>
+          </Link>
+          <button className="rounded-full bg-blue-600 px-2 py-1 text-sm font-bold text-white">
+            Send a comment?
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

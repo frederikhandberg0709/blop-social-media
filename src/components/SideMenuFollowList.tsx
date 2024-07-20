@@ -45,10 +45,10 @@ export default function SideMenuFollowList() {
   return (
     <div>
       <div className="flex items-center gap-4 pb-[10px]">
-        <h1 className="pl-[20px] text-[15px] font-bold text-black/50 dark:text-white/50">
+        <h1 className="pl-[20px] text-sm font-bold text-black/50 dark:text-white/50">
           FOLLOWING
         </h1>
-        <p className="text-[15px] text-black/50 dark:text-white/50">
+        <p className="text-sm text-black/50 dark:text-white/50">
           {following.length}
         </p>
       </div>

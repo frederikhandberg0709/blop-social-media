@@ -84,7 +84,7 @@ const EditProfile: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-[25px] font-bold">Edit Profile</h1>
+      <h1 className="text-3xl font-bold">Edit Profile</h1>
       <div className="mt-5 flex flex-col gap-[30px]">
         <p className="text-base opacity-75">
           Customize and personalize your public appearance by editing your
@@ -92,7 +92,7 @@ const EditProfile: React.FC = () => {
           picture, and profile banner.
         </p>
         <div>
-          <p className="text-[20px] font-semibold">Profile Picture</p>
+          <p className="text-xl font-semibold">Profile Picture</p>
           <div className="mt-3 flex flex-col gap-2">
             <p className="opacity-50">Image Link</p>
             <input
@@ -116,7 +116,7 @@ const EditProfile: React.FC = () => {
           </div>
         </div>
         <div>
-          <p className="text-[20px] font-semibold">Profile Banner</p>
+          <p className="text-xl font-semibold">Profile Banner</p>
           <div className="mt-3 flex items-end justify-between">
             <div className="flex flex-col gap-2">
               <p className="text-white/50">Image Link</p>

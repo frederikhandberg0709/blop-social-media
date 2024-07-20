@@ -199,9 +199,9 @@ const MainNavBar: React.FC = () => {
             onFocus={handleSearchFocus}
             onBlur={handleSearchBlur}
             tabIndex={-1}
-            className={`relative h-[45px] w-[300px] cursor-text rounded-full border-2 outline-none transition-all duration-300 ease-in-out ${
+            className={`relative cursor-text rounded-full border-2 outline-none transition-all duration-300 ease-in-out min-[830px]:h-[45px] min-[830px]:w-[300px] ${
               isSearchFocused
-                ? "w-[700px] border-blue-500 bg-white bg-opacity-10 stroke-black dark:stroke-white"
+                ? "border-blue-500 bg-white bg-opacity-10 stroke-black dark:stroke-white min-[830px]:w-[700px]"
                 : "bg-white stroke-gray-500 hover:border-gray-800 hover:bg-opacity-10 hover:stroke-black dark:border-gray-900 dark:bg-opacity-[5%] dark:hover:stroke-white"
             }`}
           >
@@ -320,7 +320,7 @@ const MainNavBar: React.FC = () => {
           // onFocus={handleSearchFocus}
           // onBlur={handleSearchBlur}
           tabIndex={-1}
-          className={`fixed left-1/2 top-[80px] z-50 ml-[-350px] h-[500px] w-[700px] rounded-[15px] border-2 border-gray-900 bg-black/80 backdrop-blur-2xl`}
+          className={`fixed left-1/2 top-[80px] z-50 ml-[-350px] h-[500px] w-[700px] rounded-[15px] border-2 border-gray-200 bg-white/80 backdrop-blur-2xl`}
         >
           <NavSearchResults />
         </div>

@@ -45,11 +45,14 @@ const NavSideBar: React.FC = () => {
       </div>
       <div className="h-[1px] w-full bg-black/10 dark:bg-white/5"></div>
       {(isLoggedIn && (
-        /* Following List */
-        <SideMenuFollowList />
+        <div className="flex flex-col gap-[15px]">
+          {/* Following List */}
+          <SideMenuFollowList />
+          <div className="h-[1px] w-full bg-black/10 dark:bg-white/5"></div>
+        </div>
       )) ||
         null}
-      <div className="flex flex-wrap gap-x-5 px-3">
+      <div className="flex flex-wrap gap-x-5 gap-y-1 px-3">
         <Link
           href={"#"}
           className="text-sm opacity-50 transition duration-150 ease-in-out hover:underline hover:opacity-100"
@@ -81,7 +84,6 @@ const NavSideBar: React.FC = () => {
           Open-source
         </Link>
       </div>
-      <p>{pathname}</p>
     </div>
   );
 };

@@ -31,12 +31,12 @@ const Notifications: React.FC = () => {
 
   return (
     <div>
-      <h1 className="font-bold text-[25px]">Notifications</h1>
+      <h1 className="text-3xl font-bold">Notifications</h1>
       {/* Push Notifications */}
-      <div className="flex flex-col gap-[30px] mt-[30px]">
+      <div className="mt-[30px] flex flex-col gap-[30px]">
         <div>
-          <h2 className="font-semibold text-[20px]">Push Notifications</h2>
-          <p className="mt-2 mb-3">
+          <h2 className="text-[20px] font-semibold">Push Notifications</h2>
+          <p className="mb-3 mt-2">
             Enable or disable push notifications. Push notifications are sent
             directly to your device to keep you updated with the latest activity
             and important security updates.
@@ -119,10 +119,10 @@ const Notifications: React.FC = () => {
       {/* Email Notifications */}
       <div className="flex flex-col gap-[30px]">
         <div>
-          <h2 className="font-semibold text-[20px] mt-[30px]">
+          <h2 className="mt-[30px] text-[20px] font-semibold">
             Email Notifications
           </h2>
-          <p className="mt-2 mb-3">
+          <p className="mb-3 mt-2">
             Enable or disable email notifications. Email notifications are sent
             to your inbox to keep you informed about account activity, security
             alerts, and the latest activity.
