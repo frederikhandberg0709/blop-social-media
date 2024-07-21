@@ -1,23 +1,60 @@
 "use client";
 
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 
 export default function RegistrationForm() {
+  const [email, setEmail] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  const validateUsername = (value: string) => {
+    const regex = /^[a-z0-9-_]+$/; // Only lowercase letters, numbers, dash, and underscore
+    return regex.test(value);
+  };
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (validateUsername(value)) {
+      setError("");
+    } else {
+      setError(
+        "Username can only contain lowercase letters, numbers, dashes, and underscores.",
+      );
+    }
+    setUsername(value);
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!validateUsername(username)) {
+      setError(
+        "Username can only contain lowercase letters, numbers, dashes, and underscores.",
+      );
+      return;
+    }
+
     const formData = new FormData(e.currentTarget);
 
-    const response = await fetch("/api/register", {
-      method: "POST",
-      body: JSON.stringify({
-        email: formData.get("email"),
-        username: formData.get("username"),
-        password: formData.get("password"),
-      }),
-    });
-
-    console.log({ response });
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        body: JSON.stringify({
+          email: formData.get("email"),
+          username: formData.get("username"),
+          password: formData.get("password"),
+        }),
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || "Failed to register");
+      } else {
+        console.log("User registered successfully");
+      }
+    } catch (error) {
+      setError("An error occurred during registration.");
+    }
   };
 
   return (
@@ -28,21 +65,28 @@ export default function RegistrationForm() {
       <input
         type="text"
         name="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         placeholder="Email"
         className="w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
       />
       <input
         type="text"
         name="username"
+        value={username}
+        onChange={handleUsernameChange}
         placeholder="Username"
         className="mt-[20px] w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
       />
       <input
         type="password"
         name="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
         className="mt-[20px] w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
       />
+      {error && <p style={{ color: "red" }}>{error}</p>}
       {/* <div className="w-full">
         <p className="text-[17px] font-semibold">Password Strength</p>
         <p>Must contain at least:</p>

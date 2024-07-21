@@ -47,7 +47,7 @@ const Home: React.FC = () => {
             {/* Page title */}
             <h1 className="text-3xl font-semibold">HOME</h1>
             {/* Filters */}
-            <button className="rounded-md border border-transparent px-[15px] py-[5px] font-medium text-black/50 transition duration-150 ease-in-out hover:border-blue-500/50 hover:bg-black/10 hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white">
+            <button className="hover:bg-primaryBlue text-primaryGray rounded-md px-[15px] py-[5px] font-medium transition duration-150 ease-in-out hover:text-black dark:hover:text-white">
               Filters
             </button>
           </div>
@@ -58,8 +58,6 @@ const Home: React.FC = () => {
               profilePicture={post.user.profilePicture}
               profileName={post.user.displayName}
               username={post.user.username}
-              // timestamp={new Date(post.createdAt).toLocaleString()}
-              // timestamp={post.createdAt}
               timestamp={formatDate(post.createdAt)}
               title={post.title}
               textContent={post.content}

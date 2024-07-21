@@ -45,22 +45,20 @@ export default function SideMenuFollowList() {
   return (
     <div>
       <div className="flex items-center gap-4 pb-[10px]">
-        <h1 className="pl-[20px] text-sm font-bold text-black/50 dark:text-white/50">
+        <h1 className="text-primaryGray pl-[20px] text-sm font-bold">
           FOLLOWING
         </h1>
-        <p className="text-sm text-black/50 dark:text-white/50">
-          {following.length}
-        </p>
+        <p className="text-primaryGray text-sm">{following.length}</p>
       </div>
       <div className="flex flex-col gap-[5px]">
         {following.map((user) => (
           <Link
             key={user.id}
             href={`/profile/${user.username}`}
-            className={`flex items-center gap-[10px] rounded-xl px-[20px] py-[10px] text-[17px] transition duration-150 ease-in-out hover:bg-black/10 active:bg-black/20 dark:hover:bg-white/10 dark:active:bg-white/20 ${
+            className={`hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive flex items-center gap-[10px] rounded-xl px-[20px] py-[10px] text-[17px] transition duration-150 ease-in-out ${
               (currentPage === `/profile/${user.username}` &&
                 "text-black dark:text-white") ||
-              "text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
+              "text-primaryGray hover:text-black dark:hover:text-white"
             }`}
           >
             <img

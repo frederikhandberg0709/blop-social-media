@@ -32,7 +32,7 @@ export default function PostDropdownMenu() {
         onClick={() => {
           setIsPostDropdownMenuOpen(!isPostDropdownMenuOpen);
         }}
-        className="cursor-pointer rounded-full fill-[#7F7F7F] stroke-[#7F7F7F] p-[5px] transition ease-in-out hover:fill-black hover:stroke-black"
+        className="hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive fill-primaryGray stroke-primaryGray active:fill-primaryBlue active:stroke-primaryBlue dark:active:stroke-primaryBlue cursor-pointer rounded-full p-[5px] transition ease-in-out hover:fill-black hover:stroke-black dark:hover:fill-white dark:hover:stroke-white"
       >
         <svg
           width="25"
@@ -49,7 +49,7 @@ export default function PostDropdownMenu() {
         </svg>
       </button>
       <div
-        className={`absolute z-50 mt-[10px] w-[200px] rounded-xl border border-gray-200 bg-white transition duration-200 ease-in-out hover:border-gray-300 ${
+        className={`dark:border-darkBorder dark:hover:border-darkBorderHover border-lightBorder hover:border-lightBorderHover absolute z-50 mt-[10px] w-[200px] rounded-xl border bg-white transition duration-200 ease-in-out dark:bg-black ${
           isPostDropdownMenuOpen ? "block" : "hidden"
         }`}
       >
@@ -64,25 +64,25 @@ function PostDropdownMenuActive() {
     <div className="flex flex-col">
       <Link
         href="#"
-        className="rounded-t-xl px-[20px] py-[10px] text-black/50 transition duration-200 ease-in-out hover:bg-black/10 hover:text-black active:bg-black/20 dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
+        className="text-primary-gray hover:bg-light-hover active:bg-light-active rounded-t-xl px-[20px] py-[10px] font-medium transition duration-200 ease-in-out hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
       >
         Open post
       </Link>
       <Link
         href="#"
-        className="px-[20px] py-[10px] text-black/50 transition duration-200 ease-in-out hover:bg-black/10 hover:text-black active:bg-black/20 dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
+        className="text-primary-gray hover:bg-light-hover active:bg-light-active px-[20px] py-[10px] font-medium transition duration-200 ease-in-out hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
       >
         Bookmark post
       </Link>
       <Link
         href="#"
-        className="px-[20px] py-[10px] text-black/50 transition duration-200 ease-in-out hover:bg-black/10 hover:text-black active:bg-black/20 dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
+        className="text-primary-gray hover:bg-light-hover active:bg-light-active px-[20px] py-[10px] font-medium transition duration-200 ease-in-out hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
       >
         Report post
       </Link>
       <Link
         href="#"
-        className="rounded-b-xl px-[20px] py-[10px] text-black/50 transition duration-200 ease-in-out hover:bg-black/10 hover:text-black active:bg-black/20 dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
+        className="text-primary-gray hover:bg-light-hover active:bg-light-active rounded-b-xl px-[20px] py-[10px] font-medium transition duration-200 ease-in-out hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
       >
         Block @username
       </Link>

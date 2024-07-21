@@ -172,7 +172,7 @@ const MainNavBar: React.FC = () => {
           >
             <Link
               href="/home"
-              className="text-[30px] font-bold text-black/50 transition duration-150 ease-in-out hover:text-black active:text-blue-500 dark:text-white/50 dark:hover:text-white"
+              className="text-primaryGray active:text-primaryBlue dark:active:text-primaryBlue dark:text-primaryGray text-[30px] font-bold transition duration-150 ease-in-out hover:text-black dark:hover:text-white"
             >
               BLOP!
             </Link>
@@ -184,7 +184,7 @@ const MainNavBar: React.FC = () => {
             >
               <button
                 onClick={toggleNavSideMenu}
-                className="h-[45px] w-[45px] rounded-full fill-black/50 p-[5px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black active:fill-blue-500 dark:fill-white/50 dark:hover:bg-white/10 dark:hover:fill-white"
+                className="fill-primaryGray dark:active:fill-primaryBlue active:fill-primaryBlue active:bg-lightActive dark:active:bg-darkActive hover:bg-lightHover dark:hover:bg-darkHover h-[45px] w-[45px] rounded-full p-[5px] transition duration-150 ease-in-out hover:fill-black dark:hover:fill-white"
               >
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M4 18h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zm0-5h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zM3 7c0 .55.45 1 1 1h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1z" />
@@ -252,7 +252,7 @@ const MainNavBar: React.FC = () => {
               {/* Create Post */}
               <Tooltip text={"Create Post"} position="bottom" offset="60">
                 <Link href={"/create-post"} className="rounded-full">
-                  <div className="darkhover:fill-white h-[45px] w-[45px] rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black active:fill-blue-500 dark:fill-white/50 dark:hover:bg-white/10">
+                  <div className="fill-primaryGray active:fill-primaryBlue dark:active:fill-primaryBlue hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive h-[45px] w-[45px] rounded-full p-[7px] transition duration-150 ease-in-out hover:fill-black dark:hover:fill-white">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -276,7 +276,7 @@ const MainNavBar: React.FC = () => {
                 <button
                   onClick={toggleNotificationPanel}
                   ref={notificationButtonRef}
-                  className="line darkhover:fill-white h-[45px] w-[45px] rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black active:fill-blue-500 dark:fill-white/50 dark:hover:bg-white/10"
+                  className="active:fill-primaryBlue dark:active:fill-primaryBlue h-[45px] w-[45px] rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black dark:fill-white/50 dark:hover:bg-white/10 dark:hover:fill-white"
                 >
                   <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -305,7 +305,7 @@ const MainNavBar: React.FC = () => {
       </nav>
       {isNavSideMenuVisible && (
         <div
-          className={`fixed left-[20px] top-[90px] z-50 flex w-[250px] flex-col rounded-2xl border-2 border-gray-200 bg-white p-[10px] transition duration-150 ease-in-out hover:border-gray-300 dark:border-gray-900 dark:bg-black dark:hover:border-gray-800 ${
+          className={`dark:border-darkBorder dark:hover:border-darkBorderHover border-lightBorder hover:border-lightBorderHover fixed left-[20px] top-[90px] z-50 flex w-[250px] flex-col rounded-2xl border-2 bg-white p-[10px] transition duration-150 ease-in-out dark:bg-black ${
             isNavSideMenuAnimating ? "navsidemenu-open" : "navsidemenu"
           }`}
         >
@@ -320,7 +320,7 @@ const MainNavBar: React.FC = () => {
           // onFocus={handleSearchFocus}
           // onBlur={handleSearchBlur}
           tabIndex={-1}
-          className={`fixed left-1/2 top-[80px] z-50 ml-[-350px] h-[500px] w-[700px] rounded-[15px] border-2 border-gray-200 bg-white/80 backdrop-blur-2xl`}
+          className={`border-lightBorder fixed left-1/2 top-[80px] z-50 ml-[-350px] h-[500px] w-[700px] rounded-[15px] border-2 bg-white/80 backdrop-blur-2xl`}
         >
           <NavSearchResults />
         </div>
@@ -328,7 +328,7 @@ const MainNavBar: React.FC = () => {
       {isNotificationPanelVisible && (
         <div
           ref={notificationPanelRef}
-          className={`fixed right-[20px] top-[90px] z-50 w-[350px] rounded-[10px] border-2 border-gray-900 bg-black p-[10px] transition duration-150 ease-in-out hover:border-gray-800 ${
+          className={`border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover fixed right-[20px] top-[90px] z-50 w-[350px] rounded-[10px] border-2 bg-black p-[10px] transition duration-150 ease-in-out ${
             isNotificationPanelAnimating
               ? "notification-panel-open"
               : "notification-panel"
@@ -340,7 +340,7 @@ const MainNavBar: React.FC = () => {
       {isProfileMenuVisible && (
         <div
           ref={profileMenuRef}
-          className={`fixed right-[20px] top-[90px] z-50 w-[280px] rounded-[10px] border-2 border-gray-200 bg-white p-[10px] transition duration-150 ease-in-out hover:border-gray-300 dark:border-gray-900 dark:bg-black dark:hover:border-gray-800 ${
+          className={`border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover fixed right-[20px] top-[90px] z-50 w-[280px] rounded-2xl border-2 bg-white p-[10px] transition duration-150 ease-in-out dark:bg-black ${
             isProfileMenuAnimating ? "profile-menu-open" : "profile-menu"
           }`}
         >

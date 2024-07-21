@@ -10,6 +10,7 @@ import PostTemplate from "@/components/post/PostTemplate";
 import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import useUserColor from "@/hooks/useUserColor";
+import { formatDate } from "@/utils/formattedDate";
 
 const CreatePost: React.FC = () => {
   const { data: session } = useSession();
@@ -224,7 +225,7 @@ const CreatePost: React.FC = () => {
                 session?.user.profileName || session?.user.username || ""
               }
               username={session?.user.username || ""}
-              timestamp={new Date().toISOString()}
+              timestamp={""}
               title={parseTextWithMedia(title)}
               textContent={content}
               initialLikesCount={0}

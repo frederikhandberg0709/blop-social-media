@@ -187,7 +187,7 @@ const PostTemplate: React.FC<PostProps> = ({
   };
 
   return (
-    <div className="flex w-[90%] flex-col gap-[10px] border-gray-200 transition duration-200 hover:border-gray-400/75 dark:border-gray-900 dark:hover:border-gray-800 sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
+    <div className="dark:border-darkBorder dark:hover:border-darkBorderHover border-lightBorder hover:border-lightBorderHover flex w-[90%] flex-col gap-[10px] transition duration-200 sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
       <div className="flex items-center justify-between">
         <Link
           href={`/profile/${username}`}

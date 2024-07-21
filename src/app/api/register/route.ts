@@ -1,39 +1,18 @@
-// import { NextApiRequest, NextApiResponse } from "next";
-// import { prisma } from "@/db/prisma";
-// import argon2 from "argon2";
-
-// export default async function handler(
-//   req: NextApiRequest,
-//   res: NextApiResponse
-// ) {
-//   if (req.method === "POST") {
-//     const { email, username, password } = req.body;
-
-//     // Hash the password
-//     const hashedPassword = await argon2.hash(password);
-
-//     try {
-//       const user = await prisma.user.create({
-//         data: {
-//           email,
-//           username,
-//           password: hashedPassword,
-//         },
-//       });
-
-//       res.status(201).json(user);
-//     } catch (error) {
-//       res.status(500).json({ error: "User creation failed" });
-//     }
-//   } else {
-//     res.setHeader("Allow", ["POST"]);
-//     res.status(405).end(`Method ${req.method} Not Allowed`);
-//   }
-// }
-
 import { NextResponse } from "next/server";
 import { prisma } from "@/db/prisma";
 import argon2 from "argon2";
+
+const validateUsername = (username: string) => {
+  const regex = /^[a-z0-9-_]+$/; // Only lowercase letters, numbers, dash, and underscore
+  return regex.test(username);
+};
+
+const validatePassword = (password: string) => {
+  // Password must be at least 8 characters long and contain at least one special character
+  const regex =
+    /^(?=.*[!@#$%^&*(),.?":{}|<>])[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]{8,}$/;
+  return regex.test(password);
+};
 
 export async function POST(request: Request) {
   try {
@@ -43,6 +22,44 @@ export async function POST(request: Request) {
     // can use Zod library for validation
 
     console.log({ email, password });
+
+    if (!email || !username || !password) {
+      return NextResponse.json(
+        { error: "Email, username, and password are required" },
+        { status: 400 },
+      );
+    }
+
+    if (!validateUsername(username)) {
+      return NextResponse.json(
+        {
+          error:
+            "Username can only contain lowercase letters, numbers, dashes, and underscores",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (!validatePassword(password)) {
+      return NextResponse.json(
+        {
+          error:
+            "Password must be at least 8 characters long and contain at least one special character",
+        },
+        { status: 400 },
+      );
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: { username },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "Username is already taken" },
+        { status: 400 },
+      );
+    }
 
     const hashedPassword = await argon2.hash(password);
 
