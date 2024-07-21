@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { formatDate } from "@/utils/formattedDate";
 import PostDropdownMenu from "../menus/PostDropdownMenu";
+import CommentTemplate from "../CommentTemplate";
 
 interface PostProps {
   id: string;
@@ -37,6 +38,8 @@ const PostTemplate: React.FC<PostProps> = ({
   const { data: session } = useSession();
   const [likesCount, setLikesCount] = useState(initialLikesCount);
   const [liked, setLiked] = useState(userLiked);
+  const [comments, setComments] = useState<any[]>([]);
+  const [isCommentSectionVisible, setIsCommentSectionVisible] = useState(false);
 
   useEffect(() => {
     const fetchLikesCount = async () => {
@@ -54,6 +57,20 @@ const PostTemplate: React.FC<PostProps> = ({
     };
 
     fetchLikesCount();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(`/api/fetch-all-comments?postId=${id}`);
+        const data = await response.json();
+        setComments(data.comments);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    fetchComments();
   }, [id]);
 
   const handleLike = async () => {
@@ -209,64 +226,82 @@ const PostTemplate: React.FC<PostProps> = ({
           <PostDropdownMenu />
         </div>
       </div>
-      <div className="flex flex-col gap-[10px]">
-        <h1 className="text-[20px] font-bold">{title}</h1>
-        <p className="overflow-x-hidden text-[15px] leading-normal">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-xl font-bold">{title}</h1>
+        <p className="overflow-x-hidden text-base leading-normal">
           {parseTextWithMedia(textContent)}
         </p>
       </div>
       <PostReactionButtons
         likesCount={likesCount}
         commentsCount={0}
+        onCommentClick={() =>
+          setIsCommentSectionVisible(!isCommentSectionVisible)
+        }
         sharesCount={0}
         donationCount={0}
         liked={liked}
         onLike={handleLike}
         onUnlike={handleUnlike}
       />
-      <div className="flex flex-col gap-2">
-        <h2 className="text-md font-bold text-black/50 dark:text-white/50">
-          Comments
-        </h2>
-        <div className="flex flex-col items-start gap-2">
-          <Link
-            href={`/profile/${session?.user.username}`}
-            className="group flex items-center gap-[10px]"
-          >
-            <img
-              src={session?.user.profilePicture || defaultProfilePicture}
-              alt={`${session?.user.profileName}'s profile picture`}
-              className="h-[40px] w-[40px] rounded-full object-cover"
-            />
-            <div className="flex flex-col gap-[1px]">
-              {/* If user has profile name */}
-              {session?.user.profileName ? (
-                <>
-                  <div className="text-[15px] font-bold group-hover:text-blue-500">
-                    {session?.user.profileName}
-                  </div>
-                  <div className="text-[12px] text-gray-500">
-                    @{session?.user.username}
-                  </div>
-                </>
-              ) : (
-                // No profile name, only show username
-                <>
-                  <div className="text-[15px] font-bold group-hover:text-blue-500">
-                    {session?.user.username}
-                  </div>
-                  <div className="text-[12px] text-gray-500">
-                    @{session?.user.username}
-                  </div>
-                </>
-              )}
-            </div>
-          </Link>
-          <button className="rounded-full bg-blue-600 px-2 py-1 text-sm font-bold text-white">
-            Send a comment?
-          </button>
+      {isCommentSectionVisible && (
+        <div className="flex flex-col gap-2">
+          <h2 className="text-md font-bold text-black/50 dark:text-white/50">
+            Comments
+          </h2>
+          <div className="flex flex-col items-start gap-2">
+            <Link
+              href={`/profile/${session?.user.username}`}
+              className="group flex items-center gap-[10px]"
+            >
+              <img
+                src={session?.user.profilePicture || defaultProfilePicture}
+                alt={`${session?.user.profileName}'s profile picture`}
+                className="h-[40px] w-[40px] rounded-full object-cover"
+              />
+              <div className="flex flex-col gap-[1px]">
+                {/* If user has profile name */}
+                {session?.user.profileName ? (
+                  <>
+                    <div className="text-[15px] font-bold group-hover:text-blue-500">
+                      {session?.user.profileName}
+                    </div>
+                    <div className="text-[12px] text-gray-500">
+                      @{session?.user.username}
+                    </div>
+                  </>
+                ) : (
+                  // No profile name, only show username
+                  <>
+                    <div className="text-[15px] font-bold group-hover:text-blue-500">
+                      {session?.user.username}
+                    </div>
+                    <div className="text-[12px] text-gray-500">
+                      @{session?.user.username}
+                    </div>
+                  </>
+                )}
+              </div>
+            </Link>
+            <Link
+              href={"/send-comment"}
+              className="rounded-full bg-blue-600 px-2 py-1 text-sm font-bold text-white"
+            >
+              Send a comment?
+            </Link>
+            {comments.map((comment) => (
+              <CommentTemplate
+                key={comment.id}
+                profilePicture={comment.user.profilePicture}
+                profileName={comment.user.profileName}
+                username={comment.user.username}
+                content={comment.content}
+                timestamp={formatDate(comment.createdAt)}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

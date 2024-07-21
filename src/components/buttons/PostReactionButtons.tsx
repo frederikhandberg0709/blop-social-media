@@ -4,6 +4,7 @@ import { Tooltip } from "../Tooltip";
 interface PostReactionButtonsProps {
   likesCount: number;
   commentsCount: number;
+  onCommentClick: () => void;
   sharesCount: number;
   donationCount: number;
   liked: boolean;
@@ -14,6 +15,7 @@ interface PostReactionButtonsProps {
 const PostReactionButtons: React.FC<PostReactionButtonsProps> = ({
   likesCount,
   commentsCount,
+  onCommentClick,
   sharesCount,
   donationCount,
   liked,
@@ -46,7 +48,13 @@ const PostReactionButtons: React.FC<PostReactionButtonsProps> = ({
         position="top"
         offset="40"
       >
-        <button className="flex w-[90px] cursor-pointer items-center justify-center gap-[5px] rounded-full fill-blue-500 py-[3px] transition-colors duration-200 hover:bg-blue-500/25 active:bg-blue-500/50">
+        <button
+          onClick={() => {
+            setIsCommentSectionVisible(!isCommentSectionVisible);
+            onCommentClick();
+          }}
+          className="flex w-[90px] cursor-pointer items-center justify-center gap-[5px] rounded-full fill-blue-500 py-[3px] transition-colors duration-200 hover:bg-blue-500/25 active:bg-blue-500/50"
+        >
           {/* Comment icon */}
           <svg
             width="24"

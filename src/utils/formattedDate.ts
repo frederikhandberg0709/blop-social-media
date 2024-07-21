@@ -10,6 +10,10 @@ export function formatDate(dateString: string): string {
   const now = new Date();
   const differenceInSeconds = (now.getTime() - parsedDate.getTime()) / 1000;
 
+  if (differenceInSeconds < 0) {
+    return `Invalid date`;
+  }
+
   // if (differenceInSeconds < 60) {
   //   return `${Math.floor(differenceInSeconds)}s`; // Seconds ago
   // } else if (differenceInSeconds < 3600) {
