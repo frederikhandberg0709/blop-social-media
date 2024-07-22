@@ -187,7 +187,7 @@ const PostTemplate: React.FC<PostProps> = ({
   };
 
   return (
-    <div className="dark:border-darkBorder dark:hover:border-darkBorderHover border-lightBorder hover:border-lightBorderHover flex w-[90%] flex-col gap-[10px] transition duration-200 sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
+    <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
       <div className="flex items-center justify-between">
         <Link
           href={`/profile/${username}`}
@@ -234,7 +234,7 @@ const PostTemplate: React.FC<PostProps> = ({
       </div>
       <PostReactionButtons
         likesCount={likesCount}
-        commentsCount={0}
+        commentsCount={comments.length}
         onCommentClick={() =>
           setIsCommentSectionVisible(!isCommentSectionVisible)
         }
@@ -246,9 +246,12 @@ const PostTemplate: React.FC<PostProps> = ({
       />
       {isCommentSectionVisible && (
         <div className="flex flex-col gap-2">
-          <h2 className="text-md font-bold text-black/50 dark:text-white/50">
-            Comments
-          </h2>
+          <div className="flex gap-3">
+            <h2 className="text-md font-bold text-black/50 dark:text-white/50">
+              COMMENTS
+            </h2>
+            <p className="text-primaryGray">{comments.length}</p>
+          </div>
           <div className="flex flex-col items-start gap-2">
             <Link
               href={`/profile/${session?.user.username}`}
@@ -284,21 +287,23 @@ const PostTemplate: React.FC<PostProps> = ({
               </div>
             </Link>
             <Link
-              href={"/send-comment"}
+              href={`/send-comment/${id}`}
               className="rounded-full bg-blue-600 px-2 py-1 text-sm font-bold text-white"
             >
               Send a comment?
             </Link>
-            {comments.map((comment) => (
-              <CommentTemplate
-                key={comment.id}
-                profilePicture={comment.user.profilePicture}
-                profileName={comment.user.profileName}
-                username={comment.user.username}
-                content={comment.content}
-                timestamp={formatDate(comment.createdAt)}
-              />
-            ))}
+            <div className="flex w-full flex-col gap-4">
+              {comments.map((comment) => (
+                <CommentTemplate
+                  key={comment.id}
+                  profilePicture={comment.user.profilePicture}
+                  profileName={comment.user.profileName}
+                  username={comment.user.username}
+                  content={comment.content}
+                  timestamp={comment.createdAt}
+                />
+              ))}
+            </div>
           </div>
         </div>
       )}

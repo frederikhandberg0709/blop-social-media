@@ -94,12 +94,11 @@ const EditProfile: React.FC = () => {
         <div>
           <p className="text-xl font-semibold">Profile Picture</p>
           <div className="mt-3 flex flex-col gap-2">
-            <p className="opacity-50">Image Link</p>
+            <p className="text-primaryGray">Image Link</p>
             <input
               type="text"
               value={session?.user.profilePicture}
-              // onChange={(e) => setProfileName(e.target.value)}
-              placeholder="Image Link"
+              placeholder="www.example.com/profile-picture.jpg"
               className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
             />
           </div>
@@ -119,12 +118,11 @@ const EditProfile: React.FC = () => {
           <p className="text-xl font-semibold">Profile Banner</p>
           <div className="mt-3 flex items-end justify-between">
             <div className="flex flex-col gap-2">
-              <p className="text-white/50">Image Link</p>
+              <p className="text-primaryGray">Image Link</p>
               <input
                 type="text"
                 value={session?.user.profileBanner}
-                // onChange={(e) => setProfileName(e.target.value)}
-                placeholder="Image Link"
+                placeholder="www.example.com/profile-banner.jpg"
                 className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
               />
               {/* <p>{session?.user.profileBanner}</p> */}

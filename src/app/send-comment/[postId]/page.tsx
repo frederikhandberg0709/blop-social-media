@@ -3,13 +3,13 @@
 import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SendComment() {
   const { data: session } = useSession();
   const router = useRouter();
-  const [postId, setPostId] = useState<string>("");
+  const { postId } = useParams();
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -21,13 +21,12 @@ export default function SendComment() {
     setError(null);
 
     try {
-      const response = await fetch("/api/send-comment", {
+      const response = await fetch(`/api/send-comment/${postId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          postId,
           title,
           content,
         }),

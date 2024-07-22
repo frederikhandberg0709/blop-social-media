@@ -90,7 +90,7 @@ export default function CommentTemplate({
     return parts;
   };
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex w-full flex-col gap-1">
       <div className="flex items-center justify-between">
         <Link
           href={`/profile/${username}`}
