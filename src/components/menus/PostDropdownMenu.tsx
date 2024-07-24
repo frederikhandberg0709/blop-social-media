@@ -32,7 +32,7 @@ export default function PostDropdownMenu() {
         onClick={() => {
           setIsPostDropdownMenuOpen(!isPostDropdownMenuOpen);
         }}
-        className="hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive fill-primaryGray stroke-primaryGray active:fill-primaryBlue active:stroke-primaryBlue dark:active:stroke-primaryBlue cursor-pointer rounded-full p-[5px] transition ease-in-out hover:fill-black hover:stroke-black dark:hover:fill-white dark:hover:stroke-white"
+        className="cursor-pointer rounded-full fill-primaryGray stroke-primaryGray p-[5px] transition ease-in-out hover:bg-lightHover hover:fill-black hover:stroke-black active:bg-lightActive active:fill-primaryBlue active:stroke-primaryBlue dark:hover:bg-darkHover dark:hover:fill-white dark:hover:stroke-white dark:active:bg-darkActive dark:active:fill-primaryBlue dark:active:stroke-primaryBlue"
       >
         <svg
           width="25"
@@ -49,7 +49,7 @@ export default function PostDropdownMenu() {
         </svg>
       </button>
       <div
-        className={`dark:border-darkBorder dark:hover:border-darkBorderHover border-lightBorder hover:border-lightBorderHover absolute z-50 mt-[10px] w-[200px] rounded-xl border bg-white transition duration-200 ease-in-out dark:bg-black ${
+        className={`absolute z-50 mt-[10px] w-[200px] rounded-xl border border-lightBorder bg-white transition duration-200 ease-in-out hover:border-lightBorderHover dark:border-darkBorder dark:bg-black dark:hover:border-darkBorderHover ${
           isPostDropdownMenuOpen ? "block" : "hidden"
         }`}
       >

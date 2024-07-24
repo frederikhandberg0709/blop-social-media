@@ -11,6 +11,7 @@ const config: Config = {
       colors: {
         primaryBlue: "#3b82f6",
         primaryGray: "#808080", // Black 50%
+        hoverBlue: "#1d4ed8",
         lightHover: "#E5E5E5", // Black 10%
         lightActive: "#CCC", // Black 20%
         darkHover: "#1A1A1A", // White 10%
