@@ -23,24 +23,25 @@ model Session {
 }
 
 model User {
-  id             String    @id @default(uuid())
-  username       String    @unique
-  email          String    @unique
+  id             String        @id @default(uuid())
+  username       String        @unique
+  email          String        @unique
   password       String
-  createdAt      DateTime  @default(now()) @db.Timestamptz()
-  updatedAt      DateTime  @default(now()) @updatedAt @db.Timestamptz()
+  createdAt      DateTime      @default(now()) @db.Timestamptz()
+  updatedAt      DateTime      @default(now()) @updatedAt @db.Timestamptz()
   profileName    String?
   profilePicture String?
   profileBanner  String?
   bio            String?
-  following      Follow[]  @relation("following")
-  followers      Follow[]  @relation("followers")
+  following      Follow[]      @relation("following")
+  followers      Follow[]      @relation("followers")
   posts          Post[]
   comments       Comment[]
-  likes          Like[]
+  postLikes      PostLike[]
+  commentLikes   CommentLike[]
   Session        Session[]
   accounts       Account[]
-  color          String    @default("#3b82f6")
+  color          String        @default("#3b82f6")
 }
 
 model Account {
@@ -73,29 +74,43 @@ model Post {
   createdAt DateTime       @default(now()) @db.Timestamptz()
   updatedAt DateTime       @default(now()) @updatedAt @db.Timestamptz()
   comments  Comment[]
-  likes     Like[]
+  likes     PostLike[]
   revisions PostRevision[]
 }
 
 model Comment {
-  id        String   @id @default(uuid())
-  post      Post     @relation(fields: [postId], references: [id])
+  id        String        @id @default(uuid())
+  post      Post          @relation(fields: [postId], references: [id])
   postId    String
-  user      User     @relation(fields: [userId], references: [id])
+  parentId  String?
+  user      User          @relation(fields: [userId], references: [id])
   userId    String
   title     String?
   content   String
-  createdAt DateTime @default(now()) @db.Timestamptz()
-  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+  createdAt DateTime      @default(now()) @db.Timestamptz()
+  updatedAt DateTime      @default(now()) @updatedAt @db.Timestamptz()
+  parent    Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[]     @relation("CommentReplies")
+  likes     CommentLike[]
 }
 
-model Like {
+model PostLike {
   id        String   @id @default(uuid())
   post      Post     @relation(fields: [postId], references: [id])
   postId    String
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   createdAt DateTime @default(now()) @db.Timestamptz()
+}
+
+model CommentLike {
+  id        String   @id @default(uuid())
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  commentId String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  postId    String?
 }
 
 model PostRevision {

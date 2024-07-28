@@ -9,7 +9,7 @@ import { useState } from "react";
 export default function SendComment() {
   const { data: session } = useSession();
   const router = useRouter();
-  const { postId } = useParams();
+  const { postId, parentId } = useParams();
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -27,6 +27,7 @@ export default function SendComment() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          parentId: parentId ?? null,
           title,
           content,
         }),

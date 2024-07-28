@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
   try {
     const { postId, userId } = await req.json();
 
-    const unlike = await prisma.like.deleteMany({
+    const unlike = await prisma.postLike.deleteMany({
       where: {
         postId,
         userId,
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     console.error("Failed to like post: ", error);
     return NextResponse.json(
       { error: "Failed to like post", details: error },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

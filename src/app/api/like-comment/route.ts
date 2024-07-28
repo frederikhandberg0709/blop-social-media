@@ -3,20 +3,20 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { postId, userId } = await req.json();
+    const { commentId, userId } = await req.json();
 
-    const like = await prisma.postLike.create({
+    const like = await prisma.commentLike.create({
       data: {
-        postId,
+        commentId,
         userId,
       },
     });
 
     return NextResponse.json(like, { status: 201 });
   } catch (error) {
-    console.error("Failed to like post: ", error);
+    console.error("Failed to like comment: ", error);
     return NextResponse.json(
-      { error: "Failed to like post", details: error },
+      { error: "Failed to like comment", details: error },
       { status: 500 },
     );
   }

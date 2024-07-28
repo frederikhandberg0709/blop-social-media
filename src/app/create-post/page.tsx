@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React, { useRef, useState } from "react";
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
-import PostReactionButtons from "@/components/buttons/PostReactionButtons";
+import PostReactionButtons from "@/components/buttons/PostActionButtons";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import PostTemplate from "@/components/post/PostTemplate";

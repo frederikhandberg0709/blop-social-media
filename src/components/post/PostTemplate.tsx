@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import PostReactionButtons from "../buttons/PostReactionButtons";
+import PostActionButtons from "../buttons/PostActionButtons";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { formatDate } from "@/utils/formattedDate";
@@ -46,7 +46,7 @@ const PostTemplate: React.FC<PostProps> = ({
       try {
         const userId = session?.user?.id;
         const response = await fetch(
-          `/api/likes-count?postId=${id}&userId=${userId}`,
+          `/api/likes-count-post?postId=${id}&userId=${userId}`,
         );
         const data = await response.json();
         setLikesCount(data.likesCount);
@@ -232,7 +232,7 @@ const PostTemplate: React.FC<PostProps> = ({
           {parseTextWithMedia(textContent)}
         </p>
       </div>
-      <PostReactionButtons
+      <PostActionButtons
         likesCount={likesCount}
         commentsCount={comments.length}
         onCommentClick={() =>
@@ -245,67 +245,72 @@ const PostTemplate: React.FC<PostProps> = ({
         onUnlike={handleUnlike}
       />
       {isCommentSectionVisible && (
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-3">
-            <h2 className="text-md font-bold text-black/50 dark:text-white/50">
-              COMMENTS
-            </h2>
-            <p className="text-primaryGray">{comments.length}</p>
-          </div>
-          <div className="flex flex-col items-start gap-2">
-            <Link
-              href={`/profile/${session?.user.username}`}
-              className="group flex items-center gap-[10px]"
-            >
-              <img
-                src={session?.user.profilePicture || defaultProfilePicture}
-                alt={`${session?.user.profileName}'s profile picture`}
-                className="h-[40px] w-[40px] rounded-full object-cover"
-              />
-              <div className="flex flex-col gap-[1px]">
-                {/* If user has profile name */}
-                {session?.user.profileName ? (
-                  <>
-                    <div className="text-[15px] font-bold group-hover:text-blue-500">
-                      {session?.user.profileName}
-                    </div>
-                    <div className="text-[12px] text-gray-500">
-                      @{session?.user.username}
-                    </div>
-                  </>
-                ) : (
-                  // No profile name, only show username
-                  <>
-                    <div className="text-[15px] font-bold group-hover:text-blue-500">
-                      {session?.user.username}
-                    </div>
-                    <div className="text-[12px] text-gray-500">
-                      @{session?.user.username}
-                    </div>
-                  </>
-                )}
+        <>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-semibold">Comments</h2>
+              <span className="text-xl font-bold text-primaryGray">·</span>
+              <p className="text-xl text-primaryGray">{comments.length}</p>
+            </div>
+            <div className="mt-3 flex flex-col items-start gap-2">
+              <div className="flex flex-col items-start gap-4">
+                <Link
+                  href={`/profile/${session?.user.username}`}
+                  className="group flex items-center gap-[10px]"
+                >
+                  <img
+                    src={session?.user.profilePicture || defaultProfilePicture}
+                    alt={`${session?.user.profileName}'s profile picture`}
+                    className="h-[40px] w-[40px] rounded-full object-cover"
+                  />
+                  <div className="flex flex-col gap-[1px]">
+                    {/* If user has profile name */}
+                    {session?.user.profileName ? (
+                      <>
+                        <div className="text-[15px] font-bold group-hover:text-blue-500">
+                          {session?.user.profileName}
+                        </div>
+                        <div className="text-[12px] text-gray-500">
+                          @{session?.user.username}
+                        </div>
+                      </>
+                    ) : (
+                      // No profile name, only show username
+                      <>
+                        <div className="text-[15px] font-bold group-hover:text-blue-500">
+                          {session?.user.username}
+                        </div>
+                        <div className="text-[12px] text-gray-500">
+                          @{session?.user.username}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </Link>
+                <Link
+                  href={`/send-comment/${id}`}
+                  className="rounded-full bg-blue-600 px-2 py-1 text-sm font-semibold text-white transition duration-150 ease-in-out hover:bg-hoverBlue"
+                >
+                  Send a comment?
+                </Link>
               </div>
-            </Link>
-            <Link
-              href={`/send-comment/${id}`}
-              className="rounded-full bg-blue-600 px-2 py-1 text-sm font-bold text-white"
-            >
-              Send a comment?
-            </Link>
-            <div className="flex w-full flex-col gap-4">
-              {comments.map((comment) => (
-                <CommentTemplate
-                  key={comment.id}
-                  profilePicture={comment.user.profilePicture}
-                  profileName={comment.user.profileName}
-                  username={comment.user.username}
-                  content={comment.content}
-                  timestamp={comment.createdAt}
-                />
-              ))}
+              <div className="mt-5 flex w-full flex-col gap-5">
+                {comments.map((comment) => (
+                  <CommentTemplate
+                    key={comment.id}
+                    id={comment.id}
+                    profilePicture={comment.user.profilePicture}
+                    profileName={comment.user.profileName}
+                    username={comment.user.username}
+                    title={comment.title}
+                    content={comment.content}
+                    timestamp={comment.createdAt}
+                  />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
