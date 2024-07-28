@@ -172,30 +172,30 @@ const CreatePost: React.FC = () => {
               placeholder="Title of post (optional)..."
               value={title}
               onChange={handleTitleChange}
-              className="mt-[30px] w-full rounded-xl bg-transparent p-[15px] outline-none transition duration-300 ease-in-out"
-              style={{
-                borderColor: calculateTitleBorderColor(),
-                borderWidth: "2px",
-              }}
               onFocus={handlePostTitleFocus}
               onBlur={handlePostTitleBlur}
               onMouseOver={handlePostTitleMouseOver}
               onMouseOut={handlePostTitleMouseOut}
+              className="mt-[30px] w-full rounded-xl bg-transparent p-[15px] outline-none transition duration-200 ease-in-out"
+              style={{
+                borderColor: calculateTitleBorderColor(),
+                borderWidth: "2px",
+              }}
             />
             <textarea
               placeholder="Write your post here..."
               value={content}
               onChange={handleTextChange}
               ref={textareaRef}
-              className="my-[30px] min-h-[400px] w-full overflow-hidden rounded-xl bg-transparent p-[15px] outline-none transition duration-150 ease-in-out"
-              style={{
-                borderColor: calculateTextBorderColor(),
-                borderWidth: "2px",
-              }}
               onFocus={handlePostContentFocus}
               onBlur={handlePostContentBlur}
               onMouseOver={handlePostContentMouseOver}
               onMouseOut={handlePostContentMouseOut}
+              className="my-[30px] min-h-[400px] w-full overflow-hidden rounded-xl bg-transparent p-[15px] outline-none transition duration-200 ease-in-out"
+              style={{
+                borderColor: calculateTextBorderColor(),
+                borderWidth: "2px",
+              }}
             />
 
             <div className="flex items-center justify-between gap-[30px]">

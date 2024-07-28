@@ -114,19 +114,26 @@ export default function SendComment() {
             onBlur={handleCommentTitleBlur}
             onMouseOver={handleCommentTitleMouseOver}
             onMouseOut={handleCommentTitleMouseOut}
-            className="w-full rounded-xl border-2 border-gray-300 bg-transparent p-[15px] outline-none"
+            className="w-full rounded-xl border-2 bg-transparent p-[15px] outline-none transition duration-200 ease-in-out"
+            style={{
+              borderColor: calculateTitleBorderColor(),
+              borderWidth: "2px",
+            }}
           />
           <textarea
             placeholder="Write your comment here..."
             value={content}
             onChange={handleTextChange}
             ref={textareaRef}
-            className="min-h-[200px] w-full rounded-xl border-2 border-gray-300 bg-transparent p-[15px] outline-none"
             onFocus={handleCommentContentFocus}
             onBlur={handleCommentContentBlur}
             onMouseOver={handleCommentContentMouseOver}
             onMouseOut={handleCommentContentMouseOut}
-            required
+            className="min-h-[200px] w-full rounded-xl border-2 bg-transparent p-[15px] outline-none transition duration-200 ease-in-out"
+            style={{
+              borderColor: calculateTextBorderColor(),
+              borderWidth: "2px",
+            }}
           />
           <div className="flex items-center justify-between gap-[30px]">
             <div className="flex gap-[30px]">
