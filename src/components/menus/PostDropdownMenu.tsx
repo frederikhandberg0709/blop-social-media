@@ -86,6 +86,12 @@ function PostDropdownMenuActive() {
       >
         Block @username
       </Link>
+      <Link
+        href="#"
+        className="active:bg-light-active rounded-b-xl px-[20px] py-[10px] font-medium text-red-500/50 transition duration-200 ease-in-out hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-red-500 dark:active:bg-white/20"
+      >
+        Delete post
+      </Link>
     </div>
   );
 }

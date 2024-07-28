@@ -17,6 +17,7 @@ const CreatePost: React.FC = () => {
   const router = useRouter();
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
   const [isPostTitleFocused, setIsPostTitleFocused] = useState<boolean>(false);
@@ -124,6 +125,7 @@ const CreatePost: React.FC = () => {
 
   const createPost = async () => {
     if (!content.trim()) return;
+    setIsLoading(true);
 
     try {
       const response = await fetch("/api/create-post", {
@@ -154,6 +156,8 @@ const CreatePost: React.FC = () => {
       router.push(`/post/${post.id}?success=true`);
     } catch (error) {
       console.error("Error creating post:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -208,10 +212,16 @@ const CreatePost: React.FC = () => {
                 >
                   Save Draft
                 </Link>
-                <PrimaryButton onClick={createPost} disabled={!content.trim()}>
-                  Publish
+                <PrimaryButton
+                  onClick={createPost}
+                  disabled={!content.trim() && isLoading}
+                >
+                  {isLoading ? "Publishing..." : "Publish"}
                 </PrimaryButton>
-                <DangerButton>Cancel</DangerButton>
+                {/* Show warning modal before cancelling */}
+                <DangerButton onClick={() => router.push("/home")}>
+                  Cancel
+                </DangerButton>
               </div>
             </div>
           </div>

@@ -2,9 +2,11 @@
 
 import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
+import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
+import useUserColor from "@/hooks/useUserColor";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function SendComment() {
   const { data: session } = useSession();
@@ -14,9 +16,57 @@ export default function SendComment() {
   const [content, setContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [characterCount, setCharacterCount] = useState<number>(0);
+  const [wordCount, setWordCount] = useState<number>(0);
+  const [isCommentTitleFocused, setIsCommentTitleFocused] =
+    useState<boolean>(false);
+  const [isCommentTitleHovered, setIsCommentTitleHovered] =
+    useState<boolean>(false);
+  const [isCommentContentFocused, setIsCommentContentFocused] =
+    useState<boolean>(false);
+  const [isCommentContentHovered, setIsCommentContentHovered] =
+    useState<boolean>(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const borderColor = useUserColor();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+  };
+
+  useAutosizeTextArea(textareaRef.current, content);
+
+  const handleCommentTitleFocus = () => setIsCommentTitleFocused(true);
+  const handleCommentTitleBlur = () => setIsCommentTitleFocused(false);
+  const handleCommentTitleMouseOver = () => setIsCommentTitleHovered(true);
+  const handleCommentTitleMouseOut = () => setIsCommentTitleHovered(false);
+
+  const handleCommentContentFocus = () => setIsCommentContentFocused(true);
+  const handleCommentContentBlur = () => setIsCommentContentFocused(false);
+  const handleCommentContentMouseOver = () => setIsCommentContentHovered(true);
+  const handleCommentContentMouseOut = () => setIsCommentContentHovered(false);
+
+  const calculateTitleBorderColor = () => {
+    if (isCommentTitleFocused || isCommentTitleHovered) return borderColor;
+    return `${borderColor}33`; // 20% opacity
+  };
+
+  const calculateTextBorderColor = () => {
+    if (isCommentContentFocused || isCommentContentHovered) return borderColor;
+    return `${borderColor}33`; // 20% opacity
+  };
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = event.target.value;
+    setContent(newText);
+    setCharacterCount(newText.length);
+    setWordCount(newText ? newText.trim().split(/\s+/).length : 0);
+
+    const val = event.target?.value;
+    setContent(val);
+  };
+
+  const submitComment = async () => {
+    if (!content.trim()) return;
     setIsLoading(true);
     setError(null);
 
@@ -54,30 +104,55 @@ export default function SendComment() {
       <div className="flex w-[800px] flex-col gap-[30px]">
         <h1 className="text-[25px] font-semibold">Send Comment</h1>
         {error && <p className="text-red-500">{error}</p>}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-[20px]">
+        <div className="flex flex-col gap-[20px]">
           <input
             type="text"
             placeholder="Title of comment..."
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={handleTitleChange}
+            onFocus={handleCommentTitleFocus}
+            onBlur={handleCommentTitleBlur}
+            onMouseOver={handleCommentTitleMouseOver}
+            onMouseOut={handleCommentTitleMouseOut}
             className="w-full rounded-xl border-2 border-gray-300 bg-transparent p-[15px] outline-none"
           />
           <textarea
             placeholder="Write your comment here..."
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={handleTextChange}
+            ref={textareaRef}
             className="min-h-[200px] w-full rounded-xl border-2 border-gray-300 bg-transparent p-[15px] outline-none"
+            onFocus={handleCommentContentFocus}
+            onBlur={handleCommentContentBlur}
+            onMouseOver={handleCommentContentMouseOver}
+            onMouseOut={handleCommentContentMouseOut}
             required
           />
-          <div className="flex justify-end gap-[10px]">
-            <DangerButton onClick={() => router.back()} type="button">
-              Cancel
-            </DangerButton>
-            <PrimaryButton type="submit" disabled={isLoading}>
-              {isLoading ? "Sending..." : "Send Comment"}
-            </PrimaryButton>
+          <div className="flex items-center justify-between gap-[30px]">
+            <div className="flex gap-[30px]">
+              <p className="text-white/50">Character count: {characterCount}</p>
+              <p className="text-white/50">Word count: {wordCount}</p>
+            </div>
+            <div className="flex gap-[30px]">
+              <button
+                onClick={() => {}}
+                className="w-[100px] rounded-xl py-[12px] text-center font-semibold text-green-500 transition duration-150 ease-in-out hover:bg-green-700 hover:text-white"
+              >
+                Save Draft
+              </button>
+              <PrimaryButton onClick={submitComment} disabled={isLoading}>
+                {isLoading ? "Publishing..." : "Publish"}
+              </PrimaryButton>
+              {/* Show warning modal before cancelling */}
+              <DangerButton onClick={() => router.back()} type="button">
+                Cancel
+              </DangerButton>
+            </div>
           </div>
-        </form>
+        </div>
+        <div className="h-[1px] w-full bg-white/5"></div>
+        {/* Show comment being replied to */}
+        {/* Show preview of the comment being created */}
       </div>
     </div>
   );
