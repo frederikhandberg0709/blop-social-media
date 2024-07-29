@@ -4,9 +4,8 @@ import Link from "next/link";
 import PostActionButtons from "../buttons/PostActionButtons";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { formatDate } from "@/utils/formattedDate";
-import PostDropdownMenu from "../menus/PostDropdownMenu";
 import CommentTemplate from "../CommentTemplate";
+import DropdownMenu from "../buttons/DropdownMenu";
 
 interface PostProps {
   id: string;
@@ -223,7 +222,20 @@ const PostTemplate: React.FC<PostProps> = ({
             {timestamp}
           </div>
           {/* Dropdown button */}
-          <PostDropdownMenu />
+          {/* <PostDropdownMenu /> */}
+          <DropdownMenu
+            menuItems={[
+              { label: "Open post", href: `/post/${id}` },
+              { label: "Bookmark post", href: "#", onClick: () => {} },
+              { label: "Report post", href: "#" },
+              { label: "Block @username", href: "#" },
+              {
+                label: "Delete post",
+                href: "#",
+                className: "text-red-500/50 hover:text-red-500",
+              },
+            ]}
+          />
         </div>
       </div>
       <div className="flex flex-col gap-1">

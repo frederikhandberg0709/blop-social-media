@@ -1,20 +1,27 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-export default function PostDropdownMenu() {
-  const { data: session } = useSession();
-  // Post Dropdown Menu open/close functionality
-  const [isPostDropdownMenuOpen, setIsPostDropdownMenuOpen] = useState(false);
+interface DropdownMenuProps {
+  menuItems: {
+    icon?: React.ReactNode;
+    label: string;
+    href: string;
+    onClick?: () => void;
+    className?: string;
+  }[];
+}
+
+export default function DropdownMenu({ menuItems }: DropdownMenuProps) {
+  const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false);
 
   let dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let handler = (e: MouseEvent) => {
       if (!dropdownRef.current?.contains(e.target as Node)) {
-        setIsPostDropdownMenuOpen(false);
+        setIsDropdownMenuOpen(false);
         console.log(dropdownRef.current);
       }
     };
@@ -30,7 +37,7 @@ export default function PostDropdownMenu() {
     <div ref={dropdownRef}>
       <button
         onClick={() => {
-          setIsPostDropdownMenuOpen(!isPostDropdownMenuOpen);
+          setIsDropdownMenuOpen(!isDropdownMenuOpen);
         }}
         className="cursor-pointer rounded-full fill-primaryGray stroke-primaryGray p-[5px] transition ease-in-out hover:bg-lightHover hover:fill-black hover:stroke-black active:bg-lightActive active:fill-primaryBlue active:stroke-primaryBlue dark:hover:bg-darkHover dark:hover:fill-white dark:hover:stroke-white dark:active:bg-darkActive dark:active:fill-primaryBlue dark:active:stroke-primaryBlue"
       >
@@ -49,49 +56,22 @@ export default function PostDropdownMenu() {
         </svg>
       </button>
       <div
-        className={`absolute z-50 mt-[10px] w-[200px] rounded-xl border border-lightBorder bg-white transition duration-200 ease-in-out hover:border-lightBorderHover dark:border-darkBorder dark:bg-black dark:hover:border-darkBorderHover ${
-          isPostDropdownMenuOpen ? "block" : "hidden"
+        className={`absolute z-50 mt-[10px] flex w-[200px] flex-col rounded-xl border border-lightBorder bg-white transition duration-200 ease-in-out hover:border-lightBorderHover dark:border-darkBorder dark:bg-black dark:hover:border-darkBorderHover ${
+          isDropdownMenuOpen ? "block" : "hidden"
         }`}
       >
-        <PostDropdownMenuActive />
+        {menuItems.map((item, index) => (
+          <Link
+            key={index}
+            href={item.href}
+            onClick={item.onClick}
+            className={`hover:bg-light-hover active:bg-light-active px-[20px] py-[10px] font-medium transition duration-200 ease-in-out dark:hover:bg-white/10 dark:active:bg-white/20 ${index === 0 ? "rounded-t-xl" : ""} ${index === menuItems.length - 1 ? "rounded-b-xl" : ""} ${item.className || "text-primaryGray hover:text-black dark:hover:text-white"}`}
+          >
+            {item.icon && <span className="mr-2">{item.icon}</span>}
+            {item.label}
+          </Link>
+        ))}
       </div>
-    </div>
-  );
-}
-
-function PostDropdownMenuActive() {
-  return (
-    <div className="flex flex-col">
-      <Link
-        href="#"
-        className="text-primary-gray hover:bg-light-hover active:bg-light-active rounded-t-xl px-[20px] py-[10px] font-medium transition duration-200 ease-in-out hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
-      >
-        Open post
-      </Link>
-      <Link
-        href="#"
-        className="text-primary-gray hover:bg-light-hover active:bg-light-active px-[20px] py-[10px] font-medium transition duration-200 ease-in-out hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
-      >
-        Bookmark post
-      </Link>
-      <Link
-        href="#"
-        className="text-primary-gray hover:bg-light-hover active:bg-light-active px-[20px] py-[10px] font-medium transition duration-200 ease-in-out hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
-      >
-        Report post
-      </Link>
-      <Link
-        href="#"
-        className="text-primary-gray hover:bg-light-hover active:bg-light-active rounded-b-xl px-[20px] py-[10px] font-medium transition duration-200 ease-in-out hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20"
-      >
-        Block @username
-      </Link>
-      <Link
-        href="#"
-        className="active:bg-light-active rounded-b-xl px-[20px] py-[10px] font-medium text-red-500/50 transition duration-200 ease-in-out hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-red-500 dark:active:bg-white/20"
-      >
-        Delete post
-      </Link>
     </div>
   );
 }

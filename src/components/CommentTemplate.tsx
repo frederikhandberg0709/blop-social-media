@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { formatDate } from "@/utils/formattedDate";
 import { useEffect, useState } from "react";
-import PostDropdownMenu from "./menus/PostDropdownMenu";
 import CommentActionButtons from "./buttons/CommentActionButtons";
 import { useSession } from "next-auth/react";
 import React from "react";
+import CommentDropdownMenu from "./menus/CommentDropdownMenu";
 
 interface CommentProps {
   id: string;
@@ -209,7 +209,7 @@ export default function CommentTemplate({
             {formatDate(timestamp)}
           </div>
           {/* Dropdown button */}
-          <PostDropdownMenu />
+          <CommentDropdownMenu />
         </div>
       </div>
       <div className="text-md font-semibold">{title}</div>
