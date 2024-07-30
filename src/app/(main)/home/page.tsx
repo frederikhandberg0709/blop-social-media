@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 interface PostData {
   id: string;
-  title: (string | React.ReactElement | React.ReactElement[])[];
+  title: string;
   content: string;
   createdAt: string;
   likesCount: number;
@@ -47,7 +47,7 @@ const Home: React.FC = () => {
             {/* Page title */}
             <h1 className="text-3xl font-semibold">HOME</h1>
             {/* Filters */}
-            <button className="hover:bg-primaryBlue text-primaryGray rounded-md px-[15px] py-[5px] font-medium transition duration-150 ease-in-out hover:text-black dark:hover:text-white">
+            <button className="rounded-md px-[15px] py-[5px] font-medium text-primaryGray transition duration-150 ease-in-out hover:bg-primaryBlue hover:text-black dark:hover:text-white">
               Filters
             </button>
           </div>
@@ -60,7 +60,7 @@ const Home: React.FC = () => {
               username={post.user.username}
               timestamp={formatDate(post.createdAt)}
               title={post.title}
-              textContent={post.content}
+              content={post.content}
               initialLikesCount={post.likesCount ?? 0}
               userLiked={post.userLiked}
             />

@@ -2,11 +2,13 @@
 
 import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
+import CommentTemplate from "@/components/CommentTemplate";
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import useUserColor from "@/hooks/useUserColor";
+import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function SendComment() {
   const { data: session } = useSession();
@@ -18,6 +20,7 @@ export default function SendComment() {
   const [error, setError] = useState<string | null>(null);
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
+  const [parentComment, setParentComment] = useState<any>(null);
   const [isCommentTitleFocused, setIsCommentTitleFocused] =
     useState<boolean>(false);
   const [isCommentTitleHovered, setIsCommentTitleHovered] =
@@ -64,6 +67,22 @@ export default function SendComment() {
     const val = event.target?.value;
     setContent(val);
   };
+
+  useEffect(() => {
+    const fetchParentComment = async () => {
+      if (parentId) {
+        try {
+          const response = await fetch(`/api/fetch-comment/${parentId}`);
+          const data = await response.json();
+          setParentComment(data.comment);
+        } catch (error) {
+          console.error("Error fetching parent comment:", error);
+        }
+      }
+    };
+
+    fetchParentComment();
+  }, [parentId]);
 
   const submitComment = async () => {
     if (!content.trim()) return;
@@ -158,6 +177,22 @@ export default function SendComment() {
           </div>
         </div>
         <div className="h-[1px] w-full bg-white/5"></div>
+        <div>
+          <h1 className="mb-[20px] font-bold text-white/50">Preview Comment</h1>
+          <CommentTemplate
+            id={session?.user.id || ""}
+            profilePicture={null}
+            profileName={
+              session?.user.profileName || session?.user.username || ""
+            }
+            username={session?.user.username || ""}
+            timestamp={new Date().toISOString()}
+            title={title}
+            content={parseTextWithMedia(content)}
+            initialLikesCount={0}
+            userLiked={false}
+          />
+        </div>
         {/* Show comment being replied to */}
         {/* Show preview of the comment being created */}
       </div>

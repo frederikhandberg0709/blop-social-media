@@ -7,6 +7,7 @@ import CommentActionButtons from "./buttons/CommentActionButtons";
 import { useSession } from "next-auth/react";
 import React from "react";
 import CommentDropdownMenu from "./menus/CommentDropdownMenu";
+import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 
 interface CommentProps {
   id: string;
@@ -15,9 +16,12 @@ interface CommentProps {
   username: string;
   timestamp: string;
   title?: string;
-  content: string;
+  content: string | React.ReactNode;
   imageContent?: string;
   videoContent?: string;
+  replies?: CommentProps[];
+  initialLikesCount: number;
+  userLiked: boolean;
 }
 
 export default function CommentTemplate({
@@ -30,10 +34,13 @@ export default function CommentTemplate({
   content,
   imageContent,
   videoContent,
+  replies = [],
+  initialLikesCount,
+  userLiked,
 }: CommentProps) {
   const { data: session } = useSession();
-  const [likesCount, setLikesCount] = useState<number>(0);
-  const [liked, setLiked] = useState<boolean>(false);
+  const [likesCount, setLikesCount] = useState(initialLikesCount);
+  const [liked, setLiked] = useState(userLiked);
   const [commentsCount, setCommentsCount] = useState<number>(0);
   const [sharesCount, setSharesCount] = useState<number>(0);
 
@@ -113,65 +120,9 @@ export default function CommentTemplate({
   const defaultProfilePicture =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRg5CvxCysqjZrsTPUjcl5sN3HIzePiCWM7KQ&s";
 
-  const parseTextWithMedia = (inputText: string | undefined) => {
-    if (!inputText) return null;
+  const parsedContent =
+    typeof content === "string" ? parseTextWithMedia(content) : content;
 
-    const mediaRegex = /(https:\/\/.*?\.(jpg|jpeg|png|gif|mp4|avi|mov))/g;
-    let parts = [];
-    let lastIndex = 0;
-
-    let match;
-    while ((match = mediaRegex.exec(inputText)) !== null) {
-      const textBeforeMedia = inputText.slice(lastIndex, match.index);
-      parts.push(
-        textBeforeMedia.split("\n").map((line, index, array) => (
-          <React.Fragment key={`${lastIndex}-${index}`}>
-            {line}
-            {index < array.length + 1 && <br />}
-          </React.Fragment>
-        )),
-      );
-
-      const mediaLink = match[0];
-      const isImage = /\.(jpg|jpeg|png|gif)$/.test(mediaLink);
-      if (isImage) {
-        parts.push(
-          <img
-            key={mediaLink}
-            src={mediaLink}
-            alt="User uploaded content"
-            className="rounded-[10px]"
-          />,
-        );
-      } else {
-        parts.push(
-          <video
-            key={mediaLink}
-            src={mediaLink}
-            className="rounded-[10px]"
-            width="100%"
-            controls
-            autoPlay
-            muted
-          />,
-        );
-      }
-
-      lastIndex = mediaRegex.lastIndex;
-    }
-
-    const remainingText = inputText.slice(lastIndex);
-    parts.push(
-      remainingText.split("\n").map((line, index, array) => (
-        <React.Fragment key={`${lastIndex}-${index}`}>
-          {line}
-          {index < array.length - 1 && <br />}
-        </React.Fragment>
-      )),
-    );
-
-    return parts;
-  };
   return (
     <div className="flex w-full flex-col gap-1">
       <div className="flex items-center justify-between">
@@ -208,14 +159,12 @@ export default function CommentTemplate({
           <div className="text-right text-[15px] text-gray-500">
             {formatDate(timestamp)}
           </div>
-          {/* Dropdown button */}
+          {/* Dropdown menu */}
           <CommentDropdownMenu />
         </div>
       </div>
-      <div className="text-md font-semibold">{title}</div>
-      <div className="text-sm leading-normal">
-        {parseTextWithMedia(content)}
-      </div>
+      {title && <h1 className="text-base font-bold">{title}</h1>}
+      <div className="text-sm leading-normal">{parsedContent}</div>
       <div className="mt-1">
         <CommentActionButtons
           likesCount={likesCount}
@@ -228,6 +177,13 @@ export default function CommentTemplate({
           onUnlike={handleUnlike}
         />
       </div>
+      {/* {replies.length > 0 && (
+        <div className="mt-4 border-l-2 border-gray-200 pl-4">
+          {replies.map((reply) => (
+            <CommentTemplate key={reply.id} {...reply} />
+          ))}
+        </div>
+      )} */}
     </div>
   );
 }

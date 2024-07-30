@@ -10,22 +10,48 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const comments = await prisma.comment.findMany({
-      where: { postId, parentId: null },
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            profileName: true,
-            profilePicture: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const comments = await prisma.$queryRaw`
+      WITH RECURSIVE CommentTree AS (
+        SELECT 
+          c."id",
+          c."postId",
+          c."parentId",
+          c."userId",
+          c."title",
+          c."content",
+          c."createdAt",
+          c."updatedAt",
+          u."username",
+          u."profileName",
+          u."profilePicture",
+          1 AS depth
+        FROM "Comment" c
+        JOIN "User" u ON c."userId" = u."id"
+        WHERE c."postId" = ${postId} AND c."parentId" IS NULL
+        
+        UNION ALL
+        
+        SELECT 
+          c."id",
+          c."postId",
+          c."parentId",
+          c."userId",
+          c."title",
+          c."content",
+          c."createdAt",
+          c."updatedAt",
+          u."username",
+          u."profileName",
+          u."profilePicture",
+          ct."depth" + 1 AS depth
+        FROM "Comment" c
+        JOIN "User" u ON c."userId" = u."id"
+        JOIN CommentTree ct ON c."parentId" = ct."id"
+      )
+      SELECT * FROM CommentTree ORDER BY depth, "createdAt" DESC;
+    `;
+
+    // const comments = await prisma.$queryRawUnsafe(rawQuery, postId);
 
     return NextResponse.json({ comments }, { status: 200 });
   } catch (error) {

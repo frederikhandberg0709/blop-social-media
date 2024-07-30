@@ -5,7 +5,8 @@ import PostActionButtons from "../buttons/PostActionButtons";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import CommentTemplate from "../CommentTemplate";
-import DropdownMenu from "../buttons/DropdownMenu";
+import PostDropdownMenu from "../menus/PostDropdownMenu";
+import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 
 interface PostProps {
   id: string;
@@ -13,8 +14,8 @@ interface PostProps {
   profileName: string | null;
   username: string;
   timestamp: string;
-  title: (string | React.ReactElement | React.ReactElement[])[];
-  textContent: string;
+  title?: string;
+  content: string | React.ReactNode;
   imageContent?: string;
   videoContent?: string;
   initialLikesCount: number;
@@ -28,7 +29,7 @@ const PostTemplate: React.FC<PostProps> = ({
   username,
   timestamp,
   title,
-  textContent,
+  content,
   imageContent,
   videoContent,
   initialLikesCount,
@@ -125,65 +126,8 @@ const PostTemplate: React.FC<PostProps> = ({
   const defaultProfilePicture =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRg5CvxCysqjZrsTPUjcl5sN3HIzePiCWM7KQ&s";
 
-  const parseTextWithMedia = (inputText: string | undefined) => {
-    if (!inputText) return null;
-
-    const mediaRegex = /(https:\/\/.*?\.(jpg|jpeg|png|gif|mp4|avi|mov))/g;
-    let parts = [];
-    let lastIndex = 0;
-
-    let match;
-    while ((match = mediaRegex.exec(inputText)) !== null) {
-      const textBeforeMedia = inputText.slice(lastIndex, match.index);
-      parts.push(
-        textBeforeMedia.split("\n").map((line, index, array) => (
-          <React.Fragment key={`${lastIndex}-${index}`}>
-            {line}
-            {index < array.length + 1 && <br />}
-          </React.Fragment>
-        )),
-      );
-
-      const mediaLink = match[0];
-      const isImage = /\.(jpg|jpeg|png|gif)$/.test(mediaLink);
-      if (isImage) {
-        parts.push(
-          <img
-            key={mediaLink}
-            src={mediaLink}
-            alt="User uploaded content"
-            className="rounded-[10px]"
-          />,
-        );
-      } else {
-        parts.push(
-          <video
-            key={mediaLink}
-            src={mediaLink}
-            className="rounded-[10px]"
-            width="100%"
-            controls
-            autoPlay
-            muted
-          />,
-        );
-      }
-
-      lastIndex = mediaRegex.lastIndex;
-    }
-
-    const remainingText = inputText.slice(lastIndex);
-    parts.push(
-      remainingText.split("\n").map((line, index, array) => (
-        <React.Fragment key={`${lastIndex}-${index}`}>
-          {line}
-          {index < array.length - 1 && <br />}
-        </React.Fragment>
-      )),
-    );
-
-    return parts;
-  };
+  const parsedContent =
+    typeof content === "string" ? parseTextWithMedia(content) : content;
 
   return (
     <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
@@ -221,28 +165,13 @@ const PostTemplate: React.FC<PostProps> = ({
           <div className="text-right text-[15px] text-gray-500">
             {timestamp}
           </div>
-          {/* Dropdown button */}
-          {/* <PostDropdownMenu /> */}
-          <DropdownMenu
-            menuItems={[
-              { label: "Open post", href: `/post/${id}` },
-              { label: "Bookmark post", href: "#", onClick: () => {} },
-              { label: "Report post", href: "#" },
-              { label: "Block @username", href: "#" },
-              {
-                label: "Delete post",
-                href: "#",
-                className: "text-red-500/50 hover:text-red-500",
-              },
-            ]}
-          />
+          {/* Dropdown menu */}
+          <PostDropdownMenu id={id} />
         </div>
       </div>
       <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-bold">{title}</h1>
-        <p className="overflow-x-hidden text-base leading-normal">
-          {parseTextWithMedia(textContent)}
-        </p>
+        {title && <h1 className="text-xl font-bold">{title}</h1>}
+        <p className="text-base leading-normal">{parsedContent}</p>
       </div>
       <PostActionButtons
         likesCount={likesCount}
@@ -311,12 +240,15 @@ const PostTemplate: React.FC<PostProps> = ({
                   <CommentTemplate
                     key={comment.id}
                     id={comment.id}
-                    profilePicture={comment.user.profilePicture}
-                    profileName={comment.user.profileName}
-                    username={comment.user.username}
+                    profilePicture={comment.profilePicture}
+                    profileName={comment.profileName}
+                    username={comment.username}
                     title={comment.title}
                     content={comment.content}
                     timestamp={comment.createdAt}
+                    replies={comment.replies || []}
+                    initialLikesCount={comment.likesCount}
+                    userLiked={comment.userLiked}
                   />
                 ))}
               </div>
