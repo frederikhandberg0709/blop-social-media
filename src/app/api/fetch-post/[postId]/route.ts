@@ -3,12 +3,12 @@ import { prisma } from "@/db/prisma";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { postId: string } },
 ) {
-  console.log("Fetching post with ID:", params.id);
+  console.log("Fetching post with ID:", params.postId);
   try {
     const post = await prisma.post.findUnique({
-      where: { id: params.id },
+      where: { id: params.postId },
       include: {
         user: true,
       },

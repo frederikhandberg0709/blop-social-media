@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
 
         const isPasswordValid = await argon2.verify(
           user.password,
-          credentials.password
+          credentials.password,
         );
         if (!isPasswordValid) {
           console.log("Invalid password");
@@ -74,7 +74,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async session({ session, token }) {
-      console.log("Session Callback", { session, token });
+      // console.log("Session Callback", { session, token });
       session.user.id = token.id as string;
       session.user.username = token.username as string;
       session.user.profilePicture = token.profilePicture as string;
@@ -84,7 +84,7 @@ export const authOptions: NextAuthOptions = {
     },
 
     async jwt({ token, user }) {
-      console.log("JWT Callback", { token, user });
+      // console.log("JWT Callback", { token, user });
       if (user) {
         token.id = user.id;
         token.username = user.username;

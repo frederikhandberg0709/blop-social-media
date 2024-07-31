@@ -11,6 +11,7 @@ import PrimaryButton from "@/components/buttons/PrimaryButton";
 import useUserColor from "@/hooks/useUserColor";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 import { UserProps } from "@/types/UserProps";
+import { formatDate } from "@/utils/formattedDate";
 
 const CreatePost: React.FC = () => {
   const { data: session } = useSession();
@@ -173,9 +174,9 @@ const CreatePost: React.FC = () => {
     postsCount: 0,
   };
 
-  function formattedDate(arg0: string): string {
-    throw new Error("Function not implemented.");
-  }
+  // function formattedDate(arg0: string): string {
+  //   throw new Error("Function not implemented.");
+  // }
 
   return (
     <>
@@ -247,9 +248,9 @@ const CreatePost: React.FC = () => {
             <PostTemplate
               id={session?.user.id || ""}
               user={user}
-              createdAt={formattedDate(new Date().toISOString())} // Dates are wrong
-              updatedAt={new Date().toISOString()}
-              timestamp={new Date().toISOString()}
+              createdAt={formatDate(new Date().toISOString())}
+              updatedAt={formatDate(new Date().toISOString())}
+              timestamp={formatDate(new Date().toISOString())}
               title={title}
               content={parseTextWithMedia(content)}
               initialLikesCount={0}

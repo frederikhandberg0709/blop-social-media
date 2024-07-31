@@ -7,18 +7,6 @@ import { formatDate } from "@/utils/formattedDate";
 import { PostProps } from "@/types/PostProps";
 import { getTimestamp } from "@/utils/getTimestamp";
 
-// interface PostProps {
-//   id: string;
-//   profilePicture: string | null;
-//   profileName: string | null;
-//   username: string;
-//   timestamp: string;
-//   // title?: (string | React.ReactElement | React.ReactElement[])[];
-//   title?: string;
-//   content: string | React.ReactNode;
-//   likesCount: number;
-// }
-
 const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
   const searchParams = useSearchParams();
   const success = searchParams.get("success");
@@ -51,14 +39,11 @@ const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
           <Post
             key={post.id}
             id={post.id}
-            // profilePicture={post.profilePicture}
-            // profileName={post.profileName}
-            // username={post.username}
             user={post.user}
-            createdAt={post.createdAt}
-            updatedAt={post.updatedAt}
+            createdAt={"0"}
+            updatedAt={"0"}
             // timestamp={formatDate(post.updatedAt || post.createdAt)}
-            timestamp={timestamp}
+            timestamp={new Date().toISOString()}
             title={post.title}
             content={post.content}
             initialLikesCount={post.initialLikesCount}

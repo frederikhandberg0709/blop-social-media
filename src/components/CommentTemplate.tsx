@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import CommentDropdownMenu from "./menus/CommentDropdownMenu";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
+import { useRouter } from "next/navigation";
 
 interface CommentProps {
   id: string;
@@ -39,6 +40,7 @@ export default function CommentTemplate({
   userLiked,
 }: CommentProps) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [likesCount, setLikesCount] = useState(initialLikesCount);
   const [liked, setLiked] = useState(userLiked);
   const [commentsCount, setCommentsCount] = useState<number>(0);
@@ -112,6 +114,7 @@ export default function CommentTemplate({
   };
 
   const handleReplyClick = () => {
+    router.push(`/send-comment/${id}`);
     // Implement reply functionality
     // Open new page with comment box
     console.log("Reply clicked");

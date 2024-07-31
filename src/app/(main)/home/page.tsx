@@ -15,7 +15,6 @@ const Home: React.FC = () => {
           throw new Error("Failed to fetch posts");
         }
         const data = await response.json();
-        console.log("Fetched posts:", data.posts);
         setPosts(data.posts);
       } catch (error) {
         const err = error as Error;
