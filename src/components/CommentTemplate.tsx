@@ -177,13 +177,13 @@ export default function CommentTemplate({
           onUnlike={handleUnlike}
         />
       </div>
-      {/* {replies.length > 0 && (
+      {replies.length > 0 && (
         <div className="mt-4 border-l-2 border-gray-200 pl-4">
           {replies.map((reply) => (
             <CommentTemplate key={reply.id} {...reply} />
           ))}
         </div>
-      )} */}
+      )}
     </div>
   );
 }

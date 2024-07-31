@@ -1,25 +1,11 @@
 "use client";
 
 import PostTemplate from "@/components/post/PostTemplate";
-import { formatDate } from "@/utils/formattedDate";
+import { PostProps } from "@/types/PostProps";
 import { useEffect, useState } from "react";
 
-interface PostData {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  likesCount: number;
-  userLiked: boolean;
-  user: {
-    displayName: string;
-    username: string;
-    profilePicture: string;
-  };
-}
-
 const Home: React.FC = () => {
-  const [posts, setPosts] = useState<PostData[]>([]);
+  const [posts, setPosts] = useState<PostProps[]>([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -29,7 +15,8 @@ const Home: React.FC = () => {
           throw new Error("Failed to fetch posts");
         }
         const data = await response.json();
-        setPosts(data);
+        console.log("Fetched posts:", data.posts);
+        setPosts(data.posts);
       } catch (error) {
         const err = error as Error;
         console.error(err.message);
@@ -51,20 +38,24 @@ const Home: React.FC = () => {
               Filters
             </button>
           </div>
-          {posts.map((post) => (
+          {/* {Array.isArray(posts) && posts.length > 0 ? ( */}
+          {posts?.map((post) => (
             <PostTemplate
               key={post.id}
               id={post.id}
-              profilePicture={post.user.profilePicture}
-              profileName={post.user.displayName}
-              username={post.user.username}
-              timestamp={formatDate(post.createdAt)}
+              user={post.user}
+              createdAt={post.createdAt}
+              updatedAt={post.updatedAt}
+              timestamp={post.timestamp}
               title={post.title}
               content={post.content}
-              initialLikesCount={post.likesCount ?? 0}
+              initialLikesCount={post.initialLikesCount ?? 0}
               userLiked={post.userLiked}
             />
           ))}
+          {/* ) : (
+            <p>No posts available.</p>
+          )} */}
         </div>
       </div>
     </>

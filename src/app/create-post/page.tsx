@@ -10,6 +10,7 @@ import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import useUserColor from "@/hooks/useUserColor";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
+import { UserProps } from "@/types/UserProps";
 
 const CreatePost: React.FC = () => {
   const { data: session } = useSession();
@@ -160,6 +161,22 @@ const CreatePost: React.FC = () => {
     }
   };
 
+  const user: UserProps = {
+    id: session?.user.id || "",
+    username: session?.user.username || "",
+    profileName: session?.user.name || "",
+    profilePicture: session?.user.image || "",
+    profileBanner: "",
+    bio: "",
+    followersCount: 0,
+    followingCount: 0,
+    postsCount: 0,
+  };
+
+  function formattedDate(arg0: string): string {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <>
       <div className="mb-[100px] mt-[90px] flex justify-center">
@@ -229,12 +246,10 @@ const CreatePost: React.FC = () => {
             <h1 className="mb-[20px] font-bold text-white/50">Preview Post</h1>
             <PostTemplate
               id={session?.user.id || ""}
-              profilePicture={null}
-              profileName={
-                session?.user.profileName || session?.user.username || ""
-              }
-              username={session?.user.username || ""}
-              timestamp={""}
+              user={user}
+              createdAt={formattedDate(new Date().toISOString())} // Dates are wrong
+              updatedAt={new Date().toISOString()}
+              timestamp={new Date().toISOString()}
               title={title}
               content={parseTextWithMedia(content)}
               initialLikesCount={0}

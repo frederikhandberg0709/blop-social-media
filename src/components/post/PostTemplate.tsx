@@ -7,27 +7,15 @@ import { useSession } from "next-auth/react";
 import CommentTemplate from "../CommentTemplate";
 import PostDropdownMenu from "../menus/PostDropdownMenu";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
-
-interface PostProps {
-  id: string;
-  profilePicture: string | null;
-  profileName: string | null;
-  username: string;
-  timestamp: string;
-  title?: string;
-  content: string | React.ReactNode;
-  imageContent?: string;
-  videoContent?: string;
-  initialLikesCount: number;
-  userLiked: boolean;
-}
+import { PostProps } from "@/types/PostProps";
+import { getTimestamp } from "@/utils/getTimestamp";
 
 const PostTemplate: React.FC<PostProps> = ({
   id,
-  profilePicture,
-  profileName,
-  username,
+  user,
   timestamp,
+  // createdAt,
+  // updatedAt,
   title,
   content,
   imageContent,
@@ -129,34 +117,42 @@ const PostTemplate: React.FC<PostProps> = ({
   const parsedContent =
     typeof content === "string" ? parseTextWithMedia(content) : content;
 
+  if (!user) {
+    return null; // or some kind of loading indicator or placeholder
+  }
+
   return (
     <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
       <div className="flex items-center justify-between">
         <Link
-          href={`/profile/${username}`}
+          href={`/profile/${user.username}`}
           className="group flex items-center gap-[10px]"
         >
           <img
-            src={profilePicture || defaultProfilePicture}
-            alt={`${profileName}'s profile picture`}
+            src={user.profilePicture || defaultProfilePicture}
+            alt={`${user.profileName}'s profile picture`}
             className="h-[40px] w-[40px] rounded-full object-cover"
           />
           <div className="flex flex-col gap-[1px]">
             {/* If user has profile name */}
-            {profileName ? (
+            {user.profileName ? (
               <>
                 <div className="text-[15px] font-bold group-hover:text-blue-500">
-                  {profileName}
+                  {user.profileName}
                 </div>
-                <div className="text-[12px] text-gray-500">@{username}</div>
+                <div className="text-[12px] text-gray-500">
+                  @{user.username}
+                </div>
               </>
             ) : (
               // No profile name, only show username
               <>
                 <div className="text-[15px] font-bold group-hover:text-blue-500">
-                  {username}
+                  {user.username}
                 </div>
-                <div className="text-[12px] text-gray-500">@{username}</div>
+                <div className="text-[12px] text-gray-500">
+                  @{user.username}
+                </div>
               </>
             )}
           </div>

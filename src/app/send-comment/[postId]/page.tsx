@@ -3,8 +3,11 @@
 import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import CommentTemplate from "@/components/CommentTemplate";
+import PostTemplate from "@/components/post/PostTemplate";
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import useUserColor from "@/hooks/useUserColor";
+import { PostProps } from "@/types/PostProps";
+import { formatDate } from "@/utils/formattedDate";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
@@ -14,8 +17,9 @@ export default function SendComment() {
   const { data: session } = useSession();
   const router = useRouter();
   const { postId, parentId } = useParams();
-  const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
+  const [post, setPost] = useState<PostProps | null>(null);
+  const [commentTitle, setCommentTitle] = useState<string>("");
+  const [commentContent, setCommentContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [characterCount, setCharacterCount] = useState<number>(0);
@@ -33,10 +37,10 @@ export default function SendComment() {
   const borderColor = useUserColor();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
+    setCommentTitle(event.target.value);
   };
 
-  useAutosizeTextArea(textareaRef.current, content);
+  useAutosizeTextArea(textareaRef.current, commentContent);
 
   const handleCommentTitleFocus = () => setIsCommentTitleFocused(true);
   const handleCommentTitleBlur = () => setIsCommentTitleFocused(false);
@@ -60,15 +64,25 @@ export default function SendComment() {
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = event.target.value;
-    setContent(newText);
+    setCommentContent(newText);
     setCharacterCount(newText.length);
     setWordCount(newText ? newText.trim().split(/\s+/).length : 0);
 
     const val = event.target?.value;
-    setContent(val);
+    setCommentContent(val);
   };
 
   useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await fetch(`/api/fetch-post/${postId}`);
+        const data = await response.json();
+        setPost(data.post);
+      } catch (error) {
+        console.error("Error fetching post:", error);
+      }
+    };
+
     const fetchParentComment = async () => {
       if (parentId) {
         try {
@@ -82,10 +96,10 @@ export default function SendComment() {
     };
 
     fetchParentComment();
-  }, [parentId]);
+  }, [postId, parentId]);
 
   const submitComment = async () => {
-    if (!content.trim()) return;
+    if (!commentContent.trim()) return;
     setIsLoading(true);
     setError(null);
 
@@ -97,8 +111,8 @@ export default function SendComment() {
         },
         body: JSON.stringify({
           parentId: parentId ?? null,
-          title,
-          content,
+          commentTitle,
+          commentContent,
         }),
       });
 
@@ -127,7 +141,7 @@ export default function SendComment() {
           <input
             type="text"
             placeholder="Title of comment..."
-            value={title}
+            value={commentTitle}
             onChange={handleTitleChange}
             onFocus={handleCommentTitleFocus}
             onBlur={handleCommentTitleBlur}
@@ -141,7 +155,7 @@ export default function SendComment() {
           />
           <textarea
             placeholder="Write your comment here..."
-            value={content}
+            value={commentContent}
             onChange={handleTextChange}
             ref={textareaRef}
             onFocus={handleCommentContentFocus}
@@ -179,6 +193,21 @@ export default function SendComment() {
         <div className="h-[1px] w-full bg-white/5"></div>
         <div>
           <h1 className="mb-[20px] font-bold text-white/50">Preview Comment</h1>
+          {post && (
+            <PostTemplate
+              key={post.id}
+              id={post.id}
+              user={post.user}
+              createdAt={post.createdAt}
+              updatedAt={post.updatedAt}
+              // timestamp={formatDate(post.updatedAt || post.createdAt)}
+              timestamp={post.timestamp}
+              title={post.title}
+              content={post.content}
+              initialLikesCount={post.initialLikesCount ?? 0}
+              userLiked={post.userLiked}
+            />
+          )}
           <CommentTemplate
             id={session?.user.id || ""}
             profilePicture={null}
@@ -187,8 +216,8 @@ export default function SendComment() {
             }
             username={session?.user.username || ""}
             timestamp={new Date().toISOString()}
-            title={title}
-            content={parseTextWithMedia(content)}
+            title={commentTitle}
+            content={parseTextWithMedia(commentContent)}
             initialLikesCount={0}
             userLiked={false}
           />

@@ -4,17 +4,20 @@ import { useSearchParams } from "next/navigation";
 import Post from "@/components/post/PostTemplate";
 import { useEffect, useState } from "react";
 import { formatDate } from "@/utils/formattedDate";
+import { PostProps } from "@/types/PostProps";
+import { getTimestamp } from "@/utils/getTimestamp";
 
-interface PostProps {
-  id: string;
-  profilePicture: string | null;
-  profileName: string | null;
-  username: string;
-  timestamp: string;
-  title: (string | React.ReactElement | React.ReactElement[])[];
-  textContent: string;
-  likesCount: number;
-}
+// interface PostProps {
+//   id: string;
+//   profilePicture: string | null;
+//   profileName: string | null;
+//   username: string;
+//   timestamp: string;
+//   // title?: (string | React.ReactElement | React.ReactElement[])[];
+//   title?: string;
+//   content: string | React.ReactNode;
+//   likesCount: number;
+// }
 
 const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
   const searchParams = useSearchParams();
@@ -34,6 +37,8 @@ const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
     }
   }, [success]);
 
+  const timestamp = getTimestamp(post.createdAt, post.updatedAt);
+
   return (
     <>
       {showSuccessMessage && (
@@ -44,14 +49,20 @@ const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
       <div className="mb-[100px] mt-[90px] flex justify-center">
         <div className="flex w-[800px] flex-col gap-[30px]">
           <Post
-            profilePicture={post.profilePicture}
-            profileName={post.profileName}
-            username={post.username}
-            timestamp={formatDate(post.timestamp)}
-            // timestamp={post.timestamp}
+            key={post.id}
+            id={post.id}
+            // profilePicture={post.profilePicture}
+            // profileName={post.profileName}
+            // username={post.username}
+            user={post.user}
+            createdAt={post.createdAt}
+            updatedAt={post.updatedAt}
+            // timestamp={formatDate(post.updatedAt || post.createdAt)}
+            timestamp={timestamp}
             title={post.title}
-            textContent={post.textContent}
-            likesCount={post.likesCount}
+            content={post.content}
+            initialLikesCount={post.initialLikesCount}
+            userLiked={post.userLiked}
           />
           {/* Comments */}
         </div>
