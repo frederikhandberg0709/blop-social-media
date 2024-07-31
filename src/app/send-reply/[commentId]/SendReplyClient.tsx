@@ -6,6 +6,7 @@ import CommentTemplate from "@/components/CommentTemplate";
 import PostTemplate from "@/components/post/PostTemplate";
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import useUserColor from "@/hooks/useUserColor";
+import { CommentProps } from "@/types/CommentProps";
 import { PostProps } from "@/types/PostProps";
 import { formatDate } from "@/utils/formattedDate";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
@@ -13,11 +14,11 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-interface SendCommentClientProps {
-  post: PostProps | null;
+interface SendReplyClientProps {
+  comment: CommentProps | null;
 }
 
-export default function SendCommentClient({ post }: SendCommentClientProps) {
+export default function SendReplyClient({ comment }: SendReplyClientProps) {
   const { data: session } = useSession();
   const router = useRouter();
   const [commentTitle, setCommentTitle] = useState<string>("");
@@ -26,7 +27,6 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
   const [error, setError] = useState<string | null>(null);
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
-  // const [comment, setcomment] = useState<any>(null);
   const [isCommentTitleFocused, setIsCommentTitleFocused] =
     useState<boolean>(false);
   const [isCommentTitleHovered, setIsCommentTitleHovered] =
@@ -116,7 +116,7 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
   //   fetchcomment();
   // }, [postId, parentId]);
 
-  // const submitComment = async () => {
+  const submitComment = async () => {};
   //   if (!commentContent.trim()) return;
   //   setIsLoading(true);
   //   setError(null);
@@ -150,51 +150,53 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
   //   }
   // };
 
-  // const submitComment = async () => {
-  //   if (!commentContent.trim()) return;
-  //   setIsLoading(true);
-  //   setError(null);
+  //   const submitComment = async () => {
+  //     if (!commentContent.trim()) return;
+  //     setIsLoading(true);
+  //     setError(null);
 
-  //   try {
-  //     const response = await fetch(
-  //       `/api/send-comment/${post?.id}`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
+  //     try {
+  //       const response = await fetch(
+  //         `/api/send-comment/${post?.id || comment?.id}`,
+  //         {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             parentId: comment?.id ?? null,
+  //             commentTitle,
+  //             commentContent,
+  //           }),
   //         },
-  //         body: JSON.stringify({
-  //           parentId: comment?.id ?? null,
-  //           commentTitle,
-  //           commentContent,
-  //         }),
-  //       },
-  //     );
+  //       );
 
-  //     if (!response.ok) {
-  //       const errorData = await response.json();
-  //       throw new Error(errorData.error || "Failed to send comment");
+  //       if (!response.ok) {
+  //         const errorData = await response.json();
+  //         throw new Error(errorData.error || "Failed to send comment");
+  //       }
+
+  //       const createdComment = await response.json();
+  //       console.log("Comment created:", createdComment);
+  //       router.push(`/post/${post?.id || comment?.postId}`);
+  //     } catch (error) {
+  //       setError((error as Error).message);
+  //       console.error("Error sending comment:", error);
+  //     } finally {
+  //       setIsLoading(false);
   //     }
-
-  //     const createdComment = await response.json();
-  //     console.log("Comment created:", createdComment);
-  //     router.push(`/post/${post?.id || comment?.postId}`);
-  //   } catch (error) {
-  //     setError((error as Error).message);
-  //     console.error("Error sending comment:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  //   };
 
   if (!session?.user) {
     return <div>Loading...</div>;
   }
 
+  console.log("Testing client: Comment data:", comment);
+
   return (
     <div className="mb-[100px] mt-[90px] flex justify-center">
       <div className="flex w-[800px] flex-col gap-[30px]">
-        <h1 className="text-[25px] font-semibold">Send Comment</h1>
+        <h1 className="text-2xl font-semibold">Send Reply</h1>
         {error && <p className="text-red-500">{error}</p>}
         <div className="flex flex-col gap-[20px]">
           <input
@@ -239,9 +241,9 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
               >
                 Save Draft
               </button>
-              {/* <PrimaryButton onClick={submitComment} disabled={isLoading}>
+              <PrimaryButton onClick={submitComment} disabled={isLoading}>
                 {isLoading ? "Publishing..." : "Publish"}
-              </PrimaryButton> */}
+              </PrimaryButton>
               {/* Show warning modal before cancelling */}
               <DangerButton onClick={() => router.back()} type="button">
                 Cancel
@@ -252,34 +254,21 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
         <div className="h-[1px] w-full bg-white/5"></div>
         <div>
           <h1 className="mb-[20px] font-bold text-white/50">Preview Comment</h1>
-          {post && (
-            <PostTemplate
-              key={post.id}
-              id={post.id}
-              user={post.user}
-              createdAt={post.createdAt}
-              updatedAt={post.updatedAt}
-              timestamp={post.updatedAt || post.createdAt}
-              title={post.title}
-              content={post.content}
-              initialLikesCount={post.initialLikesCount ?? 0}
-              userLiked={post.userLiked}
-            />
-          )}
-          {/* {comment && (
+          {comment && (
             <CommentTemplate
+              key={comment.id}
               id={comment.id}
-              profilePicture={comment.profilePicture}
-              profileName={comment.profileName}
-              username={comment.username}
-              timestamp={comment.timestamp}
+              user={comment.user}
+              createdAt={comment.createdAt}
+              updatedAt={comment.updatedAt}
+              timestamp={comment.updatedAt || comment.createdAt}
               title={comment.title}
-              content={parseTextWithMedia(comment.content)}
+              content={comment.content}
               initialLikesCount={comment.initialLikesCount}
               userLiked={comment.userLiked}
             />
           )}
-          <CommentTemplate
+          {/* <CommentTemplate
             id={session?.user.id || ""}
             profilePicture={null}
             profileName={
@@ -293,8 +282,6 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
             userLiked={false}
           /> */}
         </div>
-        {/* Show comment being replied to */}
-        {/* Show preview of the comment being created */}
       </div>
     </div>
   );

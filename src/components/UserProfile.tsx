@@ -1,13 +1,13 @@
 "use client";
 
 import FollowButton from "@/components/buttons/FollowButton";
-import { User } from "@/types/User";
+import { UserProps } from "@/types/UserProps";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface UserProfileProps {
-  user: User;
+  user: UserProps;
 }
 
 const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
@@ -53,7 +53,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
             <div className="flex items-center gap-[50px]">
               {/* Profile picture */}
               <img
-                src={user.profilePicture}
+                src={user.profilePicture || ""}
                 alt="Profile picture"
                 className="h-[130px] w-[130px] rounded-full border-[4px] border-white dark:border-black"
               />

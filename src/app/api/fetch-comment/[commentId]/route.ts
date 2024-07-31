@@ -3,29 +3,30 @@ import { prisma } from "@/db/prisma";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: { commentId: string } },
 ) {
-  const { id } = params;
+  // const { commentId } = params;
 
-  if (!id) {
-    return NextResponse.json(
-      { error: "Comment ID is required" },
-      { status: 400 },
-    );
-  }
+  // if (!commentId) {
+  //   return NextResponse.json(
+  //     { error: "Comment ID is required" },
+  //     { status: 400 },
+  //   );
+  // }
 
   try {
     const comment = await prisma.comment.findUnique({
-      where: { id },
+      where: { id: params.commentId },
       include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            profileName: true,
-            profilePicture: true,
-          },
-        },
+        user: true,
+        // user: {
+        // select: {
+        //   id: true,
+        //   username: true,
+        //   profileName: true,
+        //   profilePicture: true,
+        // },
+        // },
       },
     });
 

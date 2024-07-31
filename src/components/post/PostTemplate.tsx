@@ -8,7 +8,7 @@ import CommentTemplate from "../CommentTemplate";
 import PostDropdownMenu from "../menus/PostDropdownMenu";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 import { PostProps } from "@/types/PostProps";
-import { getTimestamp } from "@/utils/getTimestamp";
+import { formatDate } from "@/utils/formattedDate";
 
 const PostTemplate: React.FC<PostProps> = ({
   id,
@@ -159,7 +159,7 @@ const PostTemplate: React.FC<PostProps> = ({
         </Link>
         <div className="flex items-center gap-[15px]">
           <div className="text-right text-[15px] text-gray-500">
-            {timestamp}
+            {formatDate(timestamp)}
           </div>
           {/* Dropdown menu */}
           <PostDropdownMenu id={id} />
@@ -236,11 +236,11 @@ const PostTemplate: React.FC<PostProps> = ({
                   <CommentTemplate
                     key={comment.id}
                     id={comment.id}
-                    profilePicture={comment.profilePicture}
-                    profileName={comment.profileName}
-                    username={comment.username}
+                    user={comment.user}
                     title={comment.title}
                     content={comment.content}
+                    createdAt={comment.createdAt}
+                    updatedAt={comment.updatedAt}
                     timestamp={comment.createdAt}
                     replies={comment.replies || []}
                     initialLikesCount={comment.likesCount}

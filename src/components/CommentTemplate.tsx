@@ -9,27 +9,30 @@ import React from "react";
 import CommentDropdownMenu from "./menus/CommentDropdownMenu";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 import { useRouter } from "next/navigation";
+import { CommentProps } from "@/types/CommentProps";
 
-interface CommentProps {
-  id: string;
-  profilePicture: string | null;
-  profileName: string | null;
-  username: string;
-  timestamp: string;
-  title?: string;
-  content: string | React.ReactNode;
-  imageContent?: string;
-  videoContent?: string;
-  replies?: CommentProps[];
-  initialLikesCount: number;
-  userLiked: boolean;
-}
+// interface CommentProps {
+//   id: string;
+//   profilePicture: string | null;
+//   profileName: string | null;
+//   username: string;
+//   createdAt: string;
+//   updatedAt: string;
+//   timestamp: string;
+//   title?: string;
+//   content: string | React.ReactNode;
+//   imageContent?: string;
+//   videoContent?: string;
+//   replies?: CommentProps[];
+//   initialLikesCount: number;
+//   userLiked: boolean;
+// }
 
 export default function CommentTemplate({
   id,
-  profilePicture,
-  profileName,
-  username,
+  user,
+  createdAt,
+  updatedAt,
   timestamp,
   title,
   content,
@@ -114,7 +117,7 @@ export default function CommentTemplate({
   };
 
   const handleReplyClick = () => {
-    router.push(`/send-comment/${id}`);
+    router.push(`/send-reply/${id}`);
     // Implement reply functionality
     // Open new page with comment box
     console.log("Reply clicked");
@@ -130,30 +133,34 @@ export default function CommentTemplate({
     <div className="flex w-full flex-col gap-1">
       <div className="flex items-center justify-between">
         <Link
-          href={`/profile/${username}`}
+          href={`/profile/${user.username}`}
           className="group flex items-center gap-[10px]"
         >
           <img
-            src={profilePicture || defaultProfilePicture}
-            alt={`${profileName}'s profile picture`}
+            src={user.profilePicture || defaultProfilePicture}
+            alt={`${user.profileName}'s profile picture`}
             className="h-[40px] w-[40px] rounded-full object-cover"
           />
           <div className="flex flex-col gap-[1px]">
             {/* If user has profile name */}
-            {profileName ? (
+            {user.profileName ? (
               <>
                 <div className="text-[15px] font-bold group-hover:text-blue-500">
-                  {profileName}
+                  {user.profileName}
                 </div>
-                <div className="text-[12px] text-gray-500">@{username}</div>
+                <div className="text-[12px] text-gray-500">
+                  @{user.username}
+                </div>
               </>
             ) : (
               // No profile name, only show username
               <>
                 <div className="text-[15px] font-bold group-hover:text-blue-500">
-                  {username}
+                  {user.username}
                 </div>
-                <div className="text-[12px] text-gray-500">@{username}</div>
+                <div className="text-[12px] text-gray-500">
+                  @{user.username}
+                </div>
               </>
             )}
           </div>

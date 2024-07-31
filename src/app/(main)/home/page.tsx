@@ -45,7 +45,7 @@ const Home: React.FC = () => {
               user={post.user}
               createdAt={post.createdAt}
               updatedAt={post.updatedAt}
-              timestamp={post.timestamp}
+              timestamp={post.updatedAt || post.createdAt}
               title={post.title}
               content={post.content}
               initialLikesCount={post.initialLikesCount ?? 0}
