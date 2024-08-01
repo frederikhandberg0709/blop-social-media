@@ -25,8 +25,6 @@ const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
     }
   }, [success]);
 
-  const timestamp = getTimestamp(post.createdAt, post.updatedAt);
-
   return (
     <>
       {showSuccessMessage && (
@@ -40,10 +38,9 @@ const PostDetailClient: React.FC<{ post: PostProps }> = ({ post }) => {
             key={post.id}
             id={post.id}
             user={post.user}
-            createdAt={"0"}
-            updatedAt={"0"}
-            // timestamp={formatDate(post.updatedAt || post.createdAt)}
-            timestamp={new Date().toISOString()}
+            createdAt={post.createdAt}
+            updatedAt={post.updatedAt}
+            timestamp={post.updatedAt || post.createdAt}
             title={post.title}
             content={post.content}
             initialLikesCount={post.initialLikesCount}

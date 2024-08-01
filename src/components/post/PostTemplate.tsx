@@ -45,7 +45,7 @@ const PostTemplate: React.FC<PostProps> = ({
     };
 
     fetchLikesCount();
-  }, [id]);
+  }, [id, session?.user?.id]);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -57,7 +57,6 @@ const PostTemplate: React.FC<PostProps> = ({
         console.error("Error fetching comments:", error);
       }
     };
-
     fetchComments();
   }, [id]);
 
@@ -232,7 +231,7 @@ const PostTemplate: React.FC<PostProps> = ({
                 </Link>
               </div>
               <div className="mt-5 flex w-full flex-col gap-5">
-                {comments.map((comment) => (
+                {comments?.map((comment) => (
                   <CommentTemplate
                     key={comment.id}
                     id={comment.id}

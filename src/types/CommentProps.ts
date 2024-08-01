@@ -2,9 +2,6 @@ import { UserProps } from "./UserProps";
 
 export interface CommentProps {
   id: string;
-  //   profilePicture: string | null;
-  //   profileName: string | null;
-  //   username: string;
   user: UserProps;
   createdAt: string;
   updatedAt: string;

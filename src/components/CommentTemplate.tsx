@@ -11,23 +11,6 @@ import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 import { useRouter } from "next/navigation";
 import { CommentProps } from "@/types/CommentProps";
 
-// interface CommentProps {
-//   id: string;
-//   profilePicture: string | null;
-//   profileName: string | null;
-//   username: string;
-//   createdAt: string;
-//   updatedAt: string;
-//   timestamp: string;
-//   title?: string;
-//   content: string | React.ReactNode;
-//   imageContent?: string;
-//   videoContent?: string;
-//   replies?: CommentProps[];
-//   initialLikesCount: number;
-//   userLiked: boolean;
-// }
-
 export default function CommentTemplate({
   id,
   user,
@@ -129,6 +112,10 @@ export default function CommentTemplate({
   const parsedContent =
     typeof content === "string" ? parseTextWithMedia(content) : content;
 
+  if (!user) {
+    return "No comments right now...";
+  }
+
   return (
     <div className="flex w-full flex-col gap-1">
       <div className="flex items-center justify-between">
@@ -137,13 +124,13 @@ export default function CommentTemplate({
           className="group flex items-center gap-[10px]"
         >
           <img
-            src={user.profilePicture || defaultProfilePicture}
-            alt={`${user.profileName}'s profile picture`}
+            src={user?.profilePicture || defaultProfilePicture}
+            alt={`${user?.profileName}'s profile picture`}
             className="h-[40px] w-[40px] rounded-full object-cover"
           />
           <div className="flex flex-col gap-[1px]">
             {/* If user has profile name */}
-            {user.profileName ? (
+            {user?.profileName ? (
               <>
                 <div className="text-[15px] font-bold group-hover:text-blue-500">
                   {user.profileName}

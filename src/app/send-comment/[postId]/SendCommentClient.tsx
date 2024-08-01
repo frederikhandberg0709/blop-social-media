@@ -1,27 +1,35 @@
 "use client";
 
 import DangerButton from "@/components/buttons/DangerButton";
+import PostActionButtons from "@/components/buttons/PostActionButtons";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import CommentTemplate from "@/components/CommentTemplate";
+import PostDropdownMenu from "@/components/menus/PostDropdownMenu";
+import PostCommentPreview from "@/components/post/PostCommentPreview";
 import PostTemplate from "@/components/post/PostTemplate";
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import useUserColor from "@/hooks/useUserColor";
 import { PostProps } from "@/types/PostProps";
 import { formatDate } from "@/utils/formattedDate";
+import { getTimestamp } from "@/utils/getTimestamp";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 interface SendCommentClientProps {
-  post: PostProps | null;
+  post: PostProps;
 }
 
 export default function SendCommentClient({ post }: SendCommentClientProps) {
   const { data: session } = useSession();
   const router = useRouter();
+  const [likesCount, setLikesCount] = useState(post.initialLikesCount);
+  const [liked, setLiked] = useState(post.userLiked);
   const [commentTitle, setCommentTitle] = useState<string>("");
   const [commentContent, setCommentContent] = useState<string>("");
+  const [comments, setComments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [characterCount, setCharacterCount] = useState<number>(0);
@@ -40,6 +48,48 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCommentTitle(event.target.value);
+  };
+
+  useEffect(() => {
+    const fetchLikesCount = async () => {
+      try {
+        const userId = session?.user?.id;
+        const response = await fetch(
+          `/api/likes-count-post?postId=${post.id}&userId=${userId}`,
+        );
+        const data = await response.json();
+        setLikesCount(data.likesCount);
+        setLiked(data.userLiked);
+      } catch (error) {
+        console.error("Error fetching likes count:", error);
+      }
+    };
+
+    fetchLikesCount();
+  }, [post.id, session?.user?.id]);
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(
+          `/api/fetch-all-comments?postId=${post.id}`,
+        );
+        const data = await response.json();
+        setComments(data.comments);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    fetchComments();
+  }, [post.id]);
+
+  const handleLike = async () => {
+    // Function should be disabled
+  };
+
+  const handleUnlike = async () => {
+    // Function should be disabled
   };
 
   useAutosizeTextArea(textareaRef.current, commentContent);
@@ -74,122 +124,16 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
     setCommentContent(val);
   };
 
-  // useEffect(() => {
-  //   const fetchPost = async () => {
-  //     try {
-  //       const response = await fetch(`/api/fetch-post/${postId}`);
-
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch post");
-  //       }
-  //       const data = await response.json();
-  //       if (data && data.post) {
-  //         setPost(data.post);
-  //       } else {
-  //         console.error("Post data is not structured as expected");
-  //       }
-  //       console.log("Fetched post:", data);
-  //       setPost(data.post);
-  //     } catch (error) {
-  //       console.error("Error fetching post:", error);
-  //     }
-  //   };
-
-  //   console.log(postId);
-
-  //   const fetchcomment = async () => {
-  //     if (parentId) {
-  //       try {
-  //         const response = await fetch(`/api/fetch-comment/${parentId}`);
-  //         if (!response.ok) {
-  //           throw new Error("Failed to fetch parent comment");
-  //         }
-  //         const data = await response.json();
-  //         setcomment(data.comment);
-  //       } catch (error) {
-  //         console.error("Error fetching parent comment:", error);
-  //       }
-  //     }
-  //   };
-
-  //   fetchPost();
-  //   fetchcomment();
-  // }, [postId, parentId]);
-
-  // const submitComment = async () => {
-  //   if (!commentContent.trim()) return;
-  //   setIsLoading(true);
-  //   setError(null);
-
-  //   try {
-  //     const response = await fetch(`/api/send-comment/${postId}`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         parentId: commentId ?? null,
-  //         commentTitle,
-  //         commentContent,
-  //       }),
-  //     });
-
-  //     if (!response.ok) {
-  //       const errorData = await response.json();
-  //       throw new Error(errorData.error || "Failed to send comment");
-  //     }
-
-  //     const comment = await response.json();
-  //     console.log("Comment created:", comment);
-  //     router.push(`/post/${postId}`);
-  //   } catch (error) {
-  //     setError((error as Error).message);
-  //     console.error("Error sending comment:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  // const submitComment = async () => {
-  //   if (!commentContent.trim()) return;
-  //   setIsLoading(true);
-  //   setError(null);
-
-  //   try {
-  //     const response = await fetch(
-  //       `/api/send-comment/${post?.id}`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           parentId: comment?.id ?? null,
-  //           commentTitle,
-  //           commentContent,
-  //         }),
-  //       },
-  //     );
-
-  //     if (!response.ok) {
-  //       const errorData = await response.json();
-  //       throw new Error(errorData.error || "Failed to send comment");
-  //     }
-
-  //     const createdComment = await response.json();
-  //     console.log("Comment created:", createdComment);
-  //     router.push(`/post/${post?.id || comment?.postId}`);
-  //   } catch (error) {
-  //     setError((error as Error).message);
-  //     console.error("Error sending comment:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const parsedContent =
+    typeof post.content === "string"
+      ? parseTextWithMedia(post.content)
+      : post.content;
 
   if (!session?.user) {
     return <div>Loading...</div>;
   }
+
+  const timestamp = getTimestamp(post.createdAt, post.updatedAt);
 
   return (
     <div className="mb-[100px] mt-[90px] flex justify-center">
@@ -252,49 +196,84 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
         <div className="h-[1px] w-full bg-white/5"></div>
         <div>
           <h1 className="mb-[20px] font-bold text-white/50">Preview Comment</h1>
-          {post && (
-            <PostTemplate
-              key={post.id}
-              id={post.id}
-              user={post.user}
-              createdAt={post.createdAt}
-              updatedAt={post.updatedAt}
-              timestamp={post.updatedAt || post.createdAt}
-              title={post.title}
-              content={post.content}
-              initialLikesCount={post.initialLikesCount ?? 0}
-              userLiked={post.userLiked}
+          <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
+            <div className="flex items-center justify-between">
+              <Link
+                href={`/profile/${post.user.username}`}
+                className="group flex items-center gap-[10px]"
+              >
+                <img
+                  src={post.user.profilePicture || "defaultProfilePicture"}
+                  alt={`${post.user.profileName}'s profile picture`}
+                  className="h-[40px] w-[40px] rounded-full object-cover"
+                />
+                <div className="flex flex-col gap-[1px]">
+                  {/* If user has profile name */}
+                  {post.user.profileName ? (
+                    <>
+                      <div className="text-[15px] font-bold group-hover:text-blue-500">
+                        {post.user.profileName}
+                      </div>
+                      <div className="text-[12px] text-gray-500">
+                        @{post.user.username}
+                      </div>
+                    </>
+                  ) : (
+                    // No profile name, only show username
+                    <>
+                      <div className="text-[15px] font-bold group-hover:text-blue-500">
+                        {post.user.username}
+                      </div>
+                      <div className="text-[12px] text-gray-500">
+                        @{post.user.username}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </Link>
+              <div className="flex items-center gap-[15px]">
+                <div className="text-right text-[15px] text-gray-500">
+                  {/* {formatDate(post.timestamp)} */}
+                  {timestamp}
+                </div>
+                {/* Dropdown menu */}
+                <PostDropdownMenu id={post.id} />
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              {post.title && (
+                <h1 className="text-xl font-bold">{post.title}</h1>
+              )}
+              <p className="text-base leading-normal">{parsedContent}</p>
+            </div>
+            <PostActionButtons
+              likesCount={likesCount}
+              commentsCount={comments.length}
+              onCommentClick={
+                () => {}
+                // setIsCommentSectionVisible(!isCommentSectionVisible)
+              }
+              sharesCount={0}
+              donationCount={0}
+              liked={liked}
+              onLike={handleLike}
+              onUnlike={handleUnlike}
             />
-          )}
-          {/* {comment && (
             <CommentTemplate
-              id={comment.id}
-              profilePicture={comment.profilePicture}
-              profileName={comment.profileName}
-              username={comment.username}
-              timestamp={comment.timestamp}
-              title={comment.title}
-              content={parseTextWithMedia(comment.content)}
-              initialLikesCount={comment.initialLikesCount}
-              userLiked={comment.userLiked}
+              id={session?.user.id || ""}
+              user={session?.user}
+              createdAt={formatDate(new Date().toISOString())}
+              updatedAt={formatDate(new Date().toISOString())}
+              // timestamp={new Date().toISOString()}
+              // timestamp={formatDate(new Date().toISOString())}
+              timestamp={new Date().toISOString()}
+              title={commentTitle}
+              content={parseTextWithMedia(commentContent)}
+              initialLikesCount={0}
+              userLiked={false}
             />
-          )}
-          <CommentTemplate
-            id={session?.user.id || ""}
-            profilePicture={null}
-            profileName={
-              session?.user.profileName || session?.user.username || ""
-            }
-            username={session?.user.username || ""}
-            timestamp={formatDate(new Date().toISOString())}
-            title={commentTitle}
-            content={parseTextWithMedia(commentContent)}
-            initialLikesCount={0}
-            userLiked={false}
-          /> */}
+          </div>
         </div>
-        {/* Show comment being replied to */}
-        {/* Show preview of the comment being created */}
       </div>
     </div>
   );
