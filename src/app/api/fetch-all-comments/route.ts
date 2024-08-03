@@ -127,7 +127,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    console.log("Fetching comments for postId:", postId);
+    // console.log("Fetching comments for postId:", postId);
 
     const comments = await prisma.comment.findMany({
       where: { postId: postId },
@@ -136,7 +136,7 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    console.log("Comments from API:", comments);
+    // console.log("Comments from API:", comments);
 
     return NextResponse.json({ comments }, { status: 200 });
   } catch (error) {

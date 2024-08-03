@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import Link from "next/link";
 import PostActionButtons from "../buttons/PostActionButtons";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import CommentTemplate from "../CommentTemplate";
 import PostDropdownMenu from "../menus/PostDropdownMenu";
@@ -31,6 +32,7 @@ const PostTemplate: React.FC<PostProps> = ({
   const [commentSectionHeight, setCommentSectionHeight] = useState<
     number | "auto"
   >(0);
+  const [overlayImage, setOverlayImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLikesCount = async () => {
@@ -112,11 +114,29 @@ const PostTemplate: React.FC<PostProps> = ({
     }
   };
 
+  const handleImageClick = (src: string) => {
+    setOverlayImage(src);
+    document.body.style.overflow = "hidden"; // Disable scrolling
+  };
+
+  const closeOverlay = () => {
+    setOverlayImage(null);
+    document.body.style.overflow = "auto"; // Enable scrolling
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      closeOverlay();
+    }
+  };
+
   const defaultProfilePicture =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRg5CvxCysqjZrsTPUjcl5sN3HIzePiCWM7KQ&s";
 
   const parsedContent =
-    typeof content === "string" ? parseTextWithMedia(content) : content;
+    typeof content === "string"
+      ? parseTextWithMedia(content, handleImageClick)
+      : content;
 
   if (!user) {
     return null; // or some kind of loading indicator or placeholder
@@ -253,6 +273,28 @@ const PostTemplate: React.FC<PostProps> = ({
           </div>
         </>
       </AnimateHeight>
+      {/* Fullscreen  image overlay */}
+      {overlayImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+          onClick={handleOverlayClick}
+        >
+          <div className="relative max-h-full max-w-full overflow-hidden">
+            <button
+              className="absolute right-0 top-0 m-4 rounded-full bg-black/50 px-2 py-1 font-semibold text-white hover:bg-black/95"
+              onClick={closeOverlay}
+            >
+              Close
+            </button>
+            <img
+              src={overlayImage}
+              alt="Fullscreen"
+              onClick={(e) => e.stopPropagation()}
+              className="max-h-[90vh] max-w-[90vw] rounded-lg"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

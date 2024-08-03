@@ -1,6 +1,9 @@
 import React from "react";
 
-export const parseTextWithMedia = (inputText: string) => {
+export const parseTextWithMedia = (
+  inputText: string,
+  handleImageClick: (src: string) => void,
+) => {
   const mediaRegex = /(https:\/\/.*?\.(jpg|jpeg|png|gif|mp4|avi|mov))/g;
   let parts = [];
   let lastIndex = 0;
@@ -24,6 +27,7 @@ export const parseTextWithMedia = (inputText: string) => {
         <img
           key={mediaLink}
           src={mediaLink}
+          onClick={() => handleImageClick(mediaLink)}
           alt="User uploaded content"
           className="rounded-[10px]"
         />,

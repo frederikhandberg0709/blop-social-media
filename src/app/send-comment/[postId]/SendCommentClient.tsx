@@ -3,6 +3,7 @@
 import DangerButton from "@/components/buttons/DangerButton";
 import PostActionButtons from "@/components/buttons/PostActionButtons";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
+import ToggleSwitch from "@/components/buttons/ToggleSwitch";
 import CommentTemplate from "@/components/CommentTemplate";
 import PostDropdownMenu from "@/components/menus/PostDropdownMenu";
 import PostCommentPreview from "@/components/post/PostCommentPreview";
@@ -34,6 +35,7 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
   const [error, setError] = useState<string | null>(null);
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
+  const [overlayImage, setOverlayImage] = useState<string | null>(null);
   // const [comment, setcomment] = useState<any>(null);
   const [isCommentTitleFocused, setIsCommentTitleFocused] =
     useState<boolean>(false);
@@ -160,14 +162,30 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
     setCommentContent(val);
   };
 
-  const parsedContent =
-    typeof post.content === "string"
-      ? parseTextWithMedia(post.content)
-      : post.content;
-
   if (!session?.user) {
     return <div>Loading...</div>;
   }
+
+  const handleImageClick = (src: string) => {
+    setOverlayImage(src);
+    document.body.style.overflow = "hidden"; // Disable scrolling
+  };
+
+  const closeOverlay = () => {
+    setOverlayImage(null);
+    document.body.style.overflow = "auto"; // Enable scrolling
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      closeOverlay();
+    }
+  };
+
+  const parsedContent =
+    typeof post.content === "string"
+      ? parseTextWithMedia(post.content, handleImageClick)
+      : post.content;
 
   const timestamp = getTimestamp(post.createdAt, post.updatedAt);
 
@@ -231,7 +249,17 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
         </div>
         <div className="h-[1px] w-full bg-white/5"></div>
         <div>
-          <h1 className="mb-[20px] font-bold text-white/50">Preview Comment</h1>
+          <div className="mb-[20px] flex items-center justify-between">
+            <h1 className="text-xl font-bold text-white/50">Preview Comment</h1>
+            <div className="opacity-50 transition-opacity duration-150 ease-in-out hover:opacity-100">
+              {/* TODO: Toggle functionality to show/hide the post in preview */}
+              <ToggleSwitch
+                label={<span className="text-sm font-semibold">Show post</span>}
+                checked={true}
+                onChange={() => {}}
+              />
+            </div>
+          </div>
           <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
             <div className="flex items-center justify-between">
               <Link
@@ -304,13 +332,35 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
               // timestamp={formatDate(new Date().toISOString())}
               timestamp={new Date().toISOString()}
               title={commentTitle}
-              content={parseTextWithMedia(commentContent)}
+              content={parseTextWithMedia(commentContent, () => {})}
               initialLikesCount={0}
               userLiked={false}
             />
           </div>
         </div>
       </div>
+      {/* Fullscreen  image overlay */}
+      {overlayImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+          onClick={handleOverlayClick}
+        >
+          <div className="relative max-h-full max-w-full overflow-hidden">
+            <button
+              className="absolute right-0 top-0 m-4 rounded-full bg-black/50 px-2 py-1 font-semibold text-white hover:bg-black/95"
+              onClick={closeOverlay}
+            >
+              Close
+            </button>
+            <img
+              src={overlayImage}
+              alt="Fullscreen"
+              onClick={(e) => e.stopPropagation()}
+              className="max-h-[90vh] max-w-[90vw] rounded-lg"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
