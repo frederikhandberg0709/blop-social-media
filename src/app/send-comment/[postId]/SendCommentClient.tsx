@@ -84,6 +84,42 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
     fetchComments();
   }, [post.id]);
 
+  const submitComment = async () => {
+    if (!commentContent.trim()) return;
+    setIsLoading(true);
+    setError(null);
+
+    let title = commentTitle;
+    let content = commentContent;
+
+    try {
+      const response = await fetch(`/api/send-comment/${post.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          content,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send comment");
+      }
+
+      const comment = await response.json();
+      console.log("Comment created:", comment);
+      router.push(`/post/${post.id}`);
+    } catch (error) {
+      setError((error as Error).message);
+      console.error("Error sending comment:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleLike = async () => {
     // Function should be disabled
   };
@@ -183,9 +219,9 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
               >
                 Save Draft
               </button>
-              {/* <PrimaryButton onClick={submitComment} disabled={isLoading}>
+              <PrimaryButton onClick={submitComment} disabled={isLoading}>
                 {isLoading ? "Publishing..." : "Publish"}
-              </PrimaryButton> */}
+              </PrimaryButton>
               {/* Show warning modal before cancelling */}
               <DangerButton onClick={() => router.back()} type="button">
                 Cancel

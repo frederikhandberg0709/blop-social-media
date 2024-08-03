@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import PostActionButtons from "../buttons/PostActionButtons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import CommentTemplate from "../CommentTemplate";
 import PostDropdownMenu from "../menus/PostDropdownMenu";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 import { PostProps } from "@/types/PostProps";
 import { formatDate } from "@/utils/formattedDate";
+import AnimateHeight from "react-animate-height";
 
 const PostTemplate: React.FC<PostProps> = ({
   id,
@@ -27,7 +28,9 @@ const PostTemplate: React.FC<PostProps> = ({
   const [likesCount, setLikesCount] = useState(initialLikesCount);
   const [liked, setLiked] = useState(userLiked);
   const [comments, setComments] = useState<any[]>([]);
-  const [isCommentSectionVisible, setIsCommentSectionVisible] = useState(false);
+  const [commentSectionHeight, setCommentSectionHeight] = useState<
+    number | "auto"
+  >(0);
 
   useEffect(() => {
     const fetchLikesCount = async () => {
@@ -89,7 +92,6 @@ const PostTemplate: React.FC<PostProps> = ({
     if (!session) {
       return alert("You need to be logged in to unlike posts");
     }
-
     try {
       const response = await fetch("/api/unlike-post", {
         method: "POST",
@@ -172,7 +174,7 @@ const PostTemplate: React.FC<PostProps> = ({
         likesCount={likesCount}
         commentsCount={comments.length}
         onCommentClick={() =>
-          setIsCommentSectionVisible(!isCommentSectionVisible)
+          setCommentSectionHeight(commentSectionHeight === 0 ? "auto" : 0)
         }
         sharesCount={0}
         donationCount={0}
@@ -180,7 +182,7 @@ const PostTemplate: React.FC<PostProps> = ({
         onLike={handleLike}
         onUnlike={handleUnlike}
       />
-      {isCommentSectionVisible && (
+      <AnimateHeight duration={500} height={commentSectionHeight}>
         <>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
@@ -250,7 +252,7 @@ const PostTemplate: React.FC<PostProps> = ({
             </div>
           </div>
         </>
-      )}
+      </AnimateHeight>
     </div>
   );
 };
