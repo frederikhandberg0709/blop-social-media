@@ -36,6 +36,7 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
   const [overlayImage, setOverlayImage] = useState<string | null>(null);
+  const [showPost, setShowPost] = useState(true);
   // const [comment, setcomment] = useState<any>(null);
   const [isCommentTitleFocused, setIsCommentTitleFocused] =
     useState<boolean>(false);
@@ -252,77 +253,80 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
           <div className="mb-[20px] flex items-center justify-between">
             <h1 className="text-xl font-bold text-white/50">Preview Comment</h1>
             <div className="opacity-50 transition-opacity duration-150 ease-in-out hover:opacity-100">
-              {/* TODO: Toggle functionality to show/hide the post in preview */}
               <ToggleSwitch
                 label={<span className="text-sm font-semibold">Show post</span>}
-                checked={true}
-                onChange={() => {}}
+                checked={showPost}
+                onChange={() => setShowPost(!showPost)}
               />
             </div>
           </div>
           <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
-            <div className="flex items-center justify-between">
-              <Link
-                href={`/profile/${post.user.username}`}
-                className="group flex items-center gap-[10px]"
-              >
-                <img
-                  src={post.user.profilePicture || "defaultProfilePicture"}
-                  alt={`${post.user.profileName}'s profile picture`}
-                  className="h-[40px] w-[40px] rounded-full object-cover"
-                />
-                <div className="flex flex-col gap-[1px]">
-                  {/* If user has profile name */}
-                  {post.user.profileName ? (
-                    <>
-                      <div className="text-[15px] font-bold group-hover:text-blue-500">
-                        {post.user.profileName}
-                      </div>
-                      <div className="text-[12px] text-gray-500">
-                        @{post.user.username}
-                      </div>
-                    </>
-                  ) : (
-                    // No profile name, only show username
-                    <>
-                      <div className="text-[15px] font-bold group-hover:text-blue-500">
-                        {post.user.username}
-                      </div>
-                      <div className="text-[12px] text-gray-500">
-                        @{post.user.username}
-                      </div>
-                    </>
+            {showPost && (
+              <>
+                <div className="flex items-center justify-between">
+                  <Link
+                    href={`/profile/${post.user.username}`}
+                    className="group flex items-center gap-[10px]"
+                  >
+                    <img
+                      src={post.user.profilePicture || ""}
+                      alt={`${post.user.profileName}'s profile picture`}
+                      className="h-[40px] w-[40px] rounded-full object-cover"
+                    />
+                    <div className="flex flex-col gap-[1px]">
+                      {/* If user has profile name */}
+                      {post.user.profileName ? (
+                        <>
+                          <div className="text-[15px] font-bold group-hover:text-blue-500">
+                            {post.user.profileName}
+                          </div>
+                          <div className="text-[12px] text-gray-500">
+                            @{post.user.username}
+                          </div>
+                        </>
+                      ) : (
+                        // No profile name, only show username
+                        <>
+                          <div className="text-[15px] font-bold group-hover:text-blue-500">
+                            {post.user.username}
+                          </div>
+                          <div className="text-[12px] text-gray-500">
+                            @{post.user.username}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </Link>
+                  <div className="flex items-center gap-[15px]">
+                    <div className="text-right text-[15px] text-gray-500">
+                      {/* {formatDate(post.timestamp)} */}
+                      {timestamp}
+                    </div>
+                    {/* Dropdown menu */}
+                    <PostDropdownMenu id={post.id} />
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  {post.title && (
+                    <h1 className="text-xl font-bold">{post.title}</h1>
                   )}
+                  <p className="text-base leading-normal">{parsedContent}</p>
                 </div>
-              </Link>
-              <div className="flex items-center gap-[15px]">
-                <div className="text-right text-[15px] text-gray-500">
-                  {/* {formatDate(post.timestamp)} */}
-                  {timestamp}
-                </div>
-                {/* Dropdown menu */}
-                <PostDropdownMenu id={post.id} />
-              </div>
-            </div>
-            <div className="flex flex-col gap-1">
-              {post.title && (
-                <h1 className="text-xl font-bold">{post.title}</h1>
-              )}
-              <p className="text-base leading-normal">{parsedContent}</p>
-            </div>
-            <PostActionButtons
-              likesCount={likesCount}
-              commentsCount={comments.length}
-              onCommentClick={
-                () => {}
-                // setIsCommentSectionVisible(!isCommentSectionVisible)
-              }
-              sharesCount={0}
-              donationCount={0}
-              liked={liked}
-              onLike={handleLike}
-              onUnlike={handleUnlike}
-            />
+                <PostActionButtons
+                  likesCount={likesCount}
+                  commentsCount={comments.length}
+                  onCommentClick={
+                    () => {}
+                    // setIsCommentSectionVisible(!isCommentSectionVisible)
+                  }
+                  sharesCount={0}
+                  donationCount={0}
+                  liked={liked}
+                  onLike={handleLike}
+                  onUnlike={handleUnlike}
+                />
+              </>
+            )}
             <CommentTemplate
               id={session?.user.id || ""}
               user={session?.user}

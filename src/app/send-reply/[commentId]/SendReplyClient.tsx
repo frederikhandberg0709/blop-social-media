@@ -2,6 +2,7 @@
 
 import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
+import ToggleSwitch from "@/components/buttons/ToggleSwitch";
 import CommentTemplate from "@/components/CommentTemplate";
 import PostTemplate from "@/components/post/PostTemplate";
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
@@ -9,8 +10,10 @@ import useUserColor from "@/hooks/useUserColor";
 import { CommentProps } from "@/types/CommentProps";
 import { PostProps } from "@/types/PostProps";
 import { formatDate } from "@/utils/formattedDate";
+import { getTimestamp } from "@/utils/getTimestamp";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -21,177 +24,86 @@ interface SendReplyClientProps {
 export default function SendReplyClient({ comment }: SendReplyClientProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  const [commentTitle, setCommentTitle] = useState<string>("");
-  const [commentContent, setCommentContent] = useState<string>("");
+  const [likesCount, setLikesCount] = useState(comment?.initialLikesCount);
+  const [liked, setLiked] = useState(comment?.userLiked);
+  const [replyTitle, setReplyTitle] = useState<string>("");
+  const [replyContent, setReplyContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
-  const [isCommentTitleFocused, setIsCommentTitleFocused] =
+  const [overlayImage, setOverlayImage] = useState<string | null>(null);
+  const [isReplyTitleFocused, setIsReplyTitleFocused] =
     useState<boolean>(false);
-  const [isCommentTitleHovered, setIsCommentTitleHovered] =
+  const [isReplyTitleHovered, setIsReplyTitleHovered] =
     useState<boolean>(false);
-  const [isCommentContentFocused, setIsCommentContentFocused] =
+  const [isReplyContentFocused, setIsReplyContentFocused] =
     useState<boolean>(false);
-  const [isCommentContentHovered, setIsCommentContentHovered] =
+  const [isReplyContentHovered, setIsReplyContentHovered] =
     useState<boolean>(false);
+  const [showParentComment, setShowParentComment] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const borderColor = useUserColor();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCommentTitle(event.target.value);
+    setReplyTitle(event.target.value);
   };
 
-  useAutosizeTextArea(textareaRef.current, commentContent);
+  useAutosizeTextArea(textareaRef.current, replyContent);
 
-  const handleCommentTitleFocus = () => setIsCommentTitleFocused(true);
-  const handleCommentTitleBlur = () => setIsCommentTitleFocused(false);
-  const handleCommentTitleMouseOver = () => setIsCommentTitleHovered(true);
-  const handleCommentTitleMouseOut = () => setIsCommentTitleHovered(false);
+  const handleReplyTitleFocus = () => setIsReplyTitleFocused(true);
+  const handleReplyTitleBlur = () => setIsReplyTitleFocused(false);
+  const handleReplyTitleMouseOver = () => setIsReplyTitleHovered(true);
+  const handleReplyTitleMouseOut = () => setIsReplyTitleHovered(false);
 
-  const handleCommentContentFocus = () => setIsCommentContentFocused(true);
-  const handleCommentContentBlur = () => setIsCommentContentFocused(false);
-  const handleCommentContentMouseOver = () => setIsCommentContentHovered(true);
-  const handleCommentContentMouseOut = () => setIsCommentContentHovered(false);
+  const handleReplyContentFocus = () => setIsReplyContentFocused(true);
+  const handleReplyContentBlur = () => setIsReplyContentFocused(false);
+  const handleReplyContentMouseOver = () => setIsReplyContentHovered(true);
+  const handleReplyContentMouseOut = () => setIsReplyContentHovered(false);
 
   const calculateTitleBorderColor = () => {
-    if (isCommentTitleFocused || isCommentTitleHovered) return borderColor;
+    if (isReplyTitleFocused || isReplyTitleHovered) return borderColor;
     return `${borderColor}33`; // 20% opacity
   };
 
   const calculateTextBorderColor = () => {
-    if (isCommentContentFocused || isCommentContentHovered) return borderColor;
+    if (isReplyContentFocused || isReplyContentHovered) return borderColor;
     return `${borderColor}33`; // 20% opacity
   };
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = event.target.value;
-    setCommentContent(newText);
+    setReplyContent(newText);
     setCharacterCount(newText.length);
     setWordCount(newText ? newText.trim().split(/\s+/).length : 0);
 
     const val = event.target?.value;
-    setCommentContent(val);
+    setReplyContent(val);
   };
 
-  // useEffect(() => {
-  //   const fetchPost = async () => {
-  //     try {
-  //       const response = await fetch(`/api/fetch-post/${postId}`);
-
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch post");
-  //       }
-  //       const data = await response.json();
-  //       if (data && data.post) {
-  //         setPost(data.post);
-  //       } else {
-  //         console.error("Post data is not structured as expected");
-  //       }
-  //       console.log("Fetched post:", data);
-  //       setPost(data.post);
-  //     } catch (error) {
-  //       console.error("Error fetching post:", error);
-  //     }
-  //   };
-
-  //   console.log(postId);
-
-  //   const fetchcomment = async () => {
-  //     if (parentId) {
-  //       try {
-  //         const response = await fetch(`/api/fetch-comment/${parentId}`);
-  //         if (!response.ok) {
-  //           throw new Error("Failed to fetch parent comment");
-  //         }
-  //         const data = await response.json();
-  //         setcomment(data.comment);
-  //       } catch (error) {
-  //         console.error("Error fetching parent comment:", error);
-  //       }
-  //     }
-  //   };
-
-  //   fetchPost();
-  //   fetchcomment();
-  // }, [postId, parentId]);
-
-  const submitComment = async () => {};
-  //   if (!commentContent.trim()) return;
-  //   setIsLoading(true);
-  //   setError(null);
-
-  //   try {
-  //     const response = await fetch(`/api/send-comment/${postId}`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         parentId: commentId ?? null,
-  //         commentTitle,
-  //         commentContent,
-  //       }),
-  //     });
-
-  //     if (!response.ok) {
-  //       const errorData = await response.json();
-  //       throw new Error(errorData.error || "Failed to send comment");
-  //     }
-
-  //     const comment = await response.json();
-  //     console.log("Comment created:", comment);
-  //     router.push(`/post/${postId}`);
-  //   } catch (error) {
-  //     setError((error as Error).message);
-  //     console.error("Error sending comment:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  //   const submitComment = async () => {
-  //     if (!commentContent.trim()) return;
-  //     setIsLoading(true);
-  //     setError(null);
-
-  //     try {
-  //       const response = await fetch(
-  //         `/api/send-comment/${post?.id || comment?.id}`,
-  //         {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify({
-  //             parentId: comment?.id ?? null,
-  //             commentTitle,
-  //             commentContent,
-  //           }),
-  //         },
-  //       );
-
-  //       if (!response.ok) {
-  //         const errorData = await response.json();
-  //         throw new Error(errorData.error || "Failed to send comment");
-  //       }
-
-  //       const createdComment = await response.json();
-  //       console.log("Comment created:", createdComment);
-  //       router.push(`/post/${post?.id || comment?.postId}`);
-  //     } catch (error) {
-  //       setError((error as Error).message);
-  //       console.error("Error sending comment:", error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+  const submitReply = async () => {};
 
   if (!session?.user) {
     return <div>Loading...</div>;
   }
 
-  console.log("Testing client: Comment data:", comment);
+  const handleImageClick = (src: string) => {
+    setOverlayImage(src);
+    document.body.style.overflow = "hidden"; // Disable scrolling
+  };
+
+  const closeOverlay = () => {
+    setOverlayImage(null);
+    document.body.style.overflow = "auto"; // Enable scrolling
+  };
+
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      closeOverlay();
+    }
+  };
+
+  // const timestamp = getTimestamp(comment.createdAt, comment.updatedAt);
 
   return (
     <div className="mb-[100px] mt-[90px] flex justify-center">
@@ -202,12 +114,12 @@ export default function SendReplyClient({ comment }: SendReplyClientProps) {
           <input
             type="text"
             placeholder="Title of comment..."
-            value={commentTitle}
+            value={replyTitle}
             onChange={handleTitleChange}
-            onFocus={handleCommentTitleFocus}
-            onBlur={handleCommentTitleBlur}
-            onMouseOver={handleCommentTitleMouseOver}
-            onMouseOut={handleCommentTitleMouseOut}
+            onFocus={handleReplyTitleFocus}
+            onBlur={handleReplyTitleBlur}
+            onMouseOver={handleReplyTitleMouseOver}
+            onMouseOut={handleReplyTitleMouseOut}
             className="w-full rounded-xl border-2 bg-transparent p-[15px] outline-none transition duration-200 ease-in-out"
             style={{
               borderColor: calculateTitleBorderColor(),
@@ -216,13 +128,13 @@ export default function SendReplyClient({ comment }: SendReplyClientProps) {
           />
           <textarea
             placeholder="Write your comment here..."
-            value={commentContent}
+            value={replyContent}
             onChange={handleTextChange}
             ref={textareaRef}
-            onFocus={handleCommentContentFocus}
-            onBlur={handleCommentContentBlur}
-            onMouseOver={handleCommentContentMouseOver}
-            onMouseOut={handleCommentContentMouseOut}
+            onFocus={handleReplyContentFocus}
+            onBlur={handleReplyContentBlur}
+            onMouseOver={handleReplyContentMouseOver}
+            onMouseOut={handleReplyContentMouseOut}
             className="min-h-[200px] w-full rounded-xl border-2 bg-transparent p-[15px] outline-none transition duration-200 ease-in-out"
             style={{
               borderColor: calculateTextBorderColor(),
@@ -241,7 +153,7 @@ export default function SendReplyClient({ comment }: SendReplyClientProps) {
               >
                 Save Draft
               </button>
-              <PrimaryButton onClick={submitComment} disabled={isLoading}>
+              <PrimaryButton onClick={submitReply} disabled={isLoading}>
                 {isLoading ? "Publishing..." : "Publish"}
               </PrimaryButton>
               {/* Show warning modal before cancelling */}
@@ -253,34 +165,46 @@ export default function SendReplyClient({ comment }: SendReplyClientProps) {
         </div>
         <div className="h-[1px] w-full bg-white/5"></div>
         <div>
-          <h1 className="mb-[20px] font-bold text-white/50">Preview Comment</h1>
-          {comment && (
+          <div className="mb-[20px] flex items-center justify-between">
+            <h1 className="mb-[20px] font-bold text-white/50">
+              Preview Comment
+            </h1>
+            <div className="opacity-50 transition-opacity duration-150 ease-in-out hover:opacity-100">
+              <ToggleSwitch
+                label={
+                  <span className="text-sm font-semibold">Show comment</span>
+                }
+                checked={showParentComment}
+                onChange={() => setShowParentComment(!showParentComment)}
+              />
+            </div>
+          </div>
+          <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
+            {showParentComment && comment && (
+              <CommentTemplate
+                id={comment.id}
+                user={comment.user}
+                createdAt={comment.createdAt}
+                updatedAt={comment.updatedAt}
+                timestamp={comment.updatedAt || comment.createdAt}
+                title={comment.title}
+                content={comment.content}
+                initialLikesCount={likesCount}
+                userLiked={liked}
+              />
+            )}
             <CommentTemplate
-              key={comment.id}
-              id={comment.id}
-              user={comment.user}
-              createdAt={comment.createdAt}
-              updatedAt={comment.updatedAt}
-              timestamp={comment.updatedAt || comment.createdAt}
-              title={comment.title}
-              content={comment.content}
-              initialLikesCount={comment.initialLikesCount}
-              userLiked={comment.userLiked}
+              id={session?.user.id || ""}
+              user={session?.user}
+              createdAt={formatDate(new Date().toISOString())}
+              updatedAt={formatDate(new Date().toISOString())}
+              timestamp={new Date().toISOString()}
+              title={replyTitle}
+              content={parseTextWithMedia(replyContent, handleImageClick)}
+              initialLikesCount={0}
+              userLiked={false}
             />
-          )}
-          {/* <CommentTemplate
-            id={session?.user.id || ""}
-            profilePicture={null}
-            profileName={
-              session?.user.profileName || session?.user.username || ""
-            }
-            username={session?.user.username || ""}
-            timestamp={formatDate(new Date().toISOString())}
-            title={commentTitle}
-            content={parseTextWithMedia(commentContent)}
-            initialLikesCount={0}
-            userLiked={false}
-          /> */}
+          </div>
         </div>
       </div>
     </div>
