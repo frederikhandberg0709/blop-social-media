@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import SendReplyClient from "./SendReplyClient";
+import { CommentProps } from "@/types/CommentProps";
 
 interface SendCommentPostProps {
   params: { commentId: string };
@@ -13,14 +14,11 @@ export default async function SendReply({ params }: SendCommentPostProps) {
       cache: "no-store",
     },
   );
+  const commentData: CommentProps & { postId: string } = await response.json();
 
-  if (!response.ok) {
+  if (!commentData || !commentData.postId) {
     notFound();
   }
 
-  const commentData = await response.json();
-
-  console.log("Testing server: Comment data:", commentData);
-
-  return <SendReplyClient comment={commentData} />;
+  return <SendReplyClient comment={commentData} postId={commentData.postId} />;
 }

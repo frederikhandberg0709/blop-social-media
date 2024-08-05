@@ -18,10 +18,14 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 interface SendReplyClientProps {
-  comment: CommentProps | null;
+  comment: CommentProps;
+  postId: string;
 }
 
-export default function SendReplyClient({ comment }: SendReplyClientProps) {
+export default function SendReplyClient({
+  comment,
+  postId,
+}: SendReplyClientProps) {
   const { data: session } = useSession();
   const router = useRouter();
   const [likesCount, setLikesCount] = useState(comment?.initialLikesCount);
@@ -81,7 +85,39 @@ export default function SendReplyClient({ comment }: SendReplyClientProps) {
     setReplyContent(val);
   };
 
-  const submitReply = async () => {};
+  const submitReply = async () => {
+    if (!replyContent.trim()) return;
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/send-comment/${postId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          parentId: comment.id,
+          title: replyTitle,
+          content: replyContent,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send reply");
+      }
+
+      const reply = await response.json();
+      console.log("Reply created:", reply);
+      router.push(`/post/${comment.id}`);
+    } catch (error) {
+      setError((error as Error).message);
+      console.error("Error sending reply:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (!session?.user) {
     return <div>Loading...</div>;

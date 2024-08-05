@@ -7,26 +7,69 @@ export default function RegistrationForm() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   const validateUsername = (value: string) => {
     const regex = /^[a-z0-9-_]+$/; // Only lowercase letters, numbers, dash, and underscore
     return regex.test(value);
   };
 
+  const validateEmail = (value: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(value);
+  };
+
+  const validatePassword = (value: string) => {
+    const minLength = 8;
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+
+    return value.length >= minLength && hasSpecialChar;
+  };
+
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    if (validateUsername(value)) {
-      setError("");
-    } else {
+    setUsername(value);
+
+    if (!validateUsername(value)) {
       setError(
         "Username can only contain lowercase letters, numbers, dashes, and underscores.",
       );
+    } else {
+      setError("");
     }
-    setUsername(value);
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    if (!validateEmail(value)) {
+      setError("Please enter a valid email address.");
+    } else {
+      setError("");
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+    if (!validatePassword(value)) {
+      setError(
+        "Password must be at least 8 characters long and contain at least one special character.",
+      );
+    } else {
+      setError("");
+    }
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
+    setSuccessMessage("");
+
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
 
     if (!validateUsername(username)) {
       setError(
@@ -35,22 +78,35 @@ export default function RegistrationForm() {
       return;
     }
 
-    const formData = new FormData(e.currentTarget);
+    if (!validatePassword(password)) {
+      setError(
+        "Password must be at least 8 characters long and contain at least one special character.",
+      );
+      return;
+    }
 
     try {
       const response = await fetch("/api/register", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          email: formData.get("email"),
-          username: formData.get("username"),
-          password: formData.get("password"),
+          email,
+          username,
+          password,
         }),
       });
+
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
         setError(data.error || "Failed to register");
       } else {
-        console.log("User registered successfully");
+        setSuccessMessage("User registered successfully! You can now log in.");
+        setEmail("");
+        setUsername("");
+        setPassword("");
       }
     } catch (error) {
       setError("An error occurred during registration.");
@@ -66,7 +122,7 @@ export default function RegistrationForm() {
         type="text"
         name="email"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={handleEmailChange}
         placeholder="Email"
         className="w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
       />
@@ -82,11 +138,14 @@ export default function RegistrationForm() {
         type="password"
         name="password"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={handlePasswordChange}
         placeholder="Password"
         className="mt-[20px] w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
       />
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="mt-2 text-red-500">{error}</p>}
+      {successMessage && (
+        <p className="mt-2 text-green-500">{successMessage}</p>
+      )}
       {/* <div className="w-full">
         <p className="text-[17px] font-semibold">Password Strength</p>
         <p>Must contain at least:</p>

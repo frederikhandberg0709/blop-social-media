@@ -69,12 +69,23 @@ export async function POST(request: Request) {
         username,
         password: hashedPassword,
       },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        createdAt: true,
+      },
     });
 
-    // res.status(201).json(user);
+    return NextResponse.json(
+      { message: "User registered successfully", user },
+      { status: 201 },
+    );
   } catch (e) {
-    console.log({ e });
+    console.error("Registration error:", e);
+    return NextResponse.json(
+      { error: "An error occurred during registration" },
+      { status: 500 },
+    );
   }
-
-  return NextResponse.json({ message: "success" });
 }
