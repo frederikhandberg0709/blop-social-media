@@ -27,6 +27,7 @@ const CreatePost: React.FC = () => {
     useState<boolean>(false);
   const [isPostContentHovered, setIsPostContentHovered] =
     useState<boolean>(false);
+  const [overlayImage, setOverlayImage] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const borderColor = useUserColor();
 
@@ -116,6 +117,10 @@ const CreatePost: React.FC = () => {
     postsCount: 0,
   };
 
+  const handleImageClick = (src: string) => {
+    setOverlayImage(src);
+  };
+
   return (
     <>
       <div className="mb-[100px] mt-[90px] flex justify-center">
@@ -190,7 +195,7 @@ const CreatePost: React.FC = () => {
               updatedAt={formatDate(new Date().toISOString())}
               timestamp={new Date().toISOString()}
               title={title}
-              content={parseTextWithMedia(content)}
+              content={parseTextWithMedia(content, handleImageClick)}
               initialLikesCount={0}
               userLiked={false}
             />
