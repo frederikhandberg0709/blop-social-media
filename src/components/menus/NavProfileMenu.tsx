@@ -1,25 +1,31 @@
+import { UserProps } from "@/types/UserProps";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import ProfilePicture from "../ProfilePicture";
 
 interface NavProfileMenuProps {
-  profilePicture: string | null;
-  profileName: string | null;
-  username: string | null;
+  user: UserProps;
+  // profilePicture: string | null;
+  // profileName: string | null;
+  // username: string;
   closeMenu: () => void;
 }
 
 const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
-  profilePicture,
-  profileName,
-  username,
+  user,
+  // profilePicture,
+  // profileName,
+  // username,
   closeMenu,
 }) => {
   const { data: session } = useSession();
   const pathname = usePathname();
   const currentPage = pathname;
   const [view, setView] = useState<"menu" | "switch">("menu");
+
+  // const displayName = profileName || username;
 
   const handleSwitchAccount = () => {
     setView("switch");
@@ -64,25 +70,31 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
   return (
     <div className="flex flex-col gap-[10px]">
       <Link
-        href={`/profile/${username}`}
+        href={`/profile/${user.username}`}
         onClick={closeMenu}
         className="group flex items-center gap-[12px] rounded-xl p-[10px] transition duration-150 ease-in-out hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive"
       >
-        <img
-          src={profilePicture || "/images/default_profile.jpg"}
+        {/* Testing new ProfilePicture component */}
+        <ProfilePicture
+          src={user.profilePicture}
+          alt={user.username}
+          size={50}
+        />
+        {/* <img
+          src={user.profilePicture || "/images/default_profile.jpg"}
           alt="Profile picture"
           className="h-[40px] w-[40px] rounded-full object-cover"
-        />
+        /> */}
         <div className="group">
           <p className="text-[15px] font-bold group-hover:text-blue-500">
-            {profileName ?? username}
+            {user.profileName || user.username}
           </p>
-          <p className="text-[14px] text-gray-500">@{username}</p>
+          <p className="text-[14px] text-gray-500">@{user.username}</p>
         </div>
       </Link>
       <div className="h-[1px] w-full bg-blue-500/10"></div>
       <Link
-        href={`/profile/${username}`}
+        href={`/profile/${user.username}`}
         onClick={closeMenu}
         className={`flex gap-[10px] rounded-xl px-[10px] py-[10px] font-medium transition duration-150 ease-in-out active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
           (currentPage === `/profile/${session?.user.username}` &&

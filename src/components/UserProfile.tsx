@@ -47,11 +47,6 @@ const UserProfile: React.FC<UserProfileProps> = ({
     setIsFollowing(newIsFollowing);
   };
 
-  const handleEditProfile = () => {
-    // Implement edit profile functionality
-    console.log("Edit profile clicked");
-  };
-
   return (
     <>
       <div className="mt-[60px] flex justify-center">

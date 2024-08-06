@@ -28,7 +28,8 @@ const EditProfile: React.FC = () => {
   const [isProfilePictureChanged, setIsProfilePictureChanged] =
     useState<boolean>(false);
   const [profileBanner, setProfileBanner] = useState<string>("");
-  const [newProfilePictureUrl, setNewProfilePictureUrl] = useState<string>("");
+  const [isProfileBannerChanged, setIsProfileBannerChanged] =
+    useState<boolean>(false);
   const [newProfileBannerUrl, setNewProfileBannerUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -181,13 +182,27 @@ const EditProfile: React.FC = () => {
   //   }
   // };
 
-  const handleDeleteProfilePicture = () =>
-    updateProfile({ profilePicture: "" });
+  const handleDeleteProfilePicture = async () => {
+    await updateProfile({ profilePicture: "" });
+    setProfilePicture("");
+    setIsProfilePictureChanged(false);
+  };
 
-  const handleSaveProfileBanner = () => {
-    if (newProfileBannerUrl) {
-      updateProfile({ profileBanner: newProfileBannerUrl });
-      setNewProfileBannerUrl("");
+  // const handleDeleteProfilePicture = () =>
+  // updateProfile({ profilePicture: DEFAULT_PROFILE_PICTURE });
+  // setProfilePicture(DEFAULT_PROFILE_PICTURE);
+
+  // const handleSaveProfileBanner = () => {
+  //   if (newProfileBannerUrl) {
+  //     updateProfile({ profileBanner: newProfileBannerUrl });
+  //     setNewProfileBannerUrl("");
+  //   }
+  // };
+
+  const handleSaveProfileBanner = async () => {
+    if (newProfileBannerUrl.trim() !== "") {
+      await updateProfile({ profileBanner: profileBanner.trim() });
+      setIsProfileBannerChanged(false);
     }
   };
 
@@ -217,8 +232,6 @@ const EditProfile: React.FC = () => {
             <input
               type="text"
               value={profilePicture}
-              // value={newProfilePictureUrl || profilePicture}
-              // onChange={(e) => setNewProfilePictureUrl(e.target.value)}
               onChange={handleProfilePictureChange}
               placeholder="www.example.com/profile-picture.jpg"
               className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
@@ -239,7 +252,11 @@ const EditProfile: React.FC = () => {
               >
                 Save
               </PrimaryButton>
-              <DangerButton onClick={handleDeleteProfilePicture}>
+              <DangerButton
+                onClick={handleDeleteProfilePicture}
+                disabled={!profilePicture}
+                // disabled={profilePicture === DEFAULT_PROFILE_PICTURE}
+              >
                 Delete
               </DangerButton>
             </div>
