@@ -5,12 +5,20 @@ import { UserProps } from "@/types/UserProps";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import PostTemplate from "./post/PostTemplate";
+import { PostProps } from "@/types/PostProps";
 
 interface UserProfileProps {
   user: UserProps;
+  posts: PostProps[];
+  currentUserId: string | undefined;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
+const UserProfile: React.FC<UserProfileProps> = ({
+  user,
+  posts,
+  currentUserId,
+}) => {
   const { data: session } = useSession();
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
@@ -39,6 +47,11 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
     setIsFollowing(newIsFollowing);
   };
 
+  const handleEditProfile = () => {
+    // Implement edit profile functionality
+    console.log("Edit profile clicked");
+  };
+
   return (
     <>
       <div className="mt-[60px] flex justify-center">
@@ -58,12 +71,23 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
                 className="h-[130px] w-[130px] rounded-full border-[4px] border-white dark:border-black"
               />
               <div className="mt-[20px] flex items-center gap-[20px]">
-                <FollowButton
-                  followerId={session?.user.id || ""}
-                  followingId={user.id}
-                  isFollowing={isFollowing}
-                  onFollowChange={handleFollowChange}
-                />
+                {currentUserId ? (
+                  currentUserId === user.id ? (
+                    <button
+                      onClick={handleEditProfile}
+                      className="rounded-full bg-blue-500 px-4 py-2 font-semibold text-white transition duration-200 ease-in-out hover:bg-blue-600"
+                    >
+                      Edit Profile
+                    </button>
+                  ) : (
+                    <FollowButton
+                      followerId={currentUserId}
+                      followingId={user.id}
+                      isFollowing={isFollowing}
+                      onFollowChange={handleFollowChange}
+                    />
+                  )
+                ) : null}
                 <button className="flex gap-[10px] rounded-full bg-indigo-500 px-4 py-2 font-semibold transition duration-200 ease-in-out active:bg-indigo-700">
                   <svg
                     width="16"
@@ -149,6 +173,22 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
             <button className="rounded-full bg-gray-700 px-[20px] py-[5px]">
               Livestreams
             </button>
+          </div>
+          <div>
+            {posts?.map((post) => (
+              <PostTemplate
+                key={post.id}
+                id={post.id}
+                user={post.user}
+                createdAt={post.createdAt}
+                updatedAt={post.updatedAt}
+                timestamp={post.updatedAt || post.createdAt}
+                title={post.title}
+                content={post.content}
+                initialLikesCount={post.initialLikesCount ?? 0}
+                userLiked={post.userLiked}
+              />
+            ))}
           </div>
         </div>
       </div>
