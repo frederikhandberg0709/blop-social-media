@@ -130,9 +130,6 @@ const PostTemplate: React.FC<PostProps> = ({
     }
   };
 
-  const defaultProfilePicture =
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRg5CvxCysqjZrsTPUjcl5sN3HIzePiCWM7KQ&s";
-
   const parsedContent =
     typeof content === "string"
       ? parseTextWithMedia(content, handleImageClick)
@@ -150,7 +147,7 @@ const PostTemplate: React.FC<PostProps> = ({
           className="group flex items-center gap-[10px]"
         >
           <img
-            src={user.profilePicture || defaultProfilePicture}
+            src={user.profilePicture || ""}
             alt={`${user.profileName}'s profile picture`}
             className="h-[40px] w-[40px] rounded-full object-cover"
           />
@@ -217,7 +214,7 @@ const PostTemplate: React.FC<PostProps> = ({
                   className="group flex items-center gap-[10px]"
                 >
                   <img
-                    src={session?.user.profilePicture || defaultProfilePicture}
+                    src={session?.user.profilePicture || ""}
                     alt={`${session?.user.profileName}'s profile picture`}
                     className="h-[40px] w-[40px] rounded-full object-cover"
                   />

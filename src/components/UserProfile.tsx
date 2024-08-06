@@ -73,12 +73,12 @@ const UserProfile: React.FC<UserProfileProps> = ({
               <div className="mt-[20px] flex items-center gap-[20px]">
                 {currentUserId ? (
                   currentUserId === user.id ? (
-                    <button
-                      onClick={handleEditProfile}
+                    <Link
+                      href={"/settings#edit-profile"}
                       className="rounded-full bg-blue-500 px-4 py-2 font-semibold text-white transition duration-200 ease-in-out hover:bg-blue-600"
                     >
                       Edit Profile
-                    </button>
+                    </Link>
                   ) : (
                     <FollowButton
                       followerId={currentUserId}
