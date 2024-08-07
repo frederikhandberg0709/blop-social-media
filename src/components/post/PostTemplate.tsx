@@ -11,6 +11,7 @@ import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 import { PostProps } from "@/types/PostProps";
 import { formatDate } from "@/utils/formattedDate";
 import AnimateHeight from "react-animate-height";
+import ProfilePicture from "../ProfilePicture";
 
 const PostTemplate: React.FC<PostProps> = ({
   id,
@@ -146,10 +147,9 @@ const PostTemplate: React.FC<PostProps> = ({
           href={`/profile/${user.username}`}
           className="group flex items-center gap-[10px]"
         >
-          <img
-            src={user.profilePicture || ""}
+          <ProfilePicture
+            src={user.profilePicture}
             alt={`${user.profileName}'s profile picture`}
-            className="h-[40px] w-[40px] rounded-full object-cover"
           />
           <div className="flex flex-col gap-[1px]">
             {/* If user has profile name */}
@@ -180,7 +180,11 @@ const PostTemplate: React.FC<PostProps> = ({
             {formatDate(timestamp)}
           </div>
           {/* Dropdown menu */}
-          <PostDropdownMenu id={id} />
+          <PostDropdownMenu
+            postId={id}
+            authorId={user.id}
+            authorUsername={user.username}
+          />
         </div>
       </div>
       <div className="flex flex-col gap-1">

@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ProfilePicture from "./ProfilePicture";
 
 interface User {
   id: string;
@@ -65,10 +66,10 @@ export default function SideMenuFollowList() {
                 "text-primaryGray hover:text-black dark:hover:text-white"
               }`}
             >
-              <img
-                src={user.profilePicture || ""}
-                className="h-[30px] w-[30px] rounded-full bg-white"
-                alt="Profile picture"
+              <ProfilePicture
+                src={user.profilePicture}
+                size={30}
+                alt={`${user.profileName}'s profile picture`}
               />
               {user.profileName || user.username}
             </Link>
@@ -78,7 +79,7 @@ export default function SideMenuFollowList() {
       {following.length > 10 && (
         <button
           onClick={() => setShowAll(!showAll)}
-          className="hover:text-hoverBlue mt-4 self-center rounded-lg text-primaryBlue hover:underline"
+          className="mt-4 self-center rounded-lg text-primaryBlue hover:text-hoverBlue hover:underline"
         >
           {showAll ? "Show less" : "Show more"}
         </button>

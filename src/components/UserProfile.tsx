@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import PostTemplate from "./post/PostTemplate";
 import { PostProps } from "@/types/PostProps";
+import ProfilePicture from "./ProfilePicture";
 
 interface UserProfileProps {
   user: UserProps;
@@ -60,10 +61,11 @@ const UserProfile: React.FC<UserProfileProps> = ({
           <div>
             <div className="flex items-center gap-[50px]">
               {/* Profile picture */}
-              <img
-                src={user.profilePicture || ""}
+              <ProfilePicture
+                src={user.profilePicture}
+                size={130}
                 alt="Profile picture"
-                className="h-[130px] w-[130px] rounded-full border-[4px] border-white dark:border-black"
+                className="border-[4px] border-white dark:border-black"
               />
               <div className="mt-[20px] flex items-center gap-[20px]">
                 {currentUserId ? (
