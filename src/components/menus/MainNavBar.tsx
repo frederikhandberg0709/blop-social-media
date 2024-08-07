@@ -9,6 +9,7 @@ import "./panel-animations.css";
 import NavSearchResults from "./NavSearchResults";
 import { Tooltip } from "../Tooltip";
 import { useSession } from "next-auth/react";
+import ProfilePicture from "../ProfilePicture";
 
 const MainNavBar: React.FC = () => {
   const [isNavSideMenuVisible, setIsNavSideMenuVisible] = useState(false);
@@ -172,7 +173,7 @@ const MainNavBar: React.FC = () => {
           >
             <Link
               href="/home"
-              className="text-primaryGray active:text-primaryBlue dark:active:text-primaryBlue dark:text-primaryGray text-[30px] font-bold transition duration-150 ease-in-out hover:text-black dark:hover:text-white"
+              className="text-[30px] font-bold text-primaryGray transition duration-150 ease-in-out hover:text-black active:text-primaryBlue dark:text-primaryGray dark:hover:text-white dark:active:text-primaryBlue"
             >
               BLOP!
             </Link>
@@ -184,7 +185,7 @@ const MainNavBar: React.FC = () => {
             >
               <button
                 onClick={toggleNavSideMenu}
-                className="fill-primaryGray dark:active:fill-primaryBlue active:fill-primaryBlue active:bg-lightActive dark:active:bg-darkActive hover:bg-lightHover dark:hover:bg-darkHover h-[45px] w-[45px] rounded-full p-[5px] transition duration-150 ease-in-out hover:fill-black dark:hover:fill-white"
+                className="h-[45px] w-[45px] rounded-full fill-primaryGray p-[5px] transition duration-150 ease-in-out hover:bg-lightHover hover:fill-black active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:hover:fill-white dark:active:bg-darkActive dark:active:fill-primaryBlue"
               >
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M4 18h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zm0-5h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zM3 7c0 .55.45 1 1 1h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1z" />
@@ -252,7 +253,7 @@ const MainNavBar: React.FC = () => {
               {/* Create Post */}
               <Tooltip text={"Create Post"} position="bottom" offset="60">
                 <Link href={"/create-post"} className="rounded-full">
-                  <div className="fill-primaryGray active:fill-primaryBlue dark:active:fill-primaryBlue hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive h-[45px] w-[45px] rounded-full p-[7px] transition duration-150 ease-in-out hover:fill-black dark:hover:fill-white">
+                  <div className="h-[45px] w-[45px] rounded-full fill-primaryGray p-[7px] transition duration-150 ease-in-out hover:bg-lightHover hover:fill-black active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:hover:fill-white dark:active:bg-darkActive dark:active:fill-primaryBlue">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -276,7 +277,7 @@ const MainNavBar: React.FC = () => {
                 <button
                   onClick={toggleNotificationPanel}
                   ref={notificationButtonRef}
-                  className="active:fill-primaryBlue dark:active:fill-primaryBlue h-[45px] w-[45px] rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black dark:fill-white/50 dark:hover:bg-white/10 dark:hover:fill-white"
+                  className="h-[45px] w-[45px] rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black active:fill-primaryBlue dark:fill-white/50 dark:hover:bg-white/10 dark:hover:fill-white dark:active:fill-primaryBlue"
                 >
                   <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -293,10 +294,9 @@ const MainNavBar: React.FC = () => {
               </Tooltip>
               {/* Profile menu button */}
               <button onClick={toggleProfileMenu} ref={profileMenuButtonRef}>
-                <img
+                <ProfilePicture
                   src={session?.user.profilePicture}
-                  className="h-[50px] w-[50px] rounded-full bg-white"
-                  alt="Profile picture"
+                  alt={`${session?.user.profileName}'s profile picture`}
                 />
               </button>
             </div>
@@ -305,7 +305,7 @@ const MainNavBar: React.FC = () => {
       </nav>
       {isNavSideMenuVisible && (
         <div
-          className={`dark:border-darkBorder dark:hover:border-darkBorderHover border-lightBorder hover:border-lightBorderHover fixed left-[20px] top-[90px] z-50 flex w-[250px] flex-col rounded-2xl border-2 bg-white p-[10px] transition duration-150 ease-in-out dark:bg-black ${
+          className={`fixed left-[20px] top-[90px] z-50 flex w-[250px] flex-col rounded-2xl border-2 border-lightBorder bg-white p-[10px] transition duration-150 ease-in-out hover:border-lightBorderHover dark:border-darkBorder dark:bg-black dark:hover:border-darkBorderHover ${
             isNavSideMenuAnimating ? "navsidemenu-open" : "navsidemenu"
           }`}
         >
@@ -320,7 +320,7 @@ const MainNavBar: React.FC = () => {
           // onFocus={handleSearchFocus}
           // onBlur={handleSearchBlur}
           tabIndex={-1}
-          className={`border-lightBorder fixed left-1/2 top-[80px] z-50 ml-[-350px] h-[500px] w-[700px] rounded-[15px] border-2 bg-white/80 backdrop-blur-2xl`}
+          className={`fixed left-1/2 top-[80px] z-50 ml-[-350px] h-[500px] w-[700px] rounded-[15px] border-2 border-lightBorder bg-white/80 backdrop-blur-2xl`}
         >
           <NavSearchResults />
         </div>
@@ -328,7 +328,7 @@ const MainNavBar: React.FC = () => {
       {isNotificationPanelVisible && (
         <div
           ref={notificationPanelRef}
-          className={`border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover fixed right-[20px] top-[90px] z-50 w-[350px] rounded-[10px] border-2 bg-black p-[10px] transition duration-150 ease-in-out ${
+          className={`fixed right-[20px] top-[90px] z-50 w-[350px] rounded-[10px] border-2 border-lightBorder bg-black p-[10px] transition duration-150 ease-in-out hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover ${
             isNotificationPanelAnimating
               ? "notification-panel-open"
               : "notification-panel"
@@ -340,14 +340,21 @@ const MainNavBar: React.FC = () => {
       {isProfileMenuVisible && (
         <div
           ref={profileMenuRef}
-          className={`border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover fixed right-[20px] top-[90px] z-50 w-[280px] rounded-2xl border-2 bg-white p-[10px] transition duration-150 ease-in-out dark:bg-black ${
+          className={`fixed right-[20px] top-[90px] z-50 w-[280px] rounded-2xl border-2 border-lightBorder bg-white p-[10px] transition duration-150 ease-in-out hover:border-lightBorderHover dark:border-darkBorder dark:bg-black dark:hover:border-darkBorderHover ${
             isProfileMenuAnimating ? "profile-menu-open" : "profile-menu"
           }`}
         >
           <NavProfileMenu
-            profilePicture={session?.user.profilePicture || null}
-            profileName={session?.user.profileName || null}
-            username={session?.user.username || null}
+            user={
+              session?.user
+                ? {
+                    id: session.user.id,
+                    profilePicture: session.user.profilePicture || null,
+                    profileName: session.user.profileName || null,
+                    username: session.user.username || "unknown",
+                  }
+                : undefined
+            }
             closeMenu={closeProfileMenu}
           />
         </div>

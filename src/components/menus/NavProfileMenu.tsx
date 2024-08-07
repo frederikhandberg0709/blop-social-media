@@ -7,25 +7,14 @@ import ProfilePicture from "../ProfilePicture";
 
 interface NavProfileMenuProps {
   user: UserProps;
-  // profilePicture: string | null;
-  // profileName: string | null;
-  // username: string;
   closeMenu: () => void;
 }
 
-const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
-  user,
-  // profilePicture,
-  // profileName,
-  // username,
-  closeMenu,
-}) => {
+const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
   const { data: session } = useSession();
   const pathname = usePathname();
   const currentPage = pathname;
   const [view, setView] = useState<"menu" | "switch">("menu");
-
-  // const displayName = profileName || username;
 
   const handleSwitchAccount = () => {
     setView("switch");
@@ -34,6 +23,19 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
   const logout = async () => {
     await signOut();
   };
+
+  const displayName = () => {
+    if (user.profileName) {
+      return user.profileName;
+    }
+    if (session?.user?.profileName) {
+      return session.user.profileName;
+    }
+    return user.username;
+  };
+
+  console.log("User prop:", user);
+  console.log("Session user:", session?.user);
 
   if (view === "switch") {
     return (
@@ -74,22 +76,34 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({
         onClick={closeMenu}
         className="group flex items-center gap-[12px] rounded-xl p-[10px] transition duration-150 ease-in-out hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive"
       >
-        {/* Testing new ProfilePicture component */}
         <ProfilePicture
           src={user.profilePicture}
           alt={user.username}
           size={50}
         />
-        {/* <img
-          src={user.profilePicture || "/images/default_profile.jpg"}
-          alt="Profile picture"
-          className="h-[40px] w-[40px] rounded-full object-cover"
-        /> */}
         <div className="group">
           <p className="text-[15px] font-bold group-hover:text-blue-500">
-            {user.profileName || user.username}
+            {/* {user.profileName || user.username} */}
+            {displayName()}
           </p>
           <p className="text-[14px] text-gray-500">@{user.username}</p>
+          {/* If user has profile name */}
+          {/* {user.profileName ? (
+            <>
+              <div className="text-[15px] font-bold group-hover:text-blue-500">
+                {user.profileName}
+              </div>
+              <div className="text-[12px] text-gray-500">@{user.username}</div>
+            </>
+          ) : (
+            // No profile name, only show username
+            <>
+              <div className="text-[15px] font-bold group-hover:text-blue-500">
+                {user.username}
+              </div>
+              <div className="text-[12px] text-gray-500">@{user.username}</div>
+            </>
+          )} */}
         </div>
       </Link>
       <div className="h-[1px] w-full bg-blue-500/10"></div>

@@ -61,8 +61,10 @@ export const authOptions: NextAuthOptions = {
           return {
             id: user.id + "",
             email: user.email,
-            name: user.profileName,
+            // name: user.profileName,
+            name: user.profileName ?? user.username,
             username: user.username,
+            profileName: user.profileName,
             profilePicture: user.profilePicture,
             profileBanner: user.profileBanner,
             color: user.color,
@@ -73,26 +75,48 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, token }) {
-      // console.log("Session Callback", { session, token });
-      session.user.id = token.id as string;
-      session.user.username = token.username as string;
-      session.user.profilePicture = token.profilePicture as string;
-      session.user.profileBanner = token.profileBanner as string;
-      session.user.color = token.color as string;
-      return session;
-    },
-
     async jwt({ token, user }) {
-      // console.log("JWT Callback", { token, user });
       if (user) {
+        // This runs only on initial sign in
         token.id = user.id;
         token.username = user.username;
-        token.profilePicture = user.profilePicture;
-        token.profileBanner = user.profileBanner;
-        token.color = user.color;
       }
+
+      // Fetch fresh user data on every JWT refresh
+      const freshUser = await prisma.user.findUnique({
+        where: { id: token.id as string },
+        select: {
+          id: true,
+          username: true,
+          profileName: true,
+          profilePicture: true,
+          profileBanner: true,
+          color: true,
+        },
+      });
+
+      if (freshUser) {
+        token.username = freshUser.username;
+        token.profileName = freshUser.profileName;
+        token.profilePicture = freshUser.profilePicture;
+        token.profileBanner = freshUser.profileBanner;
+        token.color = freshUser.color;
+      }
+
       return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.username = token.username as string;
+        session.user.profileName = token.profileName as string | undefined;
+        session.user.profilePicture = token.profilePicture as
+          | string
+          | undefined;
+        session.user.profileBanner = token.profileBanner as string | undefined;
+        session.user.color = token.color as string | undefined;
+      }
+      return session;
     },
   },
   adapter: PrismaAdapter(prisma) as Adapter,
