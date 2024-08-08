@@ -27,12 +27,12 @@ const Settings: React.FC = () => {
 
   return (
     <>
-      <div className="flex justify-center w-full">
-        <div className="flex justify-center gap-[30px] h-full w-[1200px]">
-          <div className="flex gap-[30px] sticky top-0 pt-[70px] h-[100vh]">
-            <div className="w-[250px] mt-[20px]">
-              <div className="ml-[15px] mb-[20px] flex justify-between items-center">
-                <p className="font-bold text-[20px]">Settings</p>
+      <div className="flex w-full justify-center">
+        <div className="flex h-full w-[1200px] justify-center gap-[30px]">
+          <div className="sticky top-0 flex h-[100vh] gap-[30px] pt-[70px]">
+            <div className="mt-[20px] w-[250px]">
+              <div className="mb-[20px] ml-[15px] flex items-center justify-between">
+                <p className="text-[20px] font-bold">Settings</p>
                 {/* Search */}
                 {/* <TooltipBottom text="Search" topStyle="top-[45px]">
         <div className="p-[5px] border border-1 border-[#1D1D1D] bg-[#0C0C0C] rounded-md cursor-pointer hover:border-selectedPurple hover:bg-darkPurple/30 transition ease-in-out duration-200">
@@ -55,13 +55,12 @@ const Settings: React.FC = () => {
                   <Link
                     key={section}
                     href={`#${section}`}
-                    className={`pl-[15px] py-[10px] rounded-xl ${
-                      // activeSection === section ? "text-white" : "text-white/50"
+                    className={`rounded-xl py-[10px] pl-[15px] ${
                       hoveredSection === section ||
                       (!hoveredSection && activeSection === section)
                         ? "text-white"
                         : "text-white/50"
-                    } hover:text-white hover:bg-white/10 active:bg-white/20 transition duration-150 ease-in-out`}
+                    } transition duration-150 ease-in-out hover:bg-white/10 hover:text-white active:bg-white/20`}
                   >
                     {section
                       .replace("-", " ")
@@ -70,102 +69,38 @@ const Settings: React.FC = () => {
                 ))}
               </div>
             </div>
-            <div className="h-full w-[1.5px] bg-white/10 relative right-0"></div>
+            <div className="relative right-0 h-full w-[1.5px] bg-white/10"></div>
           </div>
-          <div className="w-full mt-[90px]">
-            <div
-              id="edit-profile"
-              className={`${
-                hoveredSection === "edit-profile" ||
-                (!hoveredSection && activeSection === "edit-profile")
-                  ? "opacity-100"
-                  : "opacity-50"
-              } transition-opacity duration-300 py-[25px]`}
-            >
+          <div className="mt-[90px] w-full">
+            <div id="edit-profile" className="py-[25px]">
               <EditProfile />
             </div>
 
-            <div
-              id="notifications"
-              className={`${
-                hoveredSection === "notifications" ||
-                (!hoveredSection && activeSection === "notifications")
-                  ? "opacity-100"
-                  : "opacity-50"
-              } transition-opacity duration-300 py-[25px]`}
-            >
+            <div id="notifications" className="py-[25px]">
               <Notifications />
             </div>
 
-            <div
-              id="appearance"
-              className={`${
-                hoveredSection === "appearance" ||
-                (!hoveredSection && activeSection === "appearance")
-                  ? "opacity-100"
-                  : "opacity-50"
-              } transition-opacity duration-300 py-[25px]`}
-            >
+            <div id="appearance" className="py-[25px]">
               <Appearance />
             </div>
 
-            <div
-              id="content-moderation"
-              className={`${
-                hoveredSection === "content-moderation" ||
-                (!hoveredSection && activeSection === "content-moderation")
-                  ? "opacity-100"
-                  : "opacity-50"
-              } transition-opacity duration-300 py-[25px]`}
-            >
+            <div id="content-moderation" className="py-[25px]">
               <ContentModeration />
             </div>
 
-            <div
-              id="video-player"
-              className={`${
-                hoveredSection === "video-player" ||
-                (!hoveredSection && activeSection === "video-player")
-                  ? "opacity-100"
-                  : "opacity-50"
-              } transition-opacity duration-300 py-[25px]`}
-            >
+            <div id="video-player" className="py-[25px]">
               <VideoPlayer />
             </div>
 
-            <div
-              id="change-email"
-              className={`${
-                hoveredSection === "change-email" ||
-                (!hoveredSection && activeSection === "change-email")
-                  ? "opacity-100"
-                  : "opacity-50"
-              } transition-opacity duration-300 py-[25px]`}
-            >
+            <div id="change-email" className="py-[25px]">
               <ChangeEmail />
             </div>
 
-            <div
-              id="password-security"
-              className={`${
-                hoveredSection === "password-security" ||
-                (!hoveredSection && activeSection === "password-security")
-                  ? "opacity-100"
-                  : "opacity-50"
-              } transition-opacity duration-300 py-[25px]`}
-            >
+            <div id="password-security" className="py-[25px]">
               <PasswordSecurity />
             </div>
 
-            <div
-              id="delete-account"
-              className={`${
-                hoveredSection === "delete-account" ||
-                (!hoveredSection && activeSection === "delete-account")
-                  ? "opacity-100"
-                  : "opacity-50"
-              } transition-opacity duration-300 py-[25px] mb-[100px]`}
-            >
+            <div id="delete-account" className="py-[25px]">
               <DeleteAccount />
             </div>
           </div>

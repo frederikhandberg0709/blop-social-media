@@ -16,7 +16,8 @@ interface User {
 
 const DEFAULT_PROFILE_PICTURE =
   "https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortFlat&accessoriesType=Sunglasses&hairColor=BrownDark&facialHairType=Blank&clotheType=Hoodie&clotheColor=Black&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light";
-const DEFAULT_PROFILE_BANNER = "";
+const DEFAULT_PROFILE_BANNER =
+  "https://pbs.twimg.com/profile_banners/994250907826245635/1569352839/1080x360";
 
 const EditProfile: React.FC = () => {
   const { data: session, update } = useSession();
@@ -199,6 +200,14 @@ const EditProfile: React.FC = () => {
   //   }
   // };
 
+  const handleProfileBannerChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const newValue = e.target.value;
+    setProfileBanner(newValue);
+    setIsProfileBannerChanged(true);
+  };
+
   const handleSaveProfileBanner = async () => {
     if (newProfileBannerUrl.trim() !== "") {
       await updateProfile({ profileBanner: profileBanner.trim() });
@@ -255,7 +264,6 @@ const EditProfile: React.FC = () => {
               <DangerButton
                 onClick={handleDeleteProfilePicture}
                 disabled={!profilePicture}
-                // disabled={profilePicture === DEFAULT_PROFILE_PICTURE}
               >
                 Delete
               </DangerButton>
@@ -269,58 +277,80 @@ const EditProfile: React.FC = () => {
               <p className="text-primaryGray">Image Link</p>
               <input
                 type="text"
-                value={newProfileBannerUrl}
-                onChange={(e) => setNewProfileBannerUrl(e.target.value)}
+                // value={newProfileBannerUrl}
+                // onChange={(e) => setNewProfileBannerUrl(e.target.value)}
+                value={profileBanner}
+                onChange={handleProfileBannerChange}
                 placeholder="www.example.com/profile-banner.jpg"
                 className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
               />
             </div>
             <div className="flex gap-6">
-              <PrimaryButton onClick={handleSaveProfileBanner}>
+              <PrimaryButton
+                onClick={handleSaveProfileBanner}
+                disabled={
+                  !isProfilePictureChanged || profilePicture.trim() === ""
+                }
+              >
                 Save
               </PrimaryButton>
-              <DangerButton onClick={handleDeleteProfileBanner}>
+              <DangerButton
+                onClick={handleDeleteProfileBanner}
+                disabled={!profileBanner}
+              >
                 Delete
               </DangerButton>
             </div>
           </div>
           <img
-            src={profileBanner}
+            src={profileBanner || DEFAULT_PROFILE_BANNER}
             alt=""
             className="mt-5 h-[300px] max-w-[1000px] rounded-3xl"
           />
         </div>
-        <div className="flex flex-col gap-2">
-          <p className="opacity-50">Profile Name</p>
-          <input
-            type="text"
-            value={profileName || session?.user.username}
-            onChange={(e) => setProfileName(e.target.value)}
-            placeholder="Ex. John Doe"
-            className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <p className="opacity-50">Username</p>
-          <div className="relative flex items-center">
-            <div className="absolute left-4 z-10 mb-[3px] select-none">@</div>
+        <div className="flex flex-col items-start gap-[30px]">
+          <div className="flex flex-col gap-2">
+            {/* <div className="flex items-center justify-between"> */}
+            <p className="text-xl font-semibold">Profile Information</p>
+
+            {/* </div> */}
+            <p className="mt-3 text-primaryGray">Profile Name</p>
             <input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Ex. john_doe"
-              className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent py-2 pl-[35px] pr-4 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
+              value={profileName || session?.user.username}
+              onChange={(e) => setProfileName(e.target.value)}
+              placeholder="Ex. John Doe"
+              className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
             />
           </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <p>Bio</p>
-          <textarea
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            placeholder="Ex. write about yourself"
-            className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
-          />
+          <div className="flex flex-col gap-2">
+            <p className="text-primaryGray">Username</p>
+            <div className="relative flex items-center">
+              <div className="absolute left-4 z-10 mb-[3px] select-none">@</div>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Ex. john_doe"
+                className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent py-2 pl-[35px] pr-4 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <p className="text-primaryGray">Biography</p>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Ex. write about yourself"
+              className="h-[200px] w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
+            />
+          </div>
+          <PrimaryButton
+            onClick={handleSaveProfileBanner}
+            disabled={!isProfilePictureChanged || profilePicture.trim() === ""}
+          >
+            Save
+          </PrimaryButton>
         </div>
       </div>
     </div>
