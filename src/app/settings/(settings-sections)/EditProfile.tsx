@@ -23,6 +23,7 @@ const EditProfile: React.FC = () => {
   const { data: session, update } = useSession();
   const [user, setUser] = useState<User | null>(null);
   const [profileName, setProfileName] = useState<string>("");
+  useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [bio, setBio] = useState<string>("");
   const [profilePicture, setProfilePicture] = useState<string>("");
@@ -60,50 +61,6 @@ const EditProfile: React.FC = () => {
     fetchUser();
   }, [session]);
 
-  // const updateProfile = async (updatedFields: Partial<User>) => {
-  //   if (!session?.user?.id || !user) return;
-
-  //   try {
-  //     const response = await fetch("/api/update-profile", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         userId: user.id,
-  //         ...updatedFields,
-  //       }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to update profile");
-  //     }
-
-  //     const updatedUser = await response.json();
-  //     setUser(updatedUser);
-
-  //     // Update specific fields based on what was changed
-  //     if ("profileName" in updatedFields)
-  //       setProfileName(updatedUser.profileName || "");
-  //     if ("username" in updatedFields) setUsername(updatedUser.username);
-  //     if ("bio" in updatedFields) setBio(updatedUser.bio || "");
-  //     if ("profilePicture" in updatedFields)
-  //       setProfilePicture(updatedUser.profilePicture || "");
-  //     if ("profileBanner" in updatedFields)
-  //       setProfileBanner(updatedUser.profileBanner || "");
-
-  //     await update({
-  //       ...session,
-  //       user: {
-  //         ...session.user,
-  //         ...updatedFields,
-  //       },
-  //     });
-  //   } catch (error) {
-  //     console.error("Error updating profile:", error);
-  //   }
-  // };
-
   const updateProfile = async (updatedFields: Partial<User>) => {
     if (!session?.user?.id || !user) return;
 
@@ -126,7 +83,6 @@ const EditProfile: React.FC = () => {
       const updatedUser = await response.json();
       setUser(updatedUser);
 
-      // Update specific fields based on what was changed
       Object.keys(updatedFields).forEach((key) => {
         switch (key) {
           case "profileName":
@@ -176,29 +132,11 @@ const EditProfile: React.FC = () => {
     }
   };
 
-  // const handleSaveProfilePicture = () => {
-  //   if (newProfilePictureUrl) {
-  //     updateProfile({ profilePicture: newProfilePictureUrl });
-  //     setNewProfilePictureUrl("");
-  //   }
-  // };
-
   const handleDeleteProfilePicture = async () => {
     await updateProfile({ profilePicture: "" });
     setProfilePicture("");
     setIsProfilePictureChanged(false);
   };
-
-  // const handleDeleteProfilePicture = () =>
-  // updateProfile({ profilePicture: DEFAULT_PROFILE_PICTURE });
-  // setProfilePicture(DEFAULT_PROFILE_PICTURE);
-
-  // const handleSaveProfileBanner = () => {
-  //   if (newProfileBannerUrl) {
-  //     updateProfile({ profileBanner: newProfileBannerUrl });
-  //     setNewProfileBannerUrl("");
-  //   }
-  // };
 
   const handleProfileBannerChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -216,6 +154,37 @@ const EditProfile: React.FC = () => {
   };
 
   const handleDeleteProfileBanner = () => updateProfile({ profileBanner: "" });
+
+  const isProfileInfoChanged = () => {
+    if (!user) return false;
+    return (
+      profileName !== (user.profileName || "") ||
+      username !== user.username ||
+      bio !== (user.bio || "")
+    );
+  };
+
+  const handleProfileNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProfileName(e.target.value);
+  };
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
+  };
+
+  const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setBio(e.target.value);
+  };
+
+  const handleSaveProfileInfo = async () => {
+    if (!isProfileInfoChanged()) return;
+
+    await updateProfile({
+      profileName,
+      username,
+      bio,
+    });
+  };
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -277,8 +246,6 @@ const EditProfile: React.FC = () => {
               <p className="text-primaryGray">Image Link</p>
               <input
                 type="text"
-                // value={newProfileBannerUrl}
-                // onChange={(e) => setNewProfileBannerUrl(e.target.value)}
                 value={profileBanner}
                 onChange={handleProfileBannerChange}
                 placeholder="www.example.com/profile-banner.jpg"
@@ -289,7 +256,7 @@ const EditProfile: React.FC = () => {
               <PrimaryButton
                 onClick={handleSaveProfileBanner}
                 disabled={
-                  !isProfilePictureChanged || profilePicture.trim() === ""
+                  !isProfileBannerChanged || profileBanner.trim() === ""
                 }
               >
                 Save
@@ -317,8 +284,8 @@ const EditProfile: React.FC = () => {
             <p className="mt-3 text-primaryGray">Profile Name</p>
             <input
               type="text"
-              value={profileName || session?.user.username}
-              onChange={(e) => setProfileName(e.target.value)}
+              value={profileName}
+              onChange={handleProfileNameChange}
               placeholder="Ex. John Doe"
               className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
             />
@@ -330,7 +297,7 @@ const EditProfile: React.FC = () => {
               <input
                 type="text"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={handleUsernameChange}
                 placeholder="Ex. john_doe"
                 className="w-[400px] rounded-xl border-2 border-white/5 bg-transparent py-2 pl-[35px] pr-4 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
               />
@@ -340,14 +307,14 @@ const EditProfile: React.FC = () => {
             <p className="text-primaryGray">Biography</p>
             <textarea
               value={bio}
-              onChange={(e) => setBio(e.target.value)}
+              onChange={handleBioChange}
               placeholder="Ex. write about yourself"
               className="h-[200px] w-[400px] rounded-xl border-2 border-white/5 bg-transparent px-4 py-2 outline-none transition duration-150 ease-in-out hover:border-white/15 focus:border-white/15"
             />
           </div>
           <PrimaryButton
-            onClick={handleSaveProfileBanner}
-            disabled={!isProfilePictureChanged || profilePicture.trim() === ""}
+            onClick={handleSaveProfileInfo}
+            disabled={!isProfileInfoChanged()}
           >
             Save
           </PrimaryButton>
