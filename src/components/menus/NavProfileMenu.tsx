@@ -1,8 +1,8 @@
 import { UserProps } from "@/types/UserProps";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import ProfilePicture from "../ProfilePicture";
 
 interface NavProfileMenuProps {
@@ -11,10 +11,78 @@ interface NavProfileMenuProps {
 }
 
 const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  const router = useRouter();
+  const [linkedAccounts, setLinkedAccounts] = useState<UserProps[]>([]);
   const pathname = usePathname();
   const currentPage = pathname;
   const [view, setView] = useState<"menu" | "switch">("menu");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchLinkedAccounts = async () => {
+      if (session?.user?.id) {
+        try {
+          const response = await fetch(
+            `/api/linked-accounts?userId=${session.user.id}`,
+          );
+          if (response.ok) {
+            const accounts = await response.json();
+            setLinkedAccounts(accounts);
+          } else {
+            console.error("Failed to fetch linked accounts");
+          }
+        } catch (error) {
+          console.error("Error fetching linked accounts:", error);
+        }
+      }
+    };
+
+    fetchLinkedAccounts();
+  }, [session]);
+
+  const switchToAccount = async (accountId: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("/api/switch-account", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ linkedAccountId: accountId }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to switch account");
+      }
+
+      const newUserData = await response.json();
+
+      // Update the session with the new user data
+      await update({
+        // ...session,
+        // user: newUserData,
+
+        switchToUserId: accountId,
+      });
+
+      // Close the menu and redirect to the home page
+      closeMenu();
+      router.push("/home");
+      // router.refresh();
+      window.location.reload();
+    } catch (error) {
+      console.error("Error switching account:", error);
+      setError(
+        error instanceof Error ? error.message : "An unexpected error occurred",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSwitchAccount = () => {
     setView("switch");
@@ -37,39 +105,62 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
   console.log("User prop:", user);
   console.log("Session user:", session?.user);
 
-  if (view === "switch") {
-    return (
-      <div className="flex flex-col gap-[10px]">
-        <div className="flex gap-5">
-          <button
-            onClick={() => setView("menu")}
-            className="flex w-full gap-[10px] rounded-xl px-[10px] py-[10px] font-bold text-black/50 transition duration-150 ease-in-out hover:bg-lightHover hover:text-black active:bg-lightActive dark:text-white/50 dark:hover:bg-darkHover dark:hover:text-white dark:active:bg-darkActive"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="25"
-              height="25"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="currentColor"
-                d="m3.55 12l7.35 7.35q.375.375.363.875t-.388.875q-.375.375-.875.375t-.875-.375l-7.7-7.675q-.3-.3-.45-.675T.825 12q0-.375.15-.75t.45-.675l7.7-7.7q.375-.375.888-.363t.887.388q.375.375.375.875t-.375.875L3.55 12Z"
-              />
-            </svg>{" "}
-            Switch Account
-          </button>
-        </div>
-        <Link
-          href={"#"}
-          className="text-md rounded-md bg-gradient-to-b from-blue-500 to-blue-900 py-3 text-center font-semibold text-white hover:from-blue-700 hover:to-blue-900"
+  const renderSwitchView = () => (
+    <div className="flex flex-col gap-[10px]">
+      <div className="flex gap-5">
+        <button
+          onClick={() => setView("menu")}
+          className="flex w-full gap-[10px] rounded-xl px-[10px] py-[10px] font-bold text-black/50 transition duration-150 ease-in-out hover:bg-lightHover hover:text-black active:bg-lightActive dark:text-white/50 dark:hover:bg-darkHover dark:hover:text-white dark:active:bg-darkActive"
         >
-          Link Account
-        </Link>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="25"
+            height="25"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="currentColor"
+              d="m3.55 12l7.35 7.35q.375.375.363.875t-.388.875q-.375.375-.875.375t-.875-.375l-7.7-7.675q-.3-.3-.45-.675T.825 12q0-.375.15-.75t.45-.675l7.7-7.7q.375-.375.888-.363t.887.388q.375.375.375.875t-.375.875L3.55 12Z"
+            />
+          </svg>{" "}
+          Switch Account
+        </button>
       </div>
-    );
-  }
+      {isLoading && <p>Switching account...</p>}
+      {linkedAccounts.length > 0 ? (
+        linkedAccounts.map((account) => (
+          <button
+            key={account.id}
+            onClick={() => switchToAccount(account.id)}
+            disabled={isLoading}
+            className="flex items-center gap-[12px] rounded-xl p-[10px] transition duration-150 ease-in-out hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive"
+          >
+            <ProfilePicture
+              src={account.profilePicture}
+              alt={account.username}
+              size={40}
+            />
+            <div>
+              <p className="text-[15px] font-bold">
+                {account.profileName || account.username}
+              </p>
+              <p className="text-[14px] text-gray-500">@{account.username}</p>
+            </div>
+          </button>
+        ))
+      ) : (
+        <p className="text-gray-500">No linked accounts found</p>
+      )}
+      <Link
+        href={"/link-account"}
+        className="text-md rounded-md bg-gradient-to-b from-blue-500 to-blue-900 py-3 text-center font-semibold text-white hover:from-blue-700 hover:to-blue-900"
+      >
+        Link New Account
+      </Link>
+    </div>
+  );
 
-  return (
+  const renderMenuView = () => (
     <div className="flex flex-col gap-[10px]">
       <Link
         href={`/profile/${user.username}`}
@@ -87,23 +178,6 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
             {displayName()}
           </p>
           <p className="text-[14px] text-gray-500">@{user.username}</p>
-          {/* If user has profile name */}
-          {/* {user.profileName ? (
-            <>
-              <div className="text-[15px] font-bold group-hover:text-blue-500">
-                {user.profileName}
-              </div>
-              <div className="text-[12px] text-gray-500">@{user.username}</div>
-            </>
-          ) : (
-            // No profile name, only show username
-            <>
-              <div className="text-[15px] font-bold group-hover:text-blue-500">
-                {user.username}
-              </div>
-              <div className="text-[12px] text-gray-500">@{user.username}</div>
-            </>
-          )} */}
         </div>
       </Link>
       <div className="h-[1px] w-full bg-blue-500/10"></div>
@@ -183,6 +257,8 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
       </button>
     </div>
   );
+
+  return <div>{view === "switch" ? renderSwitchView() : renderMenuView()}</div>;
 };
 
 export default NavProfileMenu;

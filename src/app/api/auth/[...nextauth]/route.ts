@@ -75,32 +75,73 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
+    async jwt({ token, user, account, trigger, session }) {
+      if (user && account) {
         // This runs only on initial sign in
         token.id = user.id;
         token.username = user.username;
+        token.profileName = user.profileName;
+        token.profilePicture = user.profilePicture;
+        token.profileBanner = user.profileBanner;
+        token.color = user.color;
       }
 
       // Fetch fresh user data on every JWT refresh
-      const freshUser = await prisma.user.findUnique({
-        where: { id: token.id as string },
-        select: {
-          id: true,
-          username: true,
-          profileName: true,
-          profilePicture: true,
-          profileBanner: true,
-          color: true,
-        },
-      });
+      // const freshUser = await prisma.user.findUnique({
+      //   where: { id: token.id as string },
+      //   select: {
+      //     id: true,
+      //     username: true,
+      //     profileName: true,
+      //     profilePicture: true,
+      //     profileBanner: true,
+      //     color: true,
+      //   },
+      // });
 
-      if (freshUser) {
-        token.username = freshUser.username;
-        token.profileName = freshUser.profileName;
-        token.profilePicture = freshUser.profilePicture;
-        token.profileBanner = freshUser.profileBanner;
-        token.color = freshUser.color;
+      // Handle account switching
+      if (trigger === "update" && session?.switchToUserId) {
+        const switchToUser = await prisma.user.findUnique({
+          where: { id: session.switchToUserId },
+          select: {
+            id: true,
+            username: true,
+            profileName: true,
+            profilePicture: true,
+            profileBanner: true,
+            color: true,
+          },
+        });
+
+        if (switchToUser) {
+          token.id = switchToUser.id;
+          token.username = switchToUser.username;
+          token.profileName = switchToUser.profileName;
+          token.profilePicture = switchToUser.profilePicture;
+          token.profileBanner = switchToUser.profileBanner;
+          token.color = switchToUser.color;
+        }
+      } else {
+        // Fetch fresh user data on every JWT refresh
+        const freshUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: {
+            id: true,
+            username: true,
+            profileName: true,
+            profilePicture: true,
+            profileBanner: true,
+            color: true,
+          },
+        });
+
+        if (freshUser) {
+          token.username = freshUser.username;
+          token.profileName = freshUser.profileName;
+          token.profilePicture = freshUser.profilePicture;
+          token.profileBanner = freshUser.profileBanner;
+          token.color = freshUser.color;
+        }
       }
 
       return token;

@@ -15,7 +15,7 @@ const EditPost: React.FC = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [post, setPost] = useState<{ title: string; content: string } | null>(
-    null
+    null,
   );
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -41,84 +41,6 @@ const EditPost: React.FC = () => {
   const handlePostContentBlur = () => setIsPostContentFocused(false);
   const handlePostContentMouseOver = () => setIsPostContentHovered(true);
   const handlePostContentMouseOut = () => setIsPostContentHovered(false);
-
-  const calculateTitleBorderColor = () => {
-    if (isPostTitleFocused || isPostTitleHovered) return borderColor;
-    return `${borderColor}33`; // 20% opacity
-  };
-
-  const calculateTextBorderColor = () => {
-    if (isPostContentFocused || isPostContentHovered) return borderColor;
-    return `${borderColor}33`; // 20% opacity
-  };
-
-  const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newText = event.target.value;
-    setContent(newText);
-    setCharacterCount(newText.length);
-    setWordCount(newText ? newText.trim().split(/\s+/).length : 0);
-
-    const val = event.target?.value;
-    setContent(val);
-  };
-
-  const parseTextWithMedia = (inputText: string) => {
-    const mediaRegex = /(https:\/\/.*?\.(jpg|jpeg|png|gif|mp4|avi|mov))/g;
-    let parts = [];
-    let lastIndex = 0;
-
-    let match;
-    while ((match = mediaRegex.exec(inputText)) !== null) {
-      const textBeforeMedia = inputText.slice(lastIndex, match.index);
-      parts.push(
-        textBeforeMedia.split("\n").map((line, index, array) => (
-          <React.Fragment key={`${lastIndex}-${index}`}>
-            {line}
-            {index < array.length + 1 && <br />}
-          </React.Fragment>
-        ))
-      );
-
-      const mediaLink = match[0];
-      const isImage = /\.(jpg|jpeg|png|gif)$/.test(mediaLink);
-      if (isImage) {
-        parts.push(
-          <img
-            key={mediaLink}
-            src={mediaLink}
-            alt="User uploaded content"
-            className="rounded-[10px]"
-          />
-        );
-      } else {
-        parts.push(
-          <video
-            key={mediaLink}
-            src={mediaLink}
-            className="rounded-[10px]"
-            width="100%"
-            controls
-            autoPlay
-            muted
-          />
-        );
-      }
-
-      lastIndex = mediaRegex.lastIndex;
-    }
-
-    const remainingText = inputText.slice(lastIndex);
-    parts.push(
-      remainingText.split("\n").map((line, index, array) => (
-        <React.Fragment key={`${lastIndex}-${index}`}>
-          {line}
-          {index < array.length - 1 && <br />}
-        </React.Fragment>
-      ))
-    );
-
-    return parts;
-  };
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -175,14 +97,92 @@ const EditPost: React.FC = () => {
     }
   };
 
+  const calculateTitleBorderColor = () => {
+    if (isPostTitleFocused || isPostTitleHovered) return borderColor;
+    return `${borderColor}33`; // 20% opacity
+  };
+
+  const calculateTextBorderColor = () => {
+    if (isPostContentFocused || isPostContentHovered) return borderColor;
+    return `${borderColor}33`; // 20% opacity
+  };
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = event.target.value;
+    setContent(newText);
+    setCharacterCount(newText.length);
+    setWordCount(newText ? newText.trim().split(/\s+/).length : 0);
+
+    const val = event.target?.value;
+    setContent(val);
+  };
+
+  const parseTextWithMedia = (inputText: string) => {
+    const mediaRegex = /(https:\/\/.*?\.(jpg|jpeg|png|gif|mp4|avi|mov))/g;
+    let parts = [];
+    let lastIndex = 0;
+
+    let match;
+    while ((match = mediaRegex.exec(inputText)) !== null) {
+      const textBeforeMedia = inputText.slice(lastIndex, match.index);
+      parts.push(
+        textBeforeMedia.split("\n").map((line, index, array) => (
+          <React.Fragment key={`${lastIndex}-${index}`}>
+            {line}
+            {index < array.length + 1 && <br />}
+          </React.Fragment>
+        )),
+      );
+
+      const mediaLink = match[0];
+      const isImage = /\.(jpg|jpeg|png|gif)$/.test(mediaLink);
+      if (isImage) {
+        parts.push(
+          <img
+            key={mediaLink}
+            src={mediaLink}
+            alt="User uploaded content"
+            className="rounded-[10px]"
+          />,
+        );
+      } else {
+        parts.push(
+          <video
+            key={mediaLink}
+            src={mediaLink}
+            className="rounded-[10px]"
+            width="100%"
+            controls
+            autoPlay
+            muted
+          />,
+        );
+      }
+
+      lastIndex = mediaRegex.lastIndex;
+    }
+
+    const remainingText = inputText.slice(lastIndex);
+    parts.push(
+      remainingText.split("\n").map((line, index, array) => (
+        <React.Fragment key={`${lastIndex}-${index}`}>
+          {line}
+          {index < array.length - 1 && <br />}
+        </React.Fragment>
+      )),
+    );
+
+    return parts;
+  };
+
   const isPostChanged = () => {
     return title !== initialTitle || content !== initialContent;
   };
 
   return (
     <>
-      <div className="flex justify-center mt-[90px] mb-[100px]">
-        <div className="flex flex-col gap-[30px] w-[800px]">
+      <div className="mb-[100px] mt-[90px] flex justify-center">
+        <div className="flex w-[800px] flex-col gap-[30px]">
           <div>
             <h1 className="text-[25px] font-semibold">Edit Post</h1>
             <input
@@ -190,7 +190,7 @@ const EditPost: React.FC = () => {
               placeholder="Title of post (optional)..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="mt-[30px] p-[15px] w-full bg-transparent outline-none border-2 rounded-xl transition duration-300 ease-in-out border-dynamic"
+              className="border-dynamic mt-[30px] w-full rounded-xl border-2 bg-transparent p-[15px] outline-none transition duration-300 ease-in-out"
               style={{
                 borderColor: calculateTitleBorderColor(),
                 borderWidth: "2px",
@@ -205,7 +205,7 @@ const EditPost: React.FC = () => {
               value={content}
               onChange={handleTextChange}
               // onChange={(e) => setContent(e.target.value)}
-              className="my-[30px] p-[15px] min-h-[400px] w-full bg-transparent outline-none border-2 rounded-xl overflow-hidden transition duration-150 ease-in-out border-dynamic"
+              className="border-dynamic my-[30px] min-h-[400px] w-full overflow-hidden rounded-xl border-2 bg-transparent p-[15px] outline-none transition duration-150 ease-in-out"
               style={{
                 borderColor: calculateTextBorderColor(),
                 borderWidth: "2px",
@@ -216,7 +216,7 @@ const EditPost: React.FC = () => {
               onMouseOut={handlePostContentMouseOut}
             />
 
-            <div className="flex justify-between items-center gap-[30px]">
+            <div className="flex items-center justify-between gap-[30px]">
               <div className="flex gap-[30px]">
                 <p className="text-white/50">
                   Character count: {characterCount}
@@ -234,7 +234,7 @@ const EditPost: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="w-full h-[1px] bg-white/5"></div>
+          <div className="h-[1px] w-full bg-white/5"></div>
           <div className="flex gap-5">
             <PrimaryButton
               onClick={() => setView("preview")}
@@ -251,19 +251,15 @@ const EditPost: React.FC = () => {
           </div>
           {view === "preview" ? (
             <div>
-              <h1 className="font-bold mb-[20px] text-white/50">
+              <h1 className="mb-[20px] font-bold text-white/50">
                 Preview Post
               </h1>
               <PostTemplate
                 id={session?.user.id || ""}
-                profilePicture={session?.user.profilePicture || ""}
-                profileName={
-                  session?.user.profileName || session?.user.username || ""
-                }
-                username={session?.user.username || ""}
-                timestamp={""}
-                title={parseTextWithMedia(title)}
-                textContent={content}
+                user={session?.user}
+                timestamp={new Date().toISOString()}
+                title={title}
+                content={parseTextWithMedia(content)}
                 initialLikesCount={0}
                 userLiked={false}
               />

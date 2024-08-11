@@ -13,7 +13,11 @@ const NextAuthProvider: React.FC<NextAuthProviderProps> = ({
   children,
   session,
 }) => {
-  return <SessionProvider session={session}>{children}</SessionProvider>;
+  return (
+    <SessionProvider session={session} refetchInterval={5 * 60}>
+      {children}
+    </SessionProvider>
+  );
 };
 
 export default NextAuthProvider;

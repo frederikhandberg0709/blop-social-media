@@ -11,21 +11,19 @@ export default async function CreateAccountPage() {
   }
 
   return (
-    <div className="mt-[150px] w-full flex flex-col items-center justify-center">
+    <div className="mt-[150px] flex w-full flex-col items-center justify-center">
       <div className="w-fit">
-        <h1 className="text-[30px] font-semibold text-center">
-          Create Account
-        </h1>
+        <h1 className="text-center text-3xl font-semibold">Create Account</h1>
 
         <RegistrationForm />
 
-        <div className="flex flex-col items-center gap-8 mt-20">
-          <h2 className="font-semibold text-[20px]">
+        <div className="mt-20 flex flex-col items-center gap-8">
+          <h2 className="text-[20px] font-semibold">
             Already have an account?
           </h2>
           <Link
             href="/login"
-            className="font-semibold text-blue-500 hover:text-white hover:bg-blue-600 relative bottom-0 hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)] px-4 py-2 rounded-xl transition-all duration-150 ease-in-out"
+            className="relative bottom-0 rounded-xl px-4 py-2 font-semibold text-blue-500 transition-all duration-150 ease-in-out hover:bottom-1 hover:bg-blue-600 hover:text-white hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]"
           >
             Login
           </Link>

@@ -48,12 +48,15 @@ const UserProfile: React.FC<UserProfileProps> = ({
     setIsFollowing(newIsFollowing);
   };
 
+  const DEFAULT_PROFILE_BANNER =
+    "https://pbs.twimg.com/profile_banners/994250907826245635/1569352839/1080x360";
+
   return (
     <>
       <div className="mt-[60px] flex justify-center">
         {/* Banner */}
         <img
-          src={user.profileBanner}
+          src={user.profileBanner || DEFAULT_PROFILE_BANNER}
           alt=""
           className="absolute top-[100px] -z-10 m-auto h-[350px] rounded-3xl"
         />
@@ -72,7 +75,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
                   currentUserId === user.id ? (
                     <Link
                       href={"/settings#edit-profile"}
-                      className="rounded-full bg-blue-500 px-4 py-2 font-semibold text-white transition duration-200 ease-in-out hover:bg-blue-600"
+                      className="rounded-full bg-blue-500 px-4 py-2 font-semibold text-white transition duration-200 ease-in-out hover:bg-blue-600 active:bg-blue-700"
                     >
                       Edit Profile
                     </Link>

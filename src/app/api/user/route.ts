@@ -1,12 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/db/prisma";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function GET(req: NextRequest) {
-  const userId = req.nextUrl.searchParams.get("userId");
+  // const userId = req.nextUrl.searchParams.get("userId");
+  const session = await getServerSession(authOptions);
 
-  if (!userId) {
-    return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+  // if (!userId) {
+  //   return NextResponse.json({ error: "User ID is required" }, { status: 400 });
+  // }
+
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
+
+  const userId = session.user.id;
 
   try {
     const user = await prisma.user.findUnique({
@@ -30,7 +39,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch user data" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -41,7 +50,7 @@ export async function POST(req: NextRequest) {
   if (!userId || !username) {
     return NextResponse.json(
       { error: "User ID and username are required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -59,7 +68,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to update profile" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

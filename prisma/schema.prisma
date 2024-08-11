@@ -23,25 +23,27 @@ model Session {
 }
 
 model User {
-  id             String        @id @default(uuid())
-  username       String        @unique
-  email          String        @unique
-  password       String
-  createdAt      DateTime      @default(now()) @db.Timestamptz()
-  updatedAt      DateTime      @default(now()) @updatedAt @db.Timestamptz()
-  profileName    String?
-  profilePicture String?
-  profileBanner  String?
-  bio            String?
-  following      Follow[]      @relation("following")
-  followers      Follow[]      @relation("followers")
-  posts          Post[]
-  comments       Comment[]
-  postLikes      PostLike[]
-  commentLikes   CommentLike[]
-  Session        Session[]
-  accounts       Account[]
-  color          String        @default("#3b82f6")
+  id               String          @id @default(uuid())
+  username         String          @unique
+  email            String          @unique
+  password         String
+  createdAt        DateTime        @default(now()) @db.Timestamptz()
+  updatedAt        DateTime        @default(now()) @updatedAt @db.Timestamptz()
+  profileName      String?
+  profilePicture   String?
+  profileBanner    String?
+  bio              String?
+  following        Follow[]        @relation("following")
+  followers        Follow[]        @relation("followers")
+  posts            Post[]
+  comments         Comment[]
+  postLikes        PostLike[]
+  commentLikes     CommentLike[]
+  Session          Session[]
+  accounts         Account[]
+  color            String          @default("#3b82f6")
+  linkedAccounts   LinkedAccount[] @relation("UserLinkedAccounts")
+  linkedToAccounts LinkedAccount[] @relation("LinkedToAccounts")
 }
 
 model Account {
@@ -130,4 +132,18 @@ model Follow {
   createdAt   DateTime @default(now()) @db.Timestamptz()
 
   @@id([followerId, followingId])
+}
+
+model LinkedAccount {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+  userId String
+  user   User   @relation("UserLinkedAccounts", fields: [userId], references: [id])
+
+  linkedUserId String
+  linkedUser   User   @relation("LinkedToAccounts", fields: [linkedUserId], references: [id])
+
+  @@unique([userId, linkedUserId])
 }

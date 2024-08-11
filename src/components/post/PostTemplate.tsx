@@ -17,8 +17,6 @@ const PostTemplate: React.FC<PostProps> = ({
   id,
   user,
   timestamp,
-  // createdAt,
-  // updatedAt,
   title,
   content,
   imageContent,
