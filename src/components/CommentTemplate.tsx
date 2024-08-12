@@ -157,7 +157,7 @@ export default function CommentTemplate({
             {formatDate(timestamp)}
           </div>
           {/* Dropdown menu */}
-          <CommentDropdownMenu />
+          <CommentDropdownMenu authorId={user.id} commentId={id} />
         </div>
       </div>
       {title && <h1 className="text-base font-bold">{title}</h1>}

@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
             username: true,
             profileName: true,
             profilePicture: true,
-            // Add any other fields you want to include
           },
         },
         linkedUser: {
@@ -32,7 +31,6 @@ export async function GET(request: NextRequest) {
             username: true,
             profileName: true,
             profilePicture: true,
-            // Add any other fields you want to include
           },
         },
       },

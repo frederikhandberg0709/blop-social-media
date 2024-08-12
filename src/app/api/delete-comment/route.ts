@@ -11,42 +11,42 @@ export async function DELETE(request: NextRequest) {
     }
 
     const userId = session.user.id;
-    const postId = request.nextUrl.searchParams.get("postId");
+    const commentId = request.nextUrl.searchParams.get("commentId");
 
-    if (!postId) {
+    if (!commentId) {
       return NextResponse.json(
-        { error: "Post ID is required" },
+        { error: "Comment ID is required" },
         { status: 400 },
       );
     }
 
-    // Fetch the post to check if the current user is the author
-    const post = await prisma.post.findUnique({
-      where: { id: postId },
+    // Fetch the comment to check if the current user is the author
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
       select: { userId: true },
     });
 
-    if (!post) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    if (!comment) {
+      return NextResponse.json({ error: "Comment not found" }, { status: 404 });
     }
 
-    if (post.userId !== userId) {
+    if (comment.userId !== userId) {
       return NextResponse.json(
-        { error: "Not authorized to delete this post" },
+        { error: "Not authorized to delete this comment" },
         { status: 403 },
       );
     }
 
-    // Delete the post
-    await prisma.post.delete({
-      where: { id: postId },
+    // Delete the comment
+    await prisma.comment.delete({
+      where: { id: commentId },
     });
 
-    return NextResponse.json({ message: "Post deleted successfully" });
+    return NextResponse.json({ message: "Comment deleted successfully" });
   } catch (error) {
-    console.error("Error deleting post:", error);
+    console.error("Error deleting comment:", error);
     return NextResponse.json(
-      { error: "Failed to delete post" },
+      { error: "Failed to delete comment" },
       { status: 500 },
     );
   }
