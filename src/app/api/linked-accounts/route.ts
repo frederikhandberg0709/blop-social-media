@@ -13,13 +13,41 @@ export async function GET(request: NextRequest) {
     const userId = session.user.id;
 
     const linkedAccounts = await prisma.linkedAccount.findMany({
-      where: { userId: userId },
-      include: { linkedUser: true },
+      where: {
+        OR: [{ userId: userId }, { linkedUserId: userId }],
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            profileName: true,
+            profilePicture: true,
+            // Add any other fields you want to include
+          },
+        },
+        linkedUser: {
+          select: {
+            id: true,
+            username: true,
+            profileName: true,
+            profilePicture: true,
+            // Add any other fields you want to include
+          },
+        },
+      },
     });
 
-    const linkedUsers = linkedAccounts.map((account) => account.linkedUser);
+    // Process the results to get a unique list of linked users
+    const uniqueLinkedUsers = linkedAccounts.reduce((acc, link) => {
+      const linkedUser = link.userId === userId ? link.linkedUser : link.user;
+      if (!acc.some((user) => user.id === linkedUser.id)) {
+        acc.push(linkedUser);
+      }
+      return acc;
+    }, [] as any[]);
 
-    return NextResponse.json(linkedUsers);
+    return NextResponse.json(uniqueLinkedUsers);
   } catch (error) {
     console.error("Error fetching linked accounts:", error);
     return NextResponse.json(

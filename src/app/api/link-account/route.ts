@@ -1,76 +1,5 @@
-// import { NextRequest, NextResponse } from "next/server";
-// import { prisma } from "@/db/prisma";
-// import { getServerSession } from "next-auth/next";
-// import { authOptions } from "../auth/[...nextauth]/route";
-
 import { prisma } from "@/db/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
-// export async function POST(req: NextRequest) {
-//   try {
-//     const session = await getServerSession(authOptions);
-//     if (!session || !session.user) {
-//       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-//     }
-
-//     const { linkedUserId } = await req.json();
-//     const currentUserId = session.user.id;
-
-//     if (!currentUserId || !linkedUserId) {
-//       return NextResponse.json(
-//         { error: "Missing required fields" },
-//         { status: 400 },
-//       );
-//     }
-
-//     if (currentUserId === linkedUserId) {
-//       return NextResponse.json(
-//         { error: "Cannot link account to itself" },
-//         { status: 400 },
-//       );
-//     }
-
-//     // Check if the link already exists
-//     const existingLink = await prisma.linkedAccount.findFirst({
-//       where: {
-//         OR: [
-//           { userId: currentUserId, linkedUserId: linkedUserId },
-//           { userId: linkedUserId, linkedUserId: currentUserId },
-//         ],
-//       },
-//     });
-
-//     if (existingLink) {
-//       return NextResponse.json(
-//         { error: "Accounts are already linked" },
-//         { status: 400 },
-//       );
-//     }
-
-//     // Create the link
-//     const linkedAccount = await prisma.linkedAccount.create({
-//       data: {
-//         userId: currentUserId,
-//         linkedUserId: linkedUserId,
-//       },
-//     });
-
-//     console.log("Linked account created:", linkedAccount);
-
-//     return NextResponse.json(linkedAccount);
-//   } catch (error) {
-//     console.error("Error linking account:", error);
-//     return NextResponse.json(
-//       { error: "Failed to link account", details: (error as Error).message },
-//       { status: 500 },
-//     );
-//     // console.error("Error linking account:", error);
-//     // return NextResponse.json(
-//     //   { error: "Failed to link account" },
-//     //   { status: 500 },
-//     // );
-//   }
-// }
 
 export async function POST(req: NextRequest) {
   console.log("Received link account request");
@@ -128,17 +57,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log("Creating link");
-    const linkedAccount = await prisma.linkedAccount.create({
-      data: {
-        userId: currentUserId,
-        linkedUserId: linkedUserId,
-      },
-    });
+    console.log("Creating bidirectional link");
+    const [link1, link2] = await prisma.$transaction([
+      prisma.linkedAccount.create({
+        data: {
+          userId: currentUserId,
+          linkedUserId: linkedUserId,
+        },
+      }),
+      prisma.linkedAccount.create({
+        data: {
+          userId: linkedUserId,
+          linkedUserId: currentUserId,
+        },
+      }),
+    ]);
 
-    console.log("Linked account created:", linkedAccount);
+    console.log("Linked accounts created:", { link1, link2 });
 
-    return NextResponse.json(linkedAccount);
+    return NextResponse.json({ link1, link2 });
   } catch (error) {
     console.error("Error linking account:", error);
     return NextResponse.json(
