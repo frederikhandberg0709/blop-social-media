@@ -6,6 +6,7 @@ interface PostActionButtonsProps {
   commentsCount: number;
   onCommentClick: () => void;
   sharesCount: number;
+  onShareClick: () => void;
   donationCount: number;
   liked: boolean;
   onLike: () => void;
@@ -17,6 +18,7 @@ const PostActionButtons: React.FC<PostActionButtonsProps> = ({
   commentsCount,
   onCommentClick,
   sharesCount,
+  onShareClick,
   donationCount,
   liked,
   onLike,
@@ -71,7 +73,12 @@ const PostActionButtons: React.FC<PostActionButtonsProps> = ({
         </button>
       </Tooltip>
       <Tooltip text={"Share"} position="top" offset="40">
-        <button className="flex w-[90px] cursor-pointer items-center justify-center gap-[5px] rounded-full fill-green-500 py-[3px] transition-colors duration-200 hover:bg-green-500/25 active:bg-green-500/50">
+        <button
+          onClick={() => {
+            onShareClick();
+          }}
+          className="flex w-[90px] cursor-pointer items-center justify-center gap-[5px] rounded-full fill-green-500 py-[3px] transition-colors duration-200 hover:bg-green-500/25 active:bg-green-500/50"
+        >
           {/* Share icon */}
           <svg
             width="24"

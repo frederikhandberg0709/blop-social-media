@@ -2,27 +2,34 @@
 
 import PostTemplate from "@/components/post/PostTemplate";
 import { PostProps } from "@/types/PostProps";
+import { UserProps } from "@/types/UserProps";
 import { useEffect, useState } from "react";
 
 const Home: React.FC = () => {
-  const [posts, setPosts] = useState<PostProps[]>([]);
+  const [timeline, setTimeline] = useState<PostProps[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchTimeline = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
-        const response = await fetch("/api/fetch-all-posts");
+        const response = await fetch("/api/home-timeline");
         if (!response.ok) {
-          throw new Error("Failed to fetch posts");
+          throw new Error("Failed to fetch home timeline");
         }
         const data = await response.json();
-        setPosts(data.posts);
+        setTimeline(data.posts);
       } catch (error) {
-        const err = error as Error;
-        console.error(err.message);
+        console.error("Error fetching home timeline:", error);
+        setError("Failed to load posts. Please try again later.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchPosts();
+    fetchTimeline();
   }, []);
 
   return (
@@ -37,24 +44,16 @@ const Home: React.FC = () => {
               Filters
             </button>
           </div>
-          {/* {Array.isArray(posts) && posts.length > 0 ? ( */}
-          {posts?.map((post) => (
-            <PostTemplate
-              key={post.id}
-              id={post.id}
-              user={post.user}
-              createdAt={post.createdAt}
-              updatedAt={post.updatedAt}
-              timestamp={post.updatedAt || post.createdAt}
-              title={post.title}
-              content={post.content}
-              initialLikesCount={post.initialLikesCount ?? 0}
-              userLiked={post.userLiked}
-            />
+          {isLoading && <p>Loading posts...</p>}
+          {error && <p className="text-red-500">{error}</p>}
+
+          {!isLoading && !error && timeline.length === 0 && (
+            <p>No posts to display. Try following some users!</p>
+          )}
+
+          {timeline.map((post) => (
+            <PostTemplate key={post.id} {...post} />
           ))}
-          {/* ) : (
-            <p>No posts available.</p>
-          )} */}
         </div>
       </div>
     </>

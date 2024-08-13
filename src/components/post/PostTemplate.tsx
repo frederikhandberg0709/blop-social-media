@@ -8,29 +8,28 @@ import { useSession } from "next-auth/react";
 import CommentTemplate from "../CommentTemplate";
 import PostDropdownMenu from "../menus/PostDropdownMenu";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
-import { PostProps } from "@/types/PostProps";
+import {
+  PostProps,
+  SharedPostProps,
+  OriginalPostProps,
+} from "@/types/PostProps";
 import { formatDate } from "@/utils/formattedDate";
 import AnimateHeight from "react-animate-height";
 import ProfilePicture from "../ProfilePicture";
 
-const PostTemplate: React.FC<PostProps> = ({
-  id,
-  user,
-  timestamp,
-  title,
-  content,
-  imageContent,
-  videoContent,
-  initialLikesCount,
-  userLiked,
-}) => {
+const PostTemplate: React.FC<PostProps> = (props) => {
   const { data: session } = useSession();
-  const [likesCount, setLikesCount] = useState(initialLikesCount);
-  const [liked, setLiked] = useState(userLiked);
+  const isShared = props.type === "shared";
+  const sharedPost = isShared ? (props as SharedPostProps) : null;
+  const post = isShared ? sharedPost!.post : (props as OriginalPostProps);
+
+  const [likesCount, setLikesCount] = useState(post.initialLikesCount);
+  const [liked, setLiked] = useState(post.userLiked);
   const [comments, setComments] = useState<any[]>([]);
   const [commentSectionHeight, setCommentSectionHeight] = useState<
     number | "auto"
   >(0);
+  const [sharesCount, setSharesCount] = useState(0);
   const [overlayImage, setOverlayImage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,7 +37,7 @@ const PostTemplate: React.FC<PostProps> = ({
       try {
         const userId = session?.user?.id;
         const response = await fetch(
-          `/api/likes-count-post?postId=${id}&userId=${userId}`,
+          `/api/likes-count-post?postId=${post.id}&userId=${userId}`,
         );
         const data = await response.json();
         setLikesCount(data.likesCount);
@@ -49,12 +48,14 @@ const PostTemplate: React.FC<PostProps> = ({
     };
 
     fetchLikesCount();
-  }, [id, session?.user?.id]);
+  }, [post.id, session?.user?.id]);
 
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await fetch(`/api/fetch-all-comments?postId=${id}`);
+        const response = await fetch(
+          `/api/fetch-all-comments?postId=${post.id}`,
+        );
         const data = await response.json();
         setComments(data.comments);
       } catch (error) {
@@ -62,7 +63,23 @@ const PostTemplate: React.FC<PostProps> = ({
       }
     };
     fetchComments();
-  }, [id]);
+  }, [post.id]);
+
+  useEffect(() => {
+    const fetchSharesCount = async () => {
+      try {
+        const response = await fetch(
+          `/api/fetch-post-share-count?postId=${post.id}`,
+        );
+        const data = await response.json();
+        setSharesCount(data.sharesCount);
+      } catch (error) {
+        console.error("Error fetching shares count:", error);
+      }
+    };
+
+    fetchSharesCount();
+  }, [post.id]);
 
   const handleLike = async () => {
     if (!session) {
@@ -75,7 +92,7 @@ const PostTemplate: React.FC<PostProps> = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ postId: id, userId: session.user.id }),
+        body: JSON.stringify({ postId: post.id, userId: session.user.id }),
       });
 
       if (response.ok) {
@@ -99,7 +116,7 @@ const PostTemplate: React.FC<PostProps> = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ postId: id, userId: session.user.id }),
+        body: JSON.stringify({ postId: post.id, userId: session.user.id }),
       });
 
       if (response.ok) {
@@ -110,6 +127,31 @@ const PostTemplate: React.FC<PostProps> = ({
       }
     } catch (error) {
       console.error("Error unliking post:", error);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!session) {
+      return alert("You need to be logged in to share posts");
+    }
+
+    try {
+      const response = await fetch("/api/share-post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ postId: post.id }),
+      });
+
+      if (response.ok) {
+        alert("Post shared successfully!");
+        // You might want to update the UI or refetch the post data here
+      } else {
+        console.error("Failed to share post");
+      }
+    } catch (error) {
+      console.error("Error sharing post:", error);
     }
   };
 
@@ -130,44 +172,57 @@ const PostTemplate: React.FC<PostProps> = ({
   };
 
   const parsedContent =
-    typeof content === "string"
-      ? parseTextWithMedia(content, handleImageClick)
-      : content;
+    typeof post.content === "string"
+      ? parseTextWithMedia(post.content, handleImageClick)
+      : post.content;
 
-  if (!user) {
-    return null; // or some kind of loading indicator or placeholder
+  if (!post.user) {
+    return null;
   }
 
   return (
     <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
+      {/* Only show if post is shared */}
+      {isShared && sharedPost && (
+        <p className="text-sm text-gray-500">
+          Shared by{" "}
+          <Link
+            href={`/profile/${sharedPost.sharedBy.username}`}
+            className="font-bold hover:underline"
+          >
+            {sharedPost.sharedBy.profileName || `@${sharedPost.user.username}`}
+          </Link>{" "}
+          <span>· {formatDate(sharedPost.sharedAt || "")}</span>
+        </p>
+      )}
       <div className="flex items-center justify-between">
         <Link
-          href={`/profile/${user.username}`}
+          href={`/profile/${post.user.username}`}
           className="group flex items-center gap-[10px]"
         >
           <ProfilePicture
-            src={user.profilePicture}
-            alt={`${user.profileName}'s profile picture`}
+            src={post.user.profilePicture}
+            alt={`${post.user.profileName}'s profile picture`}
           />
           <div className="flex flex-col gap-[1px]">
             {/* If user has profile name */}
-            {user.profileName ? (
+            {post.user.profileName ? (
               <>
                 <div className="text-[15px] font-bold group-hover:text-blue-500">
-                  {user.profileName}
+                  {post.user.profileName}
                 </div>
                 <div className="text-[12px] text-gray-500">
-                  @{user.username}
+                  @{post.user.username}
                 </div>
               </>
             ) : (
               // No profile name, only show username
               <>
                 <div className="text-[15px] font-bold group-hover:text-blue-500">
-                  {user.username}
+                  {post.user.username}
                 </div>
                 <div className="text-[12px] text-gray-500">
-                  @{user.username}
+                  @{post.user.username}
                 </div>
               </>
             )}
@@ -175,18 +230,19 @@ const PostTemplate: React.FC<PostProps> = ({
         </Link>
         <div className="flex items-center gap-[15px]">
           <div className="text-right text-[15px] text-gray-500">
-            {formatDate(timestamp)}
+            {formatDate(!post.updatedAt ? post.createdAt : post.updatedAt)}
+            {/* {formatDate(post.timestamp)} */}
           </div>
           {/* Dropdown menu */}
           <PostDropdownMenu
-            postId={id}
-            authorId={user.id}
-            authorUsername={user.username}
+            postId={post.id}
+            authorId={post.user.id}
+            authorUsername={post.user.username}
           />
         </div>
       </div>
       <div className="flex flex-col gap-1">
-        {title && <h1 className="text-xl font-bold">{title}</h1>}
+        {post.title && <h1 className="text-xl font-bold">{post.title}</h1>}
         <p className="text-base leading-normal">{parsedContent}</p>
       </div>
       <PostActionButtons
@@ -195,7 +251,8 @@ const PostTemplate: React.FC<PostProps> = ({
         onCommentClick={() =>
           setCommentSectionHeight(commentSectionHeight === 0 ? "auto" : 0)
         }
-        sharesCount={0}
+        sharesCount={sharesCount}
+        onShareClick={handleShare}
         donationCount={0}
         liked={liked}
         onLike={handleLike}
@@ -245,7 +302,7 @@ const PostTemplate: React.FC<PostProps> = ({
                   </div>
                 </Link>
                 <Link
-                  href={`/send-comment/${id}`}
+                  href={`/send-comment/${post.id}`}
                   className="rounded-full bg-blue-600 px-2 py-1 text-sm font-semibold text-white transition duration-150 ease-in-out hover:bg-hoverBlue"
                 >
                   Send a comment?

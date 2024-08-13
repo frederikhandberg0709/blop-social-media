@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "CommentShare" ALTER COLUMN "createdAt" SET DATA TYPE TIMESTAMPTZ;
+
+-- AlterTable
+ALTER TABLE "PostShare" ALTER COLUMN "createdAt" SET DATA TYPE TIMESTAMPTZ;

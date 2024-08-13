@@ -1,15 +1,26 @@
 import { UserProps } from "./UserProps";
 
-export interface PostProps {
+export interface BasePostProps {
   id: string;
   user: UserProps;
-  title?: string;
-  content: string | React.ReactNode;
-  imageContent?: string;
-  videoContent?: string;
-  initialLikesCount: number;
-  userLiked: boolean;
   createdAt: string;
   updatedAt: string;
   timestamp: string;
+  title?: string;
+  content: string;
+  initialLikesCount: number;
+  userLiked: boolean;
 }
+
+export interface OriginalPostProps extends BasePostProps {
+  type: "original";
+}
+
+export interface SharedPostProps extends BasePostProps {
+  type: "shared";
+  sharedBy: UserProps;
+  sharedAt: string;
+  post: BasePostProps;
+}
+
+export type PostProps = OriginalPostProps | SharedPostProps;

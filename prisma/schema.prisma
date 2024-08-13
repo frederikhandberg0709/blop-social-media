@@ -44,6 +44,8 @@ model User {
   color            String          @default("#3b82f6")
   linkedAccounts   LinkedAccount[] @relation("UserLinkedAccounts")
   linkedToAccounts LinkedAccount[] @relation("LinkedToAccounts")
+  postShares       PostShare[]
+  commentShares    CommentShare[]
 }
 
 model Account {
@@ -78,22 +80,42 @@ model Post {
   comments  Comment[]
   likes     PostLike[]
   revisions PostRevision[]
+  shares    PostShare[]
 }
 
 model Comment {
-  id        String        @id @default(uuid())
-  post      Post          @relation(fields: [postId], references: [id])
+  id        String         @id @default(uuid())
+  post      Post           @relation(fields: [postId], references: [id])
   postId    String
   parentId  String?
-  user      User          @relation(fields: [userId], references: [id])
+  user      User           @relation(fields: [userId], references: [id])
   userId    String
   title     String?
   content   String
-  createdAt DateTime      @default(now()) @db.Timestamptz()
-  updatedAt DateTime      @default(now()) @updatedAt @db.Timestamptz()
-  parent    Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
-  replies   Comment[]     @relation("CommentReplies")
+  createdAt DateTime       @default(now()) @db.Timestamptz()
+  updatedAt DateTime       @default(now()) @updatedAt @db.Timestamptz()
+  parent    Comment?       @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[]      @relation("CommentReplies")
   likes     CommentLike[]
+  shares    CommentShare[]
+}
+
+model PostShare {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+  createdAt DateTime @default(now()) @db.Timestamptz()
+}
+
+model CommentShare {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  commentId String
+  createdAt DateTime @default(now()) @db.Timestamptz()
 }
 
 model PostLike {
