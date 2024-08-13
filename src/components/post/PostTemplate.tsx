@@ -29,8 +29,11 @@ const PostTemplate: React.FC<PostProps> = (props) => {
   const [commentSectionHeight, setCommentSectionHeight] = useState<
     number | "auto"
   >(0);
+  const [userHasShared, setUserHasShared] = useState(isShared);
+  const [shareId, setShareId] = useState(isShared ? sharedPost!.id : null);
   const [sharesCount, setSharesCount] = useState(0);
   const [overlayImage, setOverlayImage] = useState<string | null>(null);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   useEffect(() => {
     const fetchLikesCount = async () => {
@@ -80,6 +83,26 @@ const PostTemplate: React.FC<PostProps> = (props) => {
 
     fetchSharesCount();
   }, [post.id]);
+
+  useEffect(() => {
+    const fetchShareStatus = async () => {
+      if (!session?.user) return;
+
+      try {
+        const response = await fetch(
+          `/api/check-share-status?postId=${post.id}`,
+        );
+        const data = await response.json();
+        setUserHasShared(data.hasShared);
+        setShareId(data.shareId);
+        setSharesCount(data.sharesCount);
+      } catch (error) {
+        console.error("Error fetching share status:", error);
+      }
+    };
+
+    fetchShareStatus();
+  }, [session?.user, post.id]);
 
   const handleLike = async () => {
     if (!session) {
@@ -154,6 +177,32 @@ const PostTemplate: React.FC<PostProps> = (props) => {
       console.error("Error sharing post:", error);
     }
   };
+
+  const handleUnshare = async () => {
+    if (!session || !isShared) return;
+
+    try {
+      const response = await fetch("/api/unshare-post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ shareId: sharedPost!.id }),
+      });
+
+      if (response.ok) {
+        setIsDeleted(true);
+      } else {
+        console.error("Failed to unshare post");
+      }
+    } catch (error) {
+      console.error("Error unsharing post:", error);
+    }
+  };
+
+  if (isDeleted) {
+    return null; // Or some placeholder for deleted posts
+  }
 
   const handleImageClick = (src: string) => {
     setOverlayImage(src);
@@ -252,7 +301,7 @@ const PostTemplate: React.FC<PostProps> = (props) => {
           setCommentSectionHeight(commentSectionHeight === 0 ? "auto" : 0)
         }
         sharesCount={sharesCount}
-        onShareClick={handleShare}
+        onShareClick={userHasShared ? handleUnshare : handleShare}
         donationCount={0}
         liked={liked}
         onLike={handleLike}
