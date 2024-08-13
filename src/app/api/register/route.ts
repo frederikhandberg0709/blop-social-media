@@ -17,9 +17,6 @@ const validatePassword = (password: string) => {
 export async function POST(request: Request) {
   try {
     const { email, username, password } = await request.json();
-    // do validation here...
-    // for instance, check if email is valid, password is strong enough (password critierias: min. 8 character, min. one special character, etc.), etc.
-    // can use Zod library for validation
 
     console.log({ email, password });
 
