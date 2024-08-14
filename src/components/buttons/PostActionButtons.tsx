@@ -6,11 +6,12 @@ interface PostActionButtonsProps {
   commentsCount: number;
   onCommentClick: () => void;
   sharesCount: number;
-  onShareClick: () => void;
+  onShareClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   donationCount: number;
   liked: boolean;
   onLike: () => void;
   onUnlike: () => void;
+  shareButtonRef: React.RefObject<HTMLButtonElement>;
 }
 
 const PostActionButtons: React.FC<PostActionButtonsProps> = ({
@@ -23,6 +24,7 @@ const PostActionButtons: React.FC<PostActionButtonsProps> = ({
   liked,
   onLike,
   onUnlike,
+  shareButtonRef,
 }) => {
   const [isCommentSectionVisible, setIsCommentSectionVisible] = useState(false);
 
@@ -74,8 +76,9 @@ const PostActionButtons: React.FC<PostActionButtonsProps> = ({
       </Tooltip>
       <Tooltip text={"Share"} position="top" offset="40">
         <button
-          onClick={() => {
-            onShareClick();
+          ref={shareButtonRef}
+          onClick={(e) => {
+            onShareClick(e);
           }}
           className="flex w-[90px] cursor-pointer items-center justify-center gap-[5px] rounded-full fill-green-500 py-[3px] transition-colors duration-200 hover:bg-green-500/25 active:bg-green-500/50"
         >

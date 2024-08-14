@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import PostActionButtons from "../buttons/PostActionButtons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import CommentTemplate from "../CommentTemplate";
 import PostDropdownMenu from "../menus/PostDropdownMenu";
@@ -16,6 +16,7 @@ import {
 import { formatDate } from "@/utils/formattedDate";
 import AnimateHeight from "react-animate-height";
 import ProfilePicture from "../ProfilePicture";
+import PostShareMenu from "../menus/PostShareMenu";
 
 const PostTemplate: React.FC<PostProps> = (props) => {
   const { data: session } = useSession();
@@ -34,6 +35,15 @@ const PostTemplate: React.FC<PostProps> = (props) => {
   const [sharesCount, setSharesCount] = useState(0);
   const [overlayImage, setOverlayImage] = useState<string | null>(null);
   const [isDeleted, setIsDeleted] = useState(false);
+  const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
+  const shareButtonRef = useRef<HTMLButtonElement>(null);
+  const shareMenuRef = useRef<HTMLDivElement>(null);
+
+  const handleShareClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsShareMenuOpen(!isShareMenuOpen);
+  };
 
   useEffect(() => {
     const fetchLikesCount = async () => {
@@ -169,7 +179,10 @@ const PostTemplate: React.FC<PostProps> = (props) => {
 
       if (response.ok) {
         alert("Post shared successfully!");
-        // You might want to update the UI or refetch the post data here
+        // setSharesCount(sharesCount + 1);
+        setSharesCount((prevCount) => prevCount + 1);
+        setUserHasShared(true);
+        setIsShareMenuOpen(false);
       } else {
         console.error("Failed to share post");
       }
@@ -187,10 +200,13 @@ const PostTemplate: React.FC<PostProps> = (props) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ shareId: sharedPost!.id }),
+        body: JSON.stringify({ shareId: shareId }),
       });
 
       if (response.ok) {
+        setSharesCount((prevCount) => prevCount - 1);
+        setUserHasShared(false);
+        setIsShareMenuOpen(false);
         setIsDeleted(true);
       } else {
         console.error("Failed to unshare post");
@@ -200,8 +216,44 @@ const PostTemplate: React.FC<PostProps> = (props) => {
     }
   };
 
+  const handleQuote = () => {
+    console.log("Quote post");
+    setIsShareMenuOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isShareMenuOpen &&
+        shareMenuRef.current &&
+        shareButtonRef.current &&
+        !shareMenuRef.current.contains(event.target as Node) &&
+        !shareButtonRef.current.contains(event.target as Node)
+      ) {
+        setIsShareMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isShareMenuOpen]);
+
+  useEffect(() => {
+    if (isShareMenuOpen && shareButtonRef.current && shareMenuRef.current) {
+      const buttonRect = shareButtonRef.current.getBoundingClientRect();
+      const menuRect = shareMenuRef.current.getBoundingClientRect();
+
+      shareMenuRef.current.style.position = "absolute";
+      shareMenuRef.current.style.top = `${buttonRect.bottom + window.scrollY}px`;
+      shareMenuRef.current.style.left = `${buttonRect.left + window.scrollX}px`;
+    }
+  }, [isShareMenuOpen]);
+
   if (isDeleted) {
-    return null; // Or some placeholder for deleted posts
+    return null;
   }
 
   const handleImageClick = (src: string) => {
@@ -301,12 +353,23 @@ const PostTemplate: React.FC<PostProps> = (props) => {
           setCommentSectionHeight(commentSectionHeight === 0 ? "auto" : 0)
         }
         sharesCount={sharesCount}
-        onShareClick={userHasShared ? handleUnshare : handleShare}
+        onShareClick={handleShareClick}
+        shareButtonRef={shareButtonRef}
         donationCount={0}
         liked={liked}
         onLike={handleLike}
         onUnlike={handleUnlike}
       />
+      {isShareMenuOpen && (
+        <div ref={shareMenuRef}>
+          <PostShareMenu
+            postId={post.id}
+            onShare={userHasShared ? handleUnshare : handleShare}
+            onQuote={handleQuote}
+            userHasShared={userHasShared}
+          />
+        </div>
+      )}
       <AnimateHeight duration={500} height={commentSectionHeight}>
         <>
           <div className="flex flex-col gap-2">
