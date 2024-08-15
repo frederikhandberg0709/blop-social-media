@@ -18,21 +18,19 @@ export const parseTextWithMedia = (
           </span>
         );
       }
-      return part;
+      return part.split("\n").map((line, lineIndex) => (
+        <React.Fragment key={`${index}-${lineIndex}`}>
+          {line}
+          {lineIndex < part.split("\n").length - 1 && <br />}
+        </React.Fragment>
+      ));
     });
   };
 
   let match;
   while ((match = mediaRegex.exec(inputText)) !== null) {
     const textBeforeMedia = inputText.slice(lastIndex, match.index);
-    parts.push(
-      textBeforeMedia.split("\n").map((line, index, array) => (
-        <React.Fragment key={`${lastIndex}-${index}`}>
-          {line}
-          {index < array.length + 1 && <br />}
-        </React.Fragment>
-      )),
-    );
+    parts.push(...processText(textBeforeMedia));
 
     const mediaLink = match[0];
     const isImage = /\.(jpg|jpeg|png|gif)$/.test(mediaLink);
@@ -64,14 +62,7 @@ export const parseTextWithMedia = (
   }
 
   const remainingText = inputText.slice(lastIndex);
-  parts.push(
-    ...processText(remainingText).map((part, index) => (
-      <React.Fragment key={`remaining-${index}`}>
-        {part}
-        {index < processText(remainingText).length - 1 && " "}
-      </React.Fragment>
-    )),
-  );
+  parts.push(...processText(remainingText));
 
   return parts;
 };

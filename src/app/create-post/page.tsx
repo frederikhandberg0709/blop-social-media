@@ -108,7 +108,7 @@ const CreatePost: React.FC = () => {
   const user: UserProps = {
     id: session?.user.id || "",
     username: session?.user.username || "",
-    profileName: session?.user.name || "",
+    profileName: session?.user.profileName || "",
     profilePicture: session?.user.image || "",
     profileBanner: "",
     bio: "",
@@ -117,9 +117,10 @@ const CreatePost: React.FC = () => {
     postsCount: 0,
   };
 
-  const handleImageClick = (src: string) => {
-    setOverlayImage(src);
-  };
+  // const parsedContent =
+  //   typeof content === "string"
+  //     ? parseTextWithMedia(content, () => {})
+  //     : content;
 
   return (
     <>
@@ -191,11 +192,12 @@ const CreatePost: React.FC = () => {
             <PostTemplate
               id={session?.user.id || ""}
               user={user}
-              createdAt={formatDate(new Date().toISOString())}
-              updatedAt={formatDate(new Date().toISOString())}
+              createdAt={new Date().toISOString()}
+              updatedAt={new Date().toISOString()}
               timestamp={new Date().toISOString()}
               title={title}
-              content={parseTextWithMedia(content, handleImageClick)}
+              content={parseTextWithMedia(content, () => {})}
+              // content={parseTextWithMedia(content, handleImageClick)}
               initialLikesCount={0}
               userLiked={false}
             />

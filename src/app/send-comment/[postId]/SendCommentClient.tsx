@@ -332,8 +332,6 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
               user={session?.user}
               createdAt={formatDate(new Date().toISOString())}
               updatedAt={formatDate(new Date().toISOString())}
-              // timestamp={new Date().toISOString()}
-              // timestamp={formatDate(new Date().toISOString())}
               timestamp={new Date().toISOString()}
               title={commentTitle}
               content={parseTextWithMedia(commentContent, () => {})}

@@ -421,21 +421,25 @@ const PostTemplate: React.FC<PostProps> = (props) => {
                 </Link>
               </div>
               <div className="mt-5 flex w-full flex-col gap-5">
-                {comments?.map((comment) => (
-                  <CommentTemplate
-                    key={comment.id}
-                    id={comment.id}
-                    user={comment.user}
-                    title={comment.title}
-                    content={comment.content}
-                    createdAt={comment.createdAt}
-                    updatedAt={comment.updatedAt}
-                    timestamp={comment.createdAt}
-                    replies={comment.replies || []}
-                    initialLikesCount={comment.likesCount}
-                    userLiked={comment.userLiked}
-                  />
-                ))}
+                {comments.length === 0 ? (
+                  <p className="text-md text-gray-500">No comments yet...</p>
+                ) : (
+                  comments.map((comment) => (
+                    <CommentTemplate
+                      key={comment.id}
+                      id={comment.id}
+                      user={comment.user}
+                      title={comment.title}
+                      content={comment.content}
+                      createdAt={comment.createdAt}
+                      updatedAt={comment.updatedAt}
+                      timestamp={comment.createdAt}
+                      replies={comment.replies || []}
+                      initialLikesCount={comment.likesCount}
+                      userLiked={comment.userLiked}
+                    />
+                  ))
+                )}
               </div>
             </div>
           </div>
