@@ -1,20 +1,23 @@
 "use client";
 
-import Link from "next/link";
-import React, { useRef, useState } from "react";
-import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import PostTemplate from "@/components/post/PostTemplate";
 import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
+import PostTemplate from "@/components/post/PostTemplate";
+import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import useUserColor from "@/hooks/useUserColor";
-import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { UserProps } from "@/types/UserProps";
+import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
+import { createPost, quotePost } from "@/utils/api-calls/create-post";
 
-const CreatePost: React.FC = () => {
+export default function QuotePost() {
   const { data: session } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const postId = searchParams.get("postId");
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -26,9 +29,15 @@ const CreatePost: React.FC = () => {
     useState<boolean>(false);
   const [isPostContentHovered, setIsPostContentHovered] =
     useState<boolean>(false);
-  const [overlayImage, setOverlayImage] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const borderColor = useUserColor();
+
+  useEffect(() => {
+    if (postId) {
+      const postUrl = `${window.location.origin}/post/${postId}`;
+      setContent(`\n\n${postUrl}`);
+    }
+  }, [postId]);
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -66,39 +75,38 @@ const CreatePost: React.FC = () => {
     setContent(val);
   };
 
-  const createPost = async () => {
-    if (!content.trim()) return;
-    setIsLoading(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!session?.user?.id) {
+      alert("You must be logged in to create a post");
+      return;
+    }
 
+    setIsLoading(true);
     try {
-      const response = await fetch("/api/create-post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: session?.user.id,
+      if (postId && typeof postId === "string") {
+        // This is a quote post
+        await quotePost({
+          userId: session.user.id,
           title,
           content,
-          timestamp: new Date().toISOString(),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error creating post");
+          quotedPostId: postId,
+        });
+      } else {
+        // This is a regular post
+        await createPost({
+          userId: session.user.id,
+          title,
+          content,
+        });
       }
-
-      const post = await response.json();
-      console.log("Post created:", post);
-
-      setTitle("");
-      setContent("");
-      setCharacterCount(0);
-      setWordCount(0);
-
-      router.push(`/post/${post.id}?success=true`);
+      router.push("/"); // Redirect to home page after successful post
     } catch (error) {
-      console.error("Error creating post:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "An error occurred while creating the post",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -121,7 +129,7 @@ const CreatePost: React.FC = () => {
       <div className="mb-[100px] mt-[90px] flex justify-center">
         <div className="flex w-[800px] flex-col gap-[30px]">
           <div>
-            <h1 className="text-[25px] font-semibold">Create Post</h1>
+            <h1 className="text-[25px] font-semibold">Quote Post</h1>
             <input
               type="text"
               placeholder="Title of post (optional)..."
@@ -138,7 +146,7 @@ const CreatePost: React.FC = () => {
               }}
             />
             <textarea
-              placeholder="Write your post here..."
+              placeholder="Write your quote here..."
               value={content}
               onChange={handleTextChange}
               ref={textareaRef}
@@ -182,7 +190,9 @@ const CreatePost: React.FC = () => {
           </div>
           <div className="h-[1px] w-full bg-white/5"></div>
           <div>
-            <h1 className="mb-[20px] font-bold text-white/50">Preview Post</h1>
+            <h1 className="mb-[20px] font-bold text-white/50">
+              Preview Quote Post
+            </h1>
             <PostTemplate
               id={session?.user.id || ""}
               user={user}
@@ -191,7 +201,6 @@ const CreatePost: React.FC = () => {
               timestamp={new Date().toISOString()}
               title={title}
               content={parseTextWithMedia(content, () => {})}
-              // content={parseTextWithMedia(content, handleImageClick)}
               initialLikesCount={0}
               userLiked={false}
             />
@@ -200,6 +209,4 @@ const CreatePost: React.FC = () => {
       </div>
     </>
   );
-};
-
-export default CreatePost;
+}

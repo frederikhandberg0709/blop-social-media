@@ -81,6 +81,10 @@ model Post {
   likes     PostLike[]
   revisions PostRevision[]
   shares    PostShare[]
+
+  quoteCount Int          @default(0)
+  quotedIn   QuotedPost[] @relation("QuotedInPosts")
+  quotes     QuotedPost[] @relation("QuotingPosts")
 }
 
 model Comment {
@@ -116,6 +120,18 @@ model CommentShare {
   comment   Comment  @relation(fields: [commentId], references: [id])
   commentId String
   createdAt DateTime @default(now()) @db.Timestamptz()
+}
+
+model QuotedPost {
+  id            String   @id @default(uuid())
+  quotedPost    Post     @relation("QuotedInPosts", fields: [quotedPostId], references: [id])
+  quotedPostId  String
+  quotingPost   Post     @relation("QuotingPosts", fields: [quotingPostId], references: [id])
+  quotingPostId String
+  createdAt     DateTime @default(now()) @db.Timestamptz()
+  updatedAt     DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+  @@unique([quotedPostId, quotingPostId])
 }
 
 model PostLike {

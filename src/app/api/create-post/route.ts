@@ -30,16 +30,51 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const post = await prisma.post.create({
-      data: {
-        userId,
-        title,
-        content: content,
-      },
+    // Extract quoted post IDs from the content
+    const quotedPostIds = extractQuotedPostIds(content);
+
+    // Use a transaction to ensure all operations are performed atomically
+    const post = await prisma.$transaction(async (prisma) => {
+      // Create the new post
+      const newPost = await prisma.post.create({
+        data: {
+          userId,
+          title,
+          content: content,
+        },
+      });
+
+      // Create QuotedPost entries and update quote counts
+      if (quotedPostIds.length > 0) {
+        await Promise.all(
+          quotedPostIds.map(async (quotedPostId: string) => {
+            await prisma.quotedPost.create({
+              data: {
+                quotedPostId: quotedPostId,
+                quotingPostId: newPost.id,
+              },
+            });
+
+            await prisma.post.update({
+              where: { id: quotedPostId },
+              data: { quoteCount: { increment: 1 } },
+            });
+          }),
+        );
+      }
+
+      return newPost;
     });
+
     return NextResponse.json(post, { status: 201 });
   } catch (error) {
     const err = error as Error;
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
+}
+
+function extractQuotedPostIds(content: string): string[] {
+  const regex = /\/post\/([a-zA-Z0-9]+)/g;
+  const matches = content.matchAll(regex);
+  return Array.from(matches, (m) => m[1]);
 }

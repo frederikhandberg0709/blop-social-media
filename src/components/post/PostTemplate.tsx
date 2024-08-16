@@ -17,9 +17,11 @@ import { formatDate } from "@/utils/formattedDate";
 import AnimateHeight from "react-animate-height";
 import ProfilePicture from "../ProfilePicture";
 import PostShareMenu from "../menus/PostShareMenu";
+import { useRouter } from "next/navigation";
 
 const PostTemplate: React.FC<PostProps> = (props) => {
   const { data: session } = useSession();
+  const router = useRouter();
   const isShared = props.type === "shared";
   const sharedPost = isShared ? (props as SharedPostProps) : null;
   const post = isShared ? sharedPost!.post : (props as OriginalPostProps);
@@ -217,8 +219,9 @@ const PostTemplate: React.FC<PostProps> = (props) => {
   };
 
   const handleQuote = () => {
-    console.log("Quote post");
     setIsShareMenuOpen(false);
+
+    router.push(`/quote-post?postId=${props.id}`);
   };
 
   useEffect(() => {
@@ -244,7 +247,6 @@ const PostTemplate: React.FC<PostProps> = (props) => {
   useEffect(() => {
     if (isShareMenuOpen && shareButtonRef.current && shareMenuRef.current) {
       const buttonRect = shareButtonRef.current.getBoundingClientRect();
-      const menuRect = shareMenuRef.current.getBoundingClientRect();
 
       shareMenuRef.current.style.position = "absolute";
       shareMenuRef.current.style.top = `${buttonRect.bottom + window.scrollY}px`;
