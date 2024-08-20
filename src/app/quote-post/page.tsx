@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { UserProps } from "@/types/UserProps";
 import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
 import { createPost, quotePost } from "@/utils/api-calls/create-post";
+import QuotedTemplate from "@/components/post/QuotedTemplate";
 
 export default function QuotePost() {
   const { data: session } = useSession();
@@ -31,11 +32,18 @@ export default function QuotePost() {
     useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const borderColor = useUserColor();
+  const [quotedPost, setQuotedPost] = useState<any | null>(null);
 
   useEffect(() => {
     if (postId) {
       const postUrl = `${window.location.origin}/post/${postId}`;
       setContent(`\n\n${postUrl}`);
+
+      // Fetch the quoted post data
+      fetch(`/api/fetch-post/${postId}`)
+        .then((res) => res.json())
+        .then((data) => setQuotedPost(data))
+        .catch((err) => console.error("Error fetching quoted post:", err));
     }
   }, [postId]);
 
@@ -124,6 +132,33 @@ export default function QuotePost() {
     postsCount: 0,
   };
 
+  const renderPreviewContent = () => {
+    if (!postId || !quotedPost) {
+      return parseTextWithMedia(content, () => {});
+    }
+
+    const parts = content.split(new RegExp(`(\\/post\\/${postId})`));
+    return (
+      <>
+        {parts.map((part, index) => {
+          if (part === `/post/${postId}`) {
+            return (
+              <QuotedTemplate
+                key={postId}
+                id={quotedPost.id}
+                user={quotedPost.user}
+                title={quotedPost.title}
+                content={quotedPost.content}
+                createdAt={quotedPost.createdAt}
+              />
+            );
+          }
+          return <div key={index}>{parseTextWithMedia(part, () => {})}</div>;
+        })}
+      </>
+    );
+  };
+
   return (
     <>
       <div className="mb-[100px] mt-[90px] flex justify-center">
@@ -200,7 +235,7 @@ export default function QuotePost() {
               updatedAt={new Date().toISOString()}
               timestamp={new Date().toISOString()}
               title={title}
-              content={parseTextWithMedia(content, () => {})}
+              content={renderPreviewContent()}
               initialLikesCount={0}
               userLiked={false}
             />

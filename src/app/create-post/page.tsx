@@ -169,7 +169,7 @@ const CreatePost: React.FC = () => {
                 </Link>
                 <PrimaryButton
                   onClick={createPost}
-                  disabled={!content.trim() && isLoading}
+                  disabled={!content.trim() || isLoading}
                 >
                   {isLoading ? "Publishing..." : "Publish"}
                 </PrimaryButton>

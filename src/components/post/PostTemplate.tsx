@@ -18,6 +18,7 @@ import AnimateHeight from "react-animate-height";
 import ProfilePicture from "../ProfilePicture";
 import PostShareMenu from "../menus/PostShareMenu";
 import { useRouter } from "next/navigation";
+import QuotedTemplate from "./QuotedTemplate";
 
 const PostTemplate: React.FC<PostProps> = (props) => {
   const { data: session } = useSession();
@@ -40,6 +41,25 @@ const PostTemplate: React.FC<PostProps> = (props) => {
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const shareButtonRef = useRef<HTMLButtonElement>(null);
   const shareMenuRef = useRef<HTMLDivElement>(null);
+
+  const extractQuotedPostId = (content: any): string | null => {
+    if (typeof content === "string") {
+      const match = content.match(/\/post\/([a-zA-Z0-9]+)/);
+      return match ? match[1] : null;
+    }
+    if (Array.isArray(content)) {
+      for (const item of content) {
+        if (typeof item === "string") {
+          const match = item.match(/\/post\/([a-zA-Z0-9]+)/);
+          if (match) return match[1];
+        }
+      }
+    }
+    return null;
+  };
+
+  const quotedPostId = extractQuotedPostId(post.content);
+  const [quotedPost, setQuotedPost] = useState<any | null>(null);
 
   const handleShareClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -254,6 +274,16 @@ const PostTemplate: React.FC<PostProps> = (props) => {
     }
   }, [isShareMenuOpen]);
 
+  React.useEffect(() => {
+    if (quotedPostId) {
+      // Fetch the quoted post data
+      fetch(`/api/post/${quotedPostId}`)
+        .then((res) => res.json())
+        .then((data) => setQuotedPost(data))
+        .catch((err) => console.error("Error fetching quoted post:", err));
+    }
+  }, [quotedPostId]);
+
   if (isDeleted) {
     return null;
   }
@@ -283,8 +313,43 @@ const PostTemplate: React.FC<PostProps> = (props) => {
     return null;
   }
 
+  const renderContent = () => {
+    if (!quotedPostId) {
+      return <p className="text-base leading-normal">{parsedContent}</p>;
+    }
+
+    const parts = post.content.split(new RegExp(`(\\/post\\/${quotedPostId})`));
+    return (
+      <>
+        {parts.map((part, index) => {
+          if (part === `/post/${quotedPostId}`) {
+            return quotedPost ? (
+              <QuotedTemplate
+                key={quotedPostId}
+                id={quotedPost.id}
+                user={quotedPost.user}
+                title={quotedPost.title}
+                content={quotedPost.content}
+                createdAt={quotedPost.createdAt}
+              />
+            ) : (
+              <p key={index} className="text-gray-500">
+                Loading quoted post...
+              </p>
+            );
+          }
+          return (
+            <p key={index} className="text-base leading-normal">
+              {parseTextWithMedia(part, handleImageClick)}
+            </p>
+          );
+        })}
+      </>
+    );
+  };
+
   return (
-    <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
+    <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-2xl sm:border sm:p-[15px]">
       {/* Only show if post is shared */}
       {isShared && sharedPost && (
         <p className="text-sm text-gray-500">
@@ -346,11 +411,12 @@ const PostTemplate: React.FC<PostProps> = (props) => {
       </div>
       <div className="flex flex-col gap-1">
         {post.title && <h1 className="text-xl font-bold">{post.title}</h1>}
-        <p className="text-base leading-normal">{parsedContent}</p>
+        {renderContent()}
+        {/* <p className="text-base leading-normal">{parsedContent}</p> */}
       </div>
       <PostActionButtons
         likesCount={likesCount}
-        commentsCount={comments.length}
+        commentsCount={comments?.length}
         onCommentClick={() =>
           setCommentSectionHeight(commentSectionHeight === 0 ? "auto" : 0)
         }
@@ -378,7 +444,7 @@ const PostTemplate: React.FC<PostProps> = (props) => {
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-semibold">Comments</h2>
               <span className="text-xl font-bold text-primaryGray">·</span>
-              <p className="text-xl text-primaryGray">{comments.length}</p>
+              <p className="text-xl text-primaryGray">{comments?.length}</p>
             </div>
             <div className="mt-3 flex flex-col items-start gap-2">
               <div className="flex flex-col items-start gap-4">
@@ -423,10 +489,10 @@ const PostTemplate: React.FC<PostProps> = (props) => {
                 </Link>
               </div>
               <div className="mt-5 flex w-full flex-col gap-5">
-                {comments.length === 0 ? (
+                {comments?.length === 0 ? (
                   <p className="text-md text-gray-500">No comments yet...</p>
                 ) : (
-                  comments.map((comment) => (
+                  comments?.map((comment) => (
                     <CommentTemplate
                       key={comment.id}
                       id={comment.id}

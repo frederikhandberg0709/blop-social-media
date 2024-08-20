@@ -238,7 +238,10 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
               >
                 Save Draft
               </button>
-              <PrimaryButton onClick={submitComment} disabled={isLoading}>
+              <PrimaryButton
+                onClick={submitComment}
+                disabled={!commentContent.trim() || isLoading}
+              >
                 {isLoading ? "Publishing..." : "Publish"}
               </PrimaryButton>
               {/* Show warning modal before cancelling */}
