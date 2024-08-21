@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import CommentTemplate from "../CommentTemplate";
 import PostDropdownMenu from "../menus/PostDropdownMenu";
-import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
+import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
 import {
   PostProps,
   SharedPostProps,
@@ -306,7 +306,7 @@ const PostTemplate: React.FC<PostProps> = (props) => {
 
   const parsedContent =
     typeof post.content === "string"
-      ? parseTextWithMedia(post.content, handleImageClick)
+      ? parseTextWithEnhancements(post.content, handleImageClick)
       : post.content;
 
   if (!post.user) {
@@ -340,7 +340,7 @@ const PostTemplate: React.FC<PostProps> = (props) => {
           }
           return (
             <p key={index} className="text-base leading-normal">
-              {parseTextWithMedia(part, handleImageClick)}
+              {parseTextWithEnhancements(part, handleImageClick)}
             </p>
           );
         })}

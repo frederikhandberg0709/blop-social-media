@@ -13,7 +13,7 @@ import useUserColor from "@/hooks/useUserColor";
 import { PostProps } from "@/types/PostProps";
 import { formatDate } from "@/utils/formattedDate";
 import { getTimestamp } from "@/utils/getTimestamp";
-import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
+import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -185,7 +185,7 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
 
   const parsedContent =
     typeof post.content === "string"
-      ? parseTextWithMedia(post.content, handleImageClick)
+      ? parseTextWithEnhancements(post.content, handleImageClick)
       : post.content;
 
   const timestamp = getTimestamp(post.createdAt, post.updatedAt);
@@ -337,7 +337,7 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
               updatedAt={formatDate(new Date().toISOString())}
               timestamp={new Date().toISOString()}
               title={commentTitle}
-              content={parseTextWithMedia(commentContent, () => {})}
+              content={parseTextWithEnhancements(commentContent, () => {})}
               initialLikesCount={0}
               userLiked={false}
             />

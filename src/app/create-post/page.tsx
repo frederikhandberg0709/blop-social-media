@@ -9,7 +9,7 @@ import PostTemplate from "@/components/post/PostTemplate";
 import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import useUserColor from "@/hooks/useUserColor";
-import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
+import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
 import { UserProps } from "@/types/UserProps";
 
 const CreatePost: React.FC = () => {
@@ -190,8 +190,8 @@ const CreatePost: React.FC = () => {
               updatedAt={new Date().toISOString()}
               timestamp={new Date().toISOString()}
               title={title}
-              content={parseTextWithMedia(content, () => {})}
-              // content={parseTextWithMedia(content, handleImageClick)}
+              content={parseTextWithEnhancements(content, () => {})}
+              // content={parseTextWithEnhancements(content, handleImageClick)}
               initialLikesCount={0}
               userLiked={false}
             />

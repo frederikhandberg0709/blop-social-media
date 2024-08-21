@@ -1,6 +1,6 @@
 import React from "react";
 
-export const parseTextWithMedia = (
+export const parseTextWithEnhancements = (
   inputText: string,
   handleImageClick: (src: string) => void,
 ) => {
@@ -20,8 +20,9 @@ export const parseTextWithMedia = (
       }
       return part.split("\n").map((line, lineIndex) => (
         <React.Fragment key={`${index}-${lineIndex}`}>
+          {lineIndex < part.split("\n").length}
           {line}
-          {lineIndex < part.split("\n").length - 1 && <br />}
+          {lineIndex < part.split("\n").length && <br />}
         </React.Fragment>
       ));
     });

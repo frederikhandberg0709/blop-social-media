@@ -7,7 +7,7 @@ import { PostProps } from "@/types/PostProps";
 import { formatDate } from "@/utils/formattedDate";
 import PostDropdownMenu from "../menus/PostDropdownMenu";
 import Link from "next/link";
-import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
+import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
 import CommentTemplate from "../CommentTemplate";
 
 interface PostCommentPreviewProps {
@@ -70,7 +70,7 @@ export default function PostCommentPreview({ post }: PostCommentPreviewProps) {
 
   const parsedContent =
     typeof post.content === "string"
-      ? parseTextWithMedia(post.content)
+      ? parseTextWithEnhancements(post.content)
       : post.content;
 
   if (!post.user) {
@@ -145,7 +145,7 @@ export default function PostCommentPreview({ post }: PostCommentPreviewProps) {
         updatedAt={formatDate(new Date().toISOString())}
         timestamp={new Date().toISOString()}
         title={commentTitle}
-        content={parseTextWithMedia(commentContent)}
+        content={parseTextWithEnhancements(commentContent)}
         initialLikesCount={0}
         userLiked={false}
       />

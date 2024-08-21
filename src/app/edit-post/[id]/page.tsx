@@ -117,7 +117,7 @@ const EditPost: React.FC = () => {
     setContent(val);
   };
 
-  const parseTextWithMedia = (inputText: string) => {
+  const parseTextWithEnhancements = (inputText: string) => {
     const mediaRegex = /(https:\/\/.*?\.(jpg|jpeg|png|gif|mp4|avi|mov))/g;
     let parts = [];
     let lastIndex = 0;
@@ -259,7 +259,7 @@ const EditPost: React.FC = () => {
                 user={session?.user}
                 timestamp={new Date().toISOString()}
                 title={title}
-                content={parseTextWithMedia(content)}
+                content={parseTextWithEnhancements(content)}
                 initialLikesCount={0}
                 userLiked={false}
               />

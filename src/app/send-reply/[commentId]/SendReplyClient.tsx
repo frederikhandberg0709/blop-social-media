@@ -11,7 +11,7 @@ import { CommentProps } from "@/types/CommentProps";
 import { PostProps } from "@/types/PostProps";
 import { formatDate } from "@/utils/formattedDate";
 import { getTimestamp } from "@/utils/getTimestamp";
-import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
+import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -236,7 +236,10 @@ export default function SendReplyClient({
               updatedAt={formatDate(new Date().toISOString())}
               timestamp={new Date().toISOString()}
               title={replyTitle}
-              content={parseTextWithMedia(replyContent, handleImageClick)}
+              content={parseTextWithEnhancements(
+                replyContent,
+                handleImageClick,
+              )}
               initialLikesCount={0}
               userLiked={false}
             />

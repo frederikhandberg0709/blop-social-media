@@ -7,7 +7,7 @@ import CommentActionButtons from "./buttons/CommentActionButtons";
 import { useSession } from "next-auth/react";
 import React from "react";
 import CommentDropdownMenu from "./menus/CommentDropdownMenu";
-import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
+import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
 import { useRouter } from "next/navigation";
 import { CommentProps } from "@/types/CommentProps";
 
@@ -110,7 +110,7 @@ export default function CommentTemplate({
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRg5CvxCysqjZrsTPUjcl5sN3HIzePiCWM7KQ&s";
 
   const parsedContent =
-    typeof content === "string" ? parseTextWithMedia(content) : content;
+    typeof content === "string" ? parseTextWithEnhancements(content) : content;
 
   if (!user) {
     return "No comments right now...";

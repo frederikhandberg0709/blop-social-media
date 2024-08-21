@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { UserProps } from "@/types/UserProps";
-import { parseTextWithMedia } from "@/utils/parseTextWithMedia";
+import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
 import { createPost, quotePost } from "@/utils/api-calls/create-post";
 import QuotedTemplate from "@/components/post/QuotedTemplate";
 
@@ -134,7 +134,7 @@ export default function QuotePost() {
 
   const renderPreviewContent = () => {
     if (!postId || !quotedPost) {
-      return parseTextWithMedia(content, () => {});
+      return parseTextWithEnhancements(content, () => {});
     }
 
     const parts = content.split(new RegExp(`(\\/post\\/${postId})`));
@@ -153,7 +153,9 @@ export default function QuotePost() {
               />
             );
           }
-          return <div key={index}>{parseTextWithMedia(part, () => {})}</div>;
+          return (
+            <div key={index}>{parseTextWithEnhancements(part, () => {})}</div>
+          );
         })}
       </>
     );
