@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import DropdownMenu from "../buttons/DropdownMenu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface PostDropdownMenuProps {
@@ -21,7 +21,62 @@ export default function PostDropdownMenu({
   const { data: session } = useSession();
   const router = useRouter();
   const isAuthor = session?.user?.id === authorId;
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const checkBookmarkStatus = async () => {
+      try {
+        const response = await fetch(`/api/bookmarks?postId=${postId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setIsBookmarked(data.isBookmarked);
+        }
+      } catch (error) {
+        console.error("Error checking bookmark status: ", error);
+      }
+    };
+
+    checkBookmarkStatus();
+  }, [postId]);
+
+  const handleSaveBookmark = async () => {
+    try {
+      const response = await fetch("/api/bookmarks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ postId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save bookmark");
+      }
+
+      setIsBookmarked(true);
+      alert("Post saved to bookmarks");
+    } catch (error) {
+      console.log("Error saving bookmark: ", error);
+    }
+  };
+
+  const handleDeleteBookmark = async () => {
+    try {
+      const response = await fetch("/api/bookmarks", {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete bookmark");
+      }
+
+      setIsBookmarked(false);
+      alert("Bookmark removed");
+    } catch (error) {
+      console.log("Error deleting bookmark: ", error);
+    }
+  };
 
   const handleDeletePost = async () => {
     if (window.confirm("Are you sure you want to delete this post?")) {
@@ -38,7 +93,7 @@ export default function PostDropdownMenu({
         onPostDeleted();
         router.push("/");
       } catch (error) {
-        console.error("Error deleting post:", error);
+        console.error("Error deleting post: ", error);
         alert("Failed to delete post. Please try again.");
       } finally {
         setIsDeleting(false);
@@ -76,11 +131,9 @@ export default function PostDropdownMenu({
   const commonItems = [
     { label: "Open post", href: `/post/${postId}` },
     {
-      label: "Bookmark post",
+      label: isBookmarked ? "Remove bookmark" : "Save bookmark",
       href: "#",
-      onClick: () => {
-        /* Bookmark logic */
-      },
+      onClick: isBookmarked ? handleDeleteBookmark : handleSaveBookmark,
     },
   ];
 
