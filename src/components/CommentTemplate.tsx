@@ -154,7 +154,7 @@ export default function CommentTemplate({
         </Link>
         <div className="flex items-center gap-[15px]">
           <div className="text-right text-[15px] text-gray-500">
-            {formatDate(timestamp)}
+            {formatDate(!updatedAt ? createdAt : updatedAt)}
           </div>
           {/* Dropdown menu */}
           <CommentDropdownMenu authorId={user.id} commentId={id} />

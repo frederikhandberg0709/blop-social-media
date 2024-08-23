@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import DropdownMenu from "../buttons/DropdownMenu";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface CommentDropdownMenuProps {
   commentId: string;
@@ -23,7 +23,62 @@ export default function CommentDropdownMenu({
   const { data: session } = useSession();
   const router = useRouter();
   const isAuthor = session?.user?.id === authorId;
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const checkBookmarkStatus = async () => {
+      try {
+        const response = await fetch(`/api/bookmarks?commentId=${commentId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setIsBookmarked(data.isBookmarked);
+        }
+      } catch (error) {
+        console.error("Error checking bookmark status: ", error);
+      }
+    };
+
+    checkBookmarkStatus();
+  }, [commentId]);
+
+  const handleSaveBookmark = async () => {
+    try {
+      const response = await fetch("/api/bookmarks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ commentId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save bookmark");
+      }
+
+      setIsBookmarked(true);
+      alert("Post saved to bookmarks");
+    } catch (error) {
+      console.log("Error saving bookmark: ", error);
+    }
+  };
+
+  const handleDeleteBookmark = async () => {
+    try {
+      const response = await fetch("/api/bookmarks", {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete bookmark");
+      }
+
+      setIsBookmarked(false);
+      alert("Bookmark removed");
+    } catch (error) {
+      console.log("Error deleting bookmark: ", error);
+    }
+  };
 
   const handleDeleteComment = async () => {
     if (window.confirm("Are you sure you want to delete this comment?")) {
@@ -90,6 +145,11 @@ export default function CommentDropdownMenu({
         );
         alert("Comment link copied to clipboard!");
       },
+    },
+    {
+      label: isBookmarked ? "Remove bookmark" : "Save bookmark",
+      href: "#",
+      onClick: isBookmarked ? handleDeleteBookmark : handleSaveBookmark,
     },
   ];
 

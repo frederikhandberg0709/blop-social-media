@@ -14,9 +14,48 @@ export async function GET(req: NextRequest) {
   try {
     const bookmarks = await prisma.bookmark.findMany({
       where: { userId },
-      include: { post: true, comment: true },
+      include: {
+        post: {
+          include: {
+            user: true,
+          },
+        },
+        comment: {
+          include: {
+            user: true,
+            post: true, // Include parent post data
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json(bookmarks);
+
+    const bookmarkedItems = bookmarks
+      .map((bookmark) => {
+        if (bookmark.post) {
+          return {
+            type: "post",
+            data: {
+              ...bookmark.post,
+              author: bookmark.post.user,
+            },
+            bookmarkedAt: bookmark.createdAt.toISOString(),
+          };
+        } else if (bookmark.comment) {
+          return {
+            type: "comment",
+            data: {
+              ...bookmark.comment,
+              author: bookmark.comment.user,
+              post: bookmark.comment.post, // Include parent post data
+            },
+            bookmarkedAt: bookmark.createdAt.toISOString(),
+          };
+        }
+      })
+      .filter(Boolean);
+
+    return NextResponse.json(bookmarkedItems);
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch bookmarks" },

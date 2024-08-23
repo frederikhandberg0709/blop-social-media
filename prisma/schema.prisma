@@ -191,8 +191,8 @@ model LinkedAccount {
 
 model Bookmark {
   id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
 
   user   User   @relation(fields: [userId], references: [id])
   userId String

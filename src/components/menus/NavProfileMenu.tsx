@@ -106,11 +106,11 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
   console.log("Session user:", session?.user);
 
   const renderSwitchView = () => (
-    <div className="flex flex-col gap-[10px]">
+    <div className="flex flex-col gap-2.5">
       <div className="flex gap-5">
         <button
           onClick={() => setView("menu")}
-          className="flex w-full gap-[10px] rounded-xl px-[10px] py-[10px] font-bold text-black/50 transition duration-150 ease-in-out hover:bg-lightHover hover:text-black active:bg-lightActive dark:text-white/50 dark:hover:bg-darkHover dark:hover:text-white dark:active:bg-darkActive"
+          className="flex w-full gap-2.5 rounded-xl px-2.5 py-2.5 font-bold text-black/50 transition duration-150 ease-in-out hover:bg-lightHover hover:text-black active:bg-lightActive dark:text-white/50 dark:hover:bg-darkHover dark:hover:text-white dark:active:bg-darkActive"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -133,7 +133,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
             key={account.id}
             onClick={() => switchToAccount(account.id)}
             disabled={isLoading}
-            className="flex items-center gap-[12px] rounded-xl p-[10px] transition duration-150 ease-in-out hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive"
+            className="flex items-center gap-[12px] rounded-xl p-2.5 transition duration-150 ease-in-out hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive"
           >
             <ProfilePicture
               src={account.profilePicture}
@@ -161,11 +161,11 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
   );
 
   const renderMenuView = () => (
-    <div className="flex flex-col gap-[10px]">
+    <div className="flex flex-col gap-2.5">
       <Link
         href={`/profile/${user.username}`}
         onClick={closeMenu}
-        className="group flex items-center gap-[12px] rounded-xl p-[10px] transition duration-150 ease-in-out hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive"
+        className="group flex items-center gap-[12px] rounded-xl p-2.5 transition duration-150 ease-in-out hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive"
       >
         <ProfilePicture
           src={user.profilePicture}
@@ -184,7 +184,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
       <Link
         href={`/profile/${user.username}`}
         onClick={closeMenu}
-        className={`flex gap-[10px] rounded-xl px-[10px] py-[10px] font-medium transition duration-150 ease-in-out active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
+        className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 font-medium transition duration-150 ease-in-out active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
           (currentPage === `/profile/${session?.user.username}` &&
             "fill-black text-black dark:fill-white dark:text-white") ||
           "fill-black/50 text-black/50 hover:bg-lightHover hover:fill-black hover:text-black dark:fill-white/50 dark:text-white/50 dark:hover:fill-white dark:hover:text-white"
@@ -204,9 +204,30 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
         </svg>{" "}
         My Profile
       </Link>
+      <Link
+        href={"my-bookmarks"}
+        className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 font-medium transition duration-150 ease-in-out active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
+          (currentPage === "/my-bookmarks" &&
+            "fill-black text-black dark:fill-white dark:text-white") ||
+          "fill-primaryGray text-primaryGray hover:bg-lightHover hover:fill-black hover:text-black dark:text-primaryGray dark:hover:fill-white dark:hover:text-white"
+        }`}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="25"
+          height="20"
+          viewBox="0 0 384 512"
+        >
+          <path
+            fill="currentColor"
+            d="M0 48v439.7C0 501.1 10.9 512 24.3 512c5 0 9.9-1.5 14-4.4L192 400l153.7 107.6c4.1 2.9 9 4.4 14 4.4c13.4 0 24.3-10.9 24.3-24.3V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48z"
+          />
+        </svg>{" "}
+        My Bookmarks
+      </Link>
       <button
         onClick={handleSwitchAccount}
-        className="flex gap-[10px] rounded-xl px-[10px] py-[10px] font-medium text-primaryGray transition duration-150 ease-in-out hover:bg-lightHover hover:text-black active:bg-lightActive dark:hover:bg-darkHover dark:hover:text-white dark:active:bg-darkActive"
+        className="flex gap-2.5 rounded-xl px-2.5 py-2.5 font-medium text-primaryGray transition duration-150 ease-in-out hover:bg-lightHover hover:text-black active:bg-lightActive dark:hover:bg-darkHover dark:hover:text-white dark:active:bg-darkActive"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -224,7 +245,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
       <Link
         href={"/settings"}
         onClick={closeMenu}
-        className={`flex gap-[10px] rounded-xl px-[10px] py-[10px] font-medium transition duration-150 ease-in-out active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
+        className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 font-medium transition duration-150 ease-in-out active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
           (currentPage === "/settings" &&
             "fill-black text-black dark:fill-white dark:text-white") ||
           "fill-primaryGray text-primaryGray hover:bg-lightHover hover:fill-black hover:text-black dark:text-primaryGray dark:hover:fill-white dark:hover:text-white"
@@ -242,7 +263,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
       </Link>
       <button
         onClick={logout}
-        className="flex gap-[10px] rounded-xl fill-primaryGray px-[10px] py-[10px] font-medium text-primaryGray transition duration-150 ease-in-out hover:bg-lightHover hover:fill-black hover:text-black active:bg-lightActive dark:hover:bg-darkHover dark:hover:fill-white dark:hover:text-white dark:active:bg-darkActive"
+        className="flex items-center gap-2.5 rounded-xl fill-primaryGray px-2.5 py-2.5 font-medium text-primaryGray transition duration-150 ease-in-out hover:bg-lightHover hover:fill-black hover:text-black active:bg-lightActive dark:hover:bg-darkHover dark:hover:fill-white dark:hover:text-white dark:active:bg-darkActive"
       >
         <svg
           width="25"
