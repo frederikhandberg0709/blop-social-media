@@ -6,39 +6,19 @@ import { CommentProps } from "@/types/CommentProps";
 import { PostProps } from "@/types/PostProps";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import CommentWithContext from "./CommentWithContext";
+
+type PostAuthor = string | { username: string; profileName?: string };
 
 interface BookmarkedItem {
   type: "post" | "comment";
-  data: PostProps | CommentProps;
+  data:
+    | PostProps
+    | (CommentProps & {
+        post: { id: string; user: { username: string; profileName?: string } };
+      });
   bookmarkedAt: string;
-  postId?: string;
-  postAuthor?: string;
 }
-
-// WIP
-const CommentWithContext: React.FC<{
-  comment: CommentProps;
-  postId?: string;
-  postAuthor?: string;
-}> = ({ comment, postId, postAuthor }) => {
-  return (
-    <div className="rounded-lg border p-4 transition duration-200 dark:border-darkBorder dark:hover:border-darkBorderHover sm:rounded-2xl">
-      {postAuthor && (
-        <p className="mb-2 text-sm text-gray-500">
-          Commented on @{postAuthor}&apos;s post
-        </p>
-      )}
-      {postId && (
-        <Link href={`/post/${postId}`}>
-          <button className="mt-2 rounded bg-blue-500 px-4 py-2 text-white transition duration-200 hover:bg-blue-600">
-            Show post
-          </button>
-        </Link>
-      )}
-      <CommentTemplate {...comment} />
-    </div>
-  );
-};
 
 export default function MyBookmarks() {
   const [bookmarkedItems, setBookmarkedItems] = useState<BookmarkedItem[]>([]);
@@ -74,6 +54,7 @@ export default function MyBookmarks() {
   };
 
   const renderBookmarkedItem = (item: BookmarkedItem) => {
+    console.log("Rendering item:", JSON.stringify(item, null, 2));
     switch (item.type) {
       case "post":
         return (
@@ -83,12 +64,17 @@ export default function MyBookmarks() {
           />
         );
       case "comment":
+        const commentData = item.data as CommentProps;
+
         return (
           <CommentWithContext
-            key={`comment-${item.data.id}`}
-            comment={item.data as CommentProps}
-            postId={item.postId}
-            postAuthor={item.postAuthor}
+            key={`comment-${commentData.id}`}
+            {...(item.data as CommentProps & {
+              post: {
+                id: string;
+                user: { username: string; profileName?: string };
+              };
+            })}
           />
         );
       default:
@@ -110,21 +96,21 @@ export default function MyBookmarks() {
             <span className="text-xl font-bold text-primaryGray">·</span>
             <p className="text-xl text-primaryGray">{filteredItems.length}</p>
           </div>
-          <div className="rounded-lg bg-white/10 p-1">
+          <div className="rounded-lg bg-black/5 p-1 dark:bg-white/5">
             <button
-              className={`rounded-md px-2.5 py-1.5 transition duration-150 ease-in-out hover:bg-white/10 active:bg-white/25 ${filter === "all" ? "bg-white/20" : ""}`}
+              className={`rounded-md px-2.5 py-1.5 transition duration-150 ease-in-out hover:bg-black/10 hover:text-black active:bg-black/20 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20 ${filter === "all" ? "bg-black/15 text-black dark:bg-white/15 dark:text-white" : "text-black/75 dark:text-white/75"}`}
               onClick={() => setFilter("all")}
             >
               All
             </button>
             <button
-              className={`mx-1 rounded-md px-2.5 py-1.5 transition duration-150 ease-in-out hover:bg-white/10 active:bg-white/25 ${filter === "post" ? "bg-white/20" : ""}`}
+              className={`mx-1 rounded-md px-2.5 py-1.5 transition duration-150 ease-in-out hover:bg-black/10 hover:text-black active:bg-black/20 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20 ${filter === "post" ? "bg-black/15 text-black dark:bg-white/15 dark:text-white" : "text-black/75 dark:text-white/75"}`}
               onClick={() => setFilter("post")}
             >
               Posts
             </button>
             <button
-              className={`rounded-md px-2.5 py-1.5 transition duration-150 ease-in-out hover:bg-white/10 active:bg-white/25 ${filter === "comment" ? "bg-white/20" : ""}`}
+              className={`rounded-md px-2.5 py-1.5 transition duration-150 ease-in-out hover:bg-black/10 hover:text-black active:bg-black/20 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20 ${filter === "comment" ? "bg-black/15 text-black dark:bg-white/15 dark:text-white" : "text-black/75 dark:text-white/75"}`}
               onClick={() => setFilter("comment")}
             >
               Comments

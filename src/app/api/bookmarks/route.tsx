@@ -23,7 +23,12 @@ export async function GET(req: NextRequest) {
         comment: {
           include: {
             user: true,
-            post: true, // Include parent post data
+            // post: true, // Include parent post data
+            post: {
+              include: {
+                user: true,
+              },
+            },
           },
         },
       },
@@ -47,7 +52,11 @@ export async function GET(req: NextRequest) {
             data: {
               ...bookmark.comment,
               author: bookmark.comment.user,
-              post: bookmark.comment.post, // Include parent post data
+              post: {
+                ...bookmark.comment.post,
+                user: bookmark.comment.post.user, // Ensure post user is included
+              },
+              //   post: bookmark.comment.post, // Include parent post data
             },
             bookmarkedAt: bookmark.createdAt.toISOString(),
           };

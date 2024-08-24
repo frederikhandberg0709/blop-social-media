@@ -102,8 +102,9 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
     return user.username;
   };
 
-  console.log("User prop:", user);
-  console.log("Session user:", session?.user);
+  // For testing:
+  // console.log("User prop:", user);
+  // console.log("Session user:", session?.user);
 
   const renderSwitchView = () => (
     <div className="flex flex-col gap-2.5">
