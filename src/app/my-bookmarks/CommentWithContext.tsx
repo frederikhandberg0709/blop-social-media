@@ -25,7 +25,7 @@ const CommentWithContext: React.FC<ExtendedCommentProps> = (props) => {
             Commented on{" "}
             <Link
               href={`/profile/${post.user.username}`}
-              className="font-bold hover:text-white hover:underline"
+              className="font-bold hover:text-black hover:underline dark:hover:text-white"
             >
               {post.user.profileName || `@${post.user.username}`}
             </Link>

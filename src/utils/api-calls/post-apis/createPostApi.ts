@@ -1,7 +1,8 @@
 interface CreatePostData {
-  userId: string;
+  userId: string | undefined;
   title?: string;
   content: string;
+  timestamp?: string;
 }
 
 interface QuotePostData extends CreatePostData {
@@ -10,6 +11,11 @@ interface QuotePostData extends CreatePostData {
 
 export async function createPost(data: CreatePostData): Promise<any> {
   try {
+    const postData = {
+      ...data,
+      timestamp: data.timestamp || new Date().toISOString(), // Use provided timestamp or generate a new one
+    };
+
     const response = await fetch("/api/create-post", {
       method: "POST",
       headers: {

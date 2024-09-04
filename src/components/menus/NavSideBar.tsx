@@ -33,15 +33,18 @@ const NavSideBar: React.FC = () => {
         >
           Discover
         </Link>
-        <Link
-          href={"/following"}
-          className={`rounded-xl px-[20px] py-[10px] text-[20px] font-medium transition duration-150 ease-in-out hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
-            (currentPage === "/following" && "text-black dark:text-white") ||
-            "text-primaryGray hover:text-black dark:hover:text-white"
-          }`}
-        >
-          Following
-        </Link>
+        {(isLoggedIn && (
+          <Link
+            href={"/following"}
+            className={`rounded-xl px-[20px] py-[10px] text-[20px] font-medium transition duration-150 ease-in-out hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
+              (currentPage === "/following" && "text-black dark:text-white") ||
+              "text-primaryGray hover:text-black dark:hover:text-white"
+            }`}
+          >
+            Following
+          </Link>
+        )) ||
+          null}
       </div>
       <div className="h-[1px] w-full bg-lightHover dark:bg-white/5"></div>
       {(isLoggedIn && (

@@ -26,6 +26,7 @@ export default function PostDropdownMenu({
 
   useEffect(() => {
     const checkBookmarkStatus = async () => {
+      if (!session) return;
       try {
         const response = await fetch(`/api/bookmarks?postId=${postId}`);
         if (response.ok) {
@@ -38,9 +39,10 @@ export default function PostDropdownMenu({
     };
 
     checkBookmarkStatus();
-  }, [postId]);
+  }, [postId, session]);
 
   const handleSaveBookmark = async () => {
+    if (!session) return;
     try {
       const response = await fetch("/api/bookmarks", {
         method: "POST",
@@ -62,6 +64,7 @@ export default function PostDropdownMenu({
   };
 
   const handleDeleteBookmark = async () => {
+    if (!session) return;
     try {
       const response = await fetch("/api/bookmarks", {
         method: "DELETE",
@@ -79,6 +82,7 @@ export default function PostDropdownMenu({
   };
 
   const handleDeletePost = async () => {
+    if (!session) return;
     if (window.confirm("Are you sure you want to delete this post?")) {
       setIsDeleting(true);
       try {
@@ -100,6 +104,16 @@ export default function PostDropdownMenu({
       }
     }
   };
+
+  const commonItems = [{ label: "Open post", href: `/post/${postId}` }];
+
+  const loggedInItems = [
+    {
+      label: isBookmarked ? "Remove bookmark" : "Save bookmark",
+      href: "#",
+      onClick: isBookmarked ? handleDeleteBookmark : handleSaveBookmark,
+    },
+  ];
 
   const authorOnlyItems = [
     { label: "Edit post", href: `/edit-post/${postId}` },
@@ -128,19 +142,23 @@ export default function PostDropdownMenu({
     },
   ];
 
-  const commonItems = [
-    { label: "Open post", href: `/post/${postId}` },
-    {
-      label: isBookmarked ? "Remove bookmark" : "Save bookmark",
-      href: "#",
-      onClick: isBookmarked ? handleDeleteBookmark : handleSaveBookmark,
-    },
-  ];
-
-  const menuItems = [
-    ...commonItems,
-    ...(isAuthor ? authorOnlyItems : nonAuthorOnlyItems),
-  ];
+  let menuItems;
+  if (!session) {
+    menuItems = [
+      ...commonItems,
+      {
+        label: "Report post",
+        href: "#",
+        onClick: () => {
+          /* Add report logic */
+        },
+      },
+    ];
+  } else if (isAuthor) {
+    menuItems = [...commonItems, ...loggedInItems, ...authorOnlyItems];
+  } else {
+    menuItems = [...commonItems, ...loggedInItems, ...nonAuthorOnlyItems];
+  }
 
   return (
     <div>

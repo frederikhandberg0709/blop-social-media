@@ -11,6 +11,9 @@ import PrimaryButton from "@/components/buttons/PrimaryButton";
 import useUserColor from "@/hooks/useUserColor";
 import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
 import { UserProps } from "@/types/UserProps";
+import TiptapEditor from "@/components/TipTapEditor";
+import DOMPurify from "dompurify";
+import { createPost } from "@/utils/api-calls/post-apis/createPostApi";
 
 const CreatePost: React.FC = () => {
   const { data: session } = useSession();
@@ -66,29 +69,42 @@ const CreatePost: React.FC = () => {
     setContent(val);
   };
 
-  const createPost = async () => {
+  const handleCreatePost = async () => {
     if (!content.trim()) return;
     setIsLoading(true);
+    // const createPost = async () => {
+    //   if (!content.trim()) return;
+    //   setIsLoading(true);
 
     try {
-      const response = await fetch("/api/create-post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: session?.user.id,
-          title,
-          content,
-          timestamp: new Date().toISOString(),
-        }),
+      const post = await createPost({
+        userId: session?.user.id,
+        title,
+        content,
+        // content: processContent(content),
+        timestamp: new Date().toISOString(),
       });
 
-      if (!response.ok) {
-        throw new Error("Error creating post");
-      }
+      // Old POST request. Importing API call now above:
+      // const response = await fetch("/api/create-post", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     userId: session?.user.id,
+      //     title,
+      //     content,
+      //     timestamp: new Date().toISOString(),
+      //   }),
+      // });
 
-      const post = await response.json();
+      // if (!response.ok) {
+      //   throw new Error("Error creating post");
+      // }
+
+      // const post = await response.json();
+
       console.log("Post created:", post);
 
       setTitle("");
@@ -115,6 +131,76 @@ const CreatePost: React.FC = () => {
     followingCount: 0,
     postsCount: 0,
   };
+
+  // Testing for TipTapEditor:
+  // const handleContentUpdate = (newContent: string) => {
+  //   setContent(newContent);
+  // };
+
+  // const processContent = (htmlContent: string) => {
+  //   // Sanitize the HTML content
+  //   const sanitizedHtml = DOMPurify.sanitize(htmlContent);
+
+  //   // Create a temporary element to parse the HTML
+  //   const tempDiv = document.createElement("div");
+  //   tempDiv.innerHTML = sanitizedHtml;
+
+  //   // Function to convert a single node to Markdown-like syntax
+  //   const nodeToMarkdown = (node: Node): string => {
+  //     if (node.nodeType === Node.TEXT_NODE) {
+  //       return node.textContent || "";
+  //     }
+
+  //     if (node.nodeType === Node.ELEMENT_NODE) {
+  //       const element = node as HTMLElement;
+  //       let result = "";
+
+  //       for (const childNode of element.childNodes) {
+  //         let childText = nodeToMarkdown(childNode);
+
+  //         switch (element.tagName.toLowerCase()) {
+  //           case "p":
+  //             childText += "\n\n";
+  //             break;
+  //           case "br":
+  //             childText += "\n";
+  //             break;
+  //           case "strong":
+  //           case "b":
+  //             childText = `**${childText}**`;
+  //             break;
+  //           case "em":
+  //           case "i":
+  //             childText = `*${childText}*`;
+  //             break;
+  //           case "u":
+  //             childText = `__${childText}__`;
+  //             break;
+  //           case "s":
+  //             childText = `~~${childText}~~`;
+  //             break;
+  //           case "a":
+  //             const href = element.getAttribute("href");
+  //             childText = `[${childText}](${href})`;
+  //             break;
+  //           // Add more cases for other HTML elements as needed
+  //         }
+
+  //         result += childText;
+  //       }
+
+  //       return result;
+  //     }
+
+  //     return "";
+  //   };
+
+  //   // Convert the entire content
+  //   const markdownContent = nodeToMarkdown(tempDiv);
+
+  //   // Remove extra newlines and trim
+  //   return markdownContent.replace(/\n{3,}/g, "\n\n").trim();
+  // };
 
   return (
     <>
@@ -153,6 +239,8 @@ const CreatePost: React.FC = () => {
               }}
             />
 
+            {/* <TiptapEditor onUpdate={handleContentUpdate} /> */}
+
             <div className="flex items-center justify-between gap-[30px]">
               <div className="flex gap-[30px]">
                 <p className="text-white/50">
@@ -168,7 +256,7 @@ const CreatePost: React.FC = () => {
                   Save Draft
                 </Link>
                 <PrimaryButton
-                  onClick={createPost}
+                  onClick={handleCreatePost}
                   disabled={!content.trim() || isLoading}
                 >
                   {isLoading ? "Publishing..." : "Publish"}
@@ -190,7 +278,11 @@ const CreatePost: React.FC = () => {
               updatedAt={new Date().toISOString()}
               timestamp={new Date().toISOString()}
               title={title}
-              content={parseTextWithEnhancements(content, () => {})}
+              content={parseTextWithEnhancements(
+                content,
+                // processContent(content),
+                () => {},
+              )}
               // content={parseTextWithEnhancements(content, handleImageClick)}
               initialLikesCount={0}
               userLiked={false}

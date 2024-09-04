@@ -28,6 +28,7 @@ export default function CommentDropdownMenu({
 
   useEffect(() => {
     const checkBookmarkStatus = async () => {
+      if (!session) return;
       try {
         const response = await fetch(`/api/bookmarks?commentId=${commentId}`);
         if (response.ok) {
@@ -40,9 +41,10 @@ export default function CommentDropdownMenu({
     };
 
     checkBookmarkStatus();
-  }, [commentId]);
+  }, [commentId, session]);
 
   const handleSaveBookmark = async () => {
+    if (!session) return;
     try {
       const response = await fetch("/api/bookmarks", {
         method: "POST",
@@ -64,6 +66,7 @@ export default function CommentDropdownMenu({
   };
 
   const handleDeleteBookmark = async () => {
+    if (!session) return;
     try {
       const response = await fetch("/api/bookmarks", {
         method: "DELETE",
@@ -81,6 +84,7 @@ export default function CommentDropdownMenu({
   };
 
   const handleDeleteComment = async () => {
+    if (!session) return;
     if (window.confirm("Are you sure you want to delete this comment?")) {
       setIsDeleting(true);
       try {
@@ -104,6 +108,27 @@ export default function CommentDropdownMenu({
       }
     }
   };
+
+  const commonItems = [
+    {
+      label: "Copy link",
+      href: "#",
+      onClick: () => {
+        navigator.clipboard.writeText(
+          `${window.location.origin}/post/${postId}#comment-${commentId}`,
+        );
+        alert("Comment link copied to clipboard!");
+      },
+    },
+  ];
+
+  const loggedInItems = [
+    {
+      label: isBookmarked ? "Remove bookmark" : "Save bookmark",
+      href: "#",
+      onClick: isBookmarked ? handleDeleteBookmark : handleSaveBookmark,
+    },
+  ];
 
   const authorOnlyItems = [
     {
@@ -135,28 +160,23 @@ export default function CommentDropdownMenu({
     },
   ];
 
-  const commonItems = [
-    {
-      label: "Copy link",
-      href: "#",
-      onClick: () => {
-        navigator.clipboard.writeText(
-          `${window.location.origin}/post/${postId}#comment-${commentId}`,
-        );
-        alert("Comment link copied to clipboard!");
+  let menuItems;
+  if (!session) {
+    menuItems = [
+      ...commonItems,
+      {
+        label: "Report comment",
+        href: "#",
+        onClick: () => {
+          /* Add report logic */
+        },
       },
-    },
-    {
-      label: isBookmarked ? "Remove bookmark" : "Save bookmark",
-      href: "#",
-      onClick: isBookmarked ? handleDeleteBookmark : handleSaveBookmark,
-    },
-  ];
-
-  const menuItems = [
-    ...commonItems,
-    ...(isAuthor ? authorOnlyItems : nonAuthorOnlyItems),
-  ];
+    ];
+  } else if (isAuthor) {
+    menuItems = [...commonItems, ...loggedInItems, ...authorOnlyItems];
+  } else {
+    menuItems = [...commonItems, ...loggedInItems, ...nonAuthorOnlyItems];
+  }
 
   return (
     <div>

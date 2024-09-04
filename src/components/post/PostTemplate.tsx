@@ -352,11 +352,11 @@ const PostTemplate: React.FC<PostProps> = (props) => {
     <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-2xl sm:border sm:p-[15px]">
       {/* Only show if post is shared */}
       {isShared && sharedPost && (
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-primaryGray">
           Shared by{" "}
           <Link
             href={`/profile/${sharedPost.sharedBy.username}`}
-            className="font-bold hover:underline"
+            className="font-bold hover:text-black hover:underline dark:hover:text-white"
           >
             {sharedPost.sharedBy.profileName || `@${sharedPost.user.username}`}
           </Link>{" "}
