@@ -30,9 +30,9 @@ const PostTemplate: React.FC<PostProps> = (props) => {
   const [likesCount, setLikesCount] = useState(post.initialLikesCount);
   const [liked, setLiked] = useState(post.userLiked);
   const [comments, setComments] = useState<any[]>([]);
-  const [commentSectionHeight, setCommentSectionHeight] = useState<
-    number | "auto"
-  >(0);
+  const [commentSectionHeight, setCommentSectionHeight] = useState<0 | "auto">(
+    0,
+  );
   const [userHasShared, setUserHasShared] = useState(isShared);
   const [shareId, setShareId] = useState(isShared ? sharedPost!.id : null);
   const [sharesCount, setSharesCount] = useState(0);
@@ -349,85 +349,88 @@ const PostTemplate: React.FC<PostProps> = (props) => {
   };
 
   return (
-    <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-2xl sm:border sm:p-[15px]">
-      {/* Only show if post is shared */}
-      {isShared && sharedPost && (
-        <p className="text-sm text-primaryGray">
-          Shared by{" "}
+    <div className="w-[90%] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-2xl sm:border sm:p-[15px]">
+      <div className="flex flex-col gap-[10px]">
+        {/* Only show if post is shared */}
+        {isShared && sharedPost && (
+          <p className="text-sm text-primaryGray">
+            Shared by{" "}
+            <Link
+              href={`/profile/${sharedPost.sharedBy.username}`}
+              className="font-bold hover:text-black hover:underline dark:hover:text-white"
+            >
+              {sharedPost.sharedBy.profileName ||
+                `@${sharedPost.user.username}`}
+            </Link>{" "}
+            <span>· {formatDate(sharedPost.sharedAt || "")}</span>
+          </p>
+        )}
+        <div className="flex items-center justify-between">
           <Link
-            href={`/profile/${sharedPost.sharedBy.username}`}
-            className="font-bold hover:text-black hover:underline dark:hover:text-white"
+            href={`/profile/${post.user.username}`}
+            className="group flex items-center gap-[10px]"
           >
-            {sharedPost.sharedBy.profileName || `@${sharedPost.user.username}`}
-          </Link>{" "}
-          <span>· {formatDate(sharedPost.sharedAt || "")}</span>
-        </p>
-      )}
-      <div className="flex items-center justify-between">
-        <Link
-          href={`/profile/${post.user.username}`}
-          className="group flex items-center gap-[10px]"
-        >
-          <ProfilePicture
-            src={post.user.profilePicture}
-            alt={`${post.user.profileName}'s profile picture`}
-          />
-          <div className="flex flex-col gap-[1px]">
-            {/* If user has profile name */}
-            {post.user.profileName ? (
-              <>
-                <div className="text-[15px] font-bold group-hover:text-blue-500">
-                  {post.user.profileName}
-                </div>
-                <div className="text-[12px] text-gray-500">
-                  @{post.user.username}
-                </div>
-              </>
-            ) : (
-              // No profile name, only show username
-              <>
-                <div className="text-[15px] font-bold group-hover:text-blue-500">
-                  {post.user.username}
-                </div>
-                <div className="text-[12px] text-gray-500">
-                  @{post.user.username}
-                </div>
-              </>
-            )}
+            <ProfilePicture
+              src={post.user.profilePicture}
+              alt={`${post.user.profileName}'s profile picture`}
+            />
+            <div className="flex flex-col gap-[1px]">
+              {/* If user has profile name */}
+              {post.user.profileName ? (
+                <>
+                  <div className="text-[15px] font-bold group-hover:text-blue-500">
+                    {post.user.profileName}
+                  </div>
+                  <div className="text-[12px] text-gray-500">
+                    @{post.user.username}
+                  </div>
+                </>
+              ) : (
+                // No profile name, only show username
+                <>
+                  <div className="text-[15px] font-bold group-hover:text-blue-500">
+                    {post.user.username}
+                  </div>
+                  <div className="text-[12px] text-gray-500">
+                    @{post.user.username}
+                  </div>
+                </>
+              )}
+            </div>
+          </Link>
+          <div className="flex items-center gap-[15px]">
+            <div className="text-right text-[15px] text-gray-500">
+              {formatDate(!post.updatedAt ? post.createdAt : post.updatedAt)}
+              {/* {formatDate(post.timestamp)} */}
+            </div>
+            {/* Dropdown menu */}
+            <PostDropdownMenu
+              postId={post.id}
+              authorId={post.user.id}
+              authorUsername={post.user.username}
+            />
           </div>
-        </Link>
-        <div className="flex items-center gap-[15px]">
-          <div className="text-right text-[15px] text-gray-500">
-            {formatDate(!post.updatedAt ? post.createdAt : post.updatedAt)}
-            {/* {formatDate(post.timestamp)} */}
-          </div>
-          {/* Dropdown menu */}
-          <PostDropdownMenu
-            postId={post.id}
-            authorId={post.user.id}
-            authorUsername={post.user.username}
-          />
         </div>
+        <div className="flex flex-col gap-1">
+          {post.title && <h1 className="text-xl font-bold">{post.title}</h1>}
+          {renderContent()}
+          {/* <p className="text-base leading-normal">{parsedContent}</p> */}
+        </div>
+        <PostActionButtons
+          likesCount={likesCount}
+          commentsCount={comments?.length}
+          onCommentClick={() =>
+            setCommentSectionHeight(commentSectionHeight === 0 ? "auto" : 0)
+          }
+          sharesCount={sharesCount}
+          onShareClick={handleShareClick}
+          shareButtonRef={shareButtonRef}
+          donationCount={0}
+          liked={liked}
+          onLike={handleLike}
+          onUnlike={handleUnlike}
+        />
       </div>
-      <div className="flex flex-col gap-1">
-        {post.title && <h1 className="text-xl font-bold">{post.title}</h1>}
-        {renderContent()}
-        {/* <p className="text-base leading-normal">{parsedContent}</p> */}
-      </div>
-      <PostActionButtons
-        likesCount={likesCount}
-        commentsCount={comments?.length}
-        onCommentClick={() =>
-          setCommentSectionHeight(commentSectionHeight === 0 ? "auto" : 0)
-        }
-        sharesCount={sharesCount}
-        onShareClick={handleShareClick}
-        shareButtonRef={shareButtonRef}
-        donationCount={0}
-        liked={liked}
-        onLike={handleLike}
-        onUnlike={handleUnlike}
-      />
       {isShareMenuOpen && (
         <div ref={shareMenuRef}>
           <PostShareMenu
@@ -439,79 +442,77 @@ const PostTemplate: React.FC<PostProps> = (props) => {
         </div>
       )}
       <AnimateHeight duration={500} height={commentSectionHeight}>
-        <>
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <h2 className="text-xl font-semibold">Comments</h2>
-              <span className="text-xl font-bold text-primaryGray">·</span>
-              <p className="text-xl text-primaryGray">{comments?.length}</p>
+        <div className="mt-2.5 flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-semibold">Comments</h2>
+            <span className="text-xl font-bold text-primaryGray">·</span>
+            <p className="text-xl text-primaryGray">{comments?.length}</p>
+          </div>
+          <div className="mt-3 flex flex-col items-start gap-2">
+            <div className="flex flex-col items-start gap-4">
+              <Link
+                href={`/profile/${session?.user.username}`}
+                className="group flex items-center gap-[10px]"
+              >
+                <img
+                  src={session?.user.profilePicture || ""}
+                  alt={`${session?.user.profileName}'s profile picture`}
+                  className="h-[40px] w-[40px] rounded-full object-cover"
+                />
+                <div className="flex flex-col gap-[1px]">
+                  {/* If user has profile name */}
+                  {session?.user.profileName ? (
+                    <>
+                      <div className="text-[15px] font-bold group-hover:text-blue-500">
+                        {session?.user.profileName}
+                      </div>
+                      <div className="text-[12px] text-gray-500">
+                        @{session?.user.username}
+                      </div>
+                    </>
+                  ) : (
+                    // No profile name, only show username
+                    <>
+                      <div className="text-[15px] font-bold group-hover:text-blue-500">
+                        {session?.user.username}
+                      </div>
+                      <div className="text-[12px] text-gray-500">
+                        @{session?.user.username}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </Link>
+              <Link
+                href={`/send-comment/${post.id}`}
+                className="rounded-full bg-blue-600 px-2 py-1 text-sm font-semibold text-white transition duration-150 ease-in-out hover:bg-hoverBlue"
+              >
+                Send a comment?
+              </Link>
             </div>
-            <div className="mt-3 flex flex-col items-start gap-2">
-              <div className="flex flex-col items-start gap-4">
-                <Link
-                  href={`/profile/${session?.user.username}`}
-                  className="group flex items-center gap-[10px]"
-                >
-                  <img
-                    src={session?.user.profilePicture || ""}
-                    alt={`${session?.user.profileName}'s profile picture`}
-                    className="h-[40px] w-[40px] rounded-full object-cover"
+            <div className="mt-5 flex w-full flex-col gap-5">
+              {comments?.length === 0 ? (
+                <p className="text-md text-gray-500">No comments yet...</p>
+              ) : (
+                comments?.map((comment) => (
+                  <CommentTemplate
+                    key={comment.id}
+                    id={comment.id}
+                    user={comment.user}
+                    title={comment.title}
+                    content={comment.content}
+                    createdAt={comment.createdAt}
+                    updatedAt={comment.updatedAt}
+                    timestamp={comment.createdAt}
+                    replies={comment.replies || []}
+                    initialLikesCount={comment.likesCount}
+                    userLiked={comment.userLiked}
                   />
-                  <div className="flex flex-col gap-[1px]">
-                    {/* If user has profile name */}
-                    {session?.user.profileName ? (
-                      <>
-                        <div className="text-[15px] font-bold group-hover:text-blue-500">
-                          {session?.user.profileName}
-                        </div>
-                        <div className="text-[12px] text-gray-500">
-                          @{session?.user.username}
-                        </div>
-                      </>
-                    ) : (
-                      // No profile name, only show username
-                      <>
-                        <div className="text-[15px] font-bold group-hover:text-blue-500">
-                          {session?.user.username}
-                        </div>
-                        <div className="text-[12px] text-gray-500">
-                          @{session?.user.username}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </Link>
-                <Link
-                  href={`/send-comment/${post.id}`}
-                  className="rounded-full bg-blue-600 px-2 py-1 text-sm font-semibold text-white transition duration-150 ease-in-out hover:bg-hoverBlue"
-                >
-                  Send a comment?
-                </Link>
-              </div>
-              <div className="mt-5 flex w-full flex-col gap-5">
-                {comments?.length === 0 ? (
-                  <p className="text-md text-gray-500">No comments yet...</p>
-                ) : (
-                  comments?.map((comment) => (
-                    <CommentTemplate
-                      key={comment.id}
-                      id={comment.id}
-                      user={comment.user}
-                      title={comment.title}
-                      content={comment.content}
-                      createdAt={comment.createdAt}
-                      updatedAt={comment.updatedAt}
-                      timestamp={comment.createdAt}
-                      replies={comment.replies || []}
-                      initialLikesCount={comment.likesCount}
-                      userLiked={comment.userLiked}
-                    />
-                  ))
-                )}
-              </div>
+                ))
+              )}
             </div>
           </div>
-        </>
+        </div>
       </AnimateHeight>
       {/* Fullscreen  image overlay */}
       {overlayImage && (

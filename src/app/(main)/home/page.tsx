@@ -6,21 +6,26 @@ import { UserProps } from "@/types/UserProps";
 import { useEffect, useState } from "react";
 
 const Home: React.FC = () => {
-  const [timeline, setTimeline] = useState<PostProps[]>([]);
+  // const [timeline, setTimeline] = useState<PostProps[]>([]);
+  const [posts, setPosts] = useState<PostProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchTimeline = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch("/api/home-timeline");
+        const response = await fetch(`/api/home-timeline?page=${page}`);
         if (!response.ok) {
           throw new Error("Failed to fetch home timeline");
         }
         const data = await response.json();
-        setTimeline(data.posts);
+        setPosts((prevPosts) => [...prevPosts, ...data.posts]);
+        setPage((prevPage) => prevPage + 1);
+
+        // setTimeline(data.posts);
       } catch (error) {
         console.error("Error fetching home timeline:", error);
         setError("Failed to load posts. Please try again later.");
@@ -47,11 +52,11 @@ const Home: React.FC = () => {
           {isLoading && <p>Loading posts...</p>}
           {error && <p className="text-red-500">{error}</p>}
 
-          {!isLoading && !error && timeline.length === 0 && (
+          {!isLoading && !error && posts.length === 0 && (
             <p>No posts to display. Try following some users!</p>
           )}
 
-          {timeline.map((post) => (
+          {posts.map((post) => (
             <PostTemplate key={post.id} {...post} />
           ))}
         </div>
