@@ -1,21 +1,27 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Input from "@/components/inputs/FloatingInput";
 
 export default function RegistrationForm() {
   const [email, setEmail] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
 
-  const validateUsername = (value: string) => {
-    const regex = /^[a-z0-9-_]+$/; // Only lowercase letters, numbers, dash, and underscore
-    return regex.test(value);
-  };
+  const areFieldsEmpty = [email, username, password, confirmPassword].some(
+    (field) => field.trim() === "",
+  );
 
   const validateEmail = (value: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(value);
+  };
+
+  const validateUsername = (value: string) => {
+    const regex = /^[a-z0-9-_]+$/; // Only lowercase letters, numbers, dash, and underscore
     return regex.test(value);
   };
 
@@ -24,6 +30,10 @@ export default function RegistrationForm() {
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
 
     return value.length >= minLength && hasSpecialChar;
+  };
+
+  const validateConfirmPassword = (value: string) => {
+    return password === value;
   };
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,6 +71,18 @@ export default function RegistrationForm() {
     }
   };
 
+  const handleConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const value = e.target.value;
+    setConfirmPassword(value);
+    if (password !== value) {
+      setError("Passwords do not match.");
+    } else {
+      setError("");
+    }
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
@@ -82,6 +104,11 @@ export default function RegistrationForm() {
       setError(
         "Password must be at least 8 characters long and contain at least one special character.",
       );
+      return;
+    }
+
+    if (!validateConfirmPassword(confirmPassword)) {
+      setError("Passwords do not match.");
       return;
     }
 
@@ -107,6 +134,7 @@ export default function RegistrationForm() {
         setEmail("");
         setUsername("");
         setPassword("");
+        setConfirmPassword("");
       }
     } catch (error) {
       setError("An error occurred during registration.");
@@ -118,34 +146,51 @@ export default function RegistrationForm() {
       onSubmit={handleSubmit}
       className="mt-[50px] flex flex-col items-center"
     >
-      <input
-        type="text"
-        name="email"
-        value={email}
-        onChange={handleEmailChange}
-        placeholder="Email"
-        className="w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
-      />
-      <input
-        type="text"
-        name="username"
-        value={username}
-        onChange={handleUsernameChange}
-        placeholder="Username"
-        className="mt-[20px] w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
-      />
-      <input
-        type="password"
-        name="password"
-        value={password}
-        onChange={handlePasswordChange}
-        placeholder="Password"
-        className="mt-[20px] w-[400px] rounded-xl bg-black/10 px-[20px] py-[12px] text-black outline-none transition duration-200 ease-in-out hover:bg-black/20 focus:bg-black/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20"
-      />
-      {error && <p className="mt-2 text-red-500">{error}</p>}
-      {successMessage && (
-        <p className="mt-2 text-green-500">{successMessage}</p>
-      )}
+      <div className={"flex flex-col gap-6"}>
+        <Input
+          type={"email"}
+          placeholder={"Email"}
+          size={"md"}
+          variant={"default"}
+          value={email}
+          onChange={handleEmailChange}
+          required
+        />
+
+        <Input
+          placeholder={"Username"}
+          size={"md"}
+          variant={"default"}
+          value={username}
+          onChange={handleUsernameChange}
+          required
+        />
+
+        <Input
+          type={"password"}
+          placeholder={"Password"}
+          size={"md"}
+          variant={"default"}
+          value={password}
+          onChange={handlePasswordChange}
+          required
+        />
+
+        <Input
+          type={"password"}
+          placeholder={"Confirm Password"}
+          size={"md"}
+          variant={"default"}
+          value={confirmPassword}
+          onChange={handleConfirmPasswordChange}
+          required
+        />
+      </div>
+
+      <div className={"mt-3"}>
+        {error && <p className="text-red-500">{error}</p>}
+        {successMessage && <p className="text-green-500">{successMessage}</p>}
+      </div>
       {/* <div className="w-full">
         <p className="text-[17px] font-semibold">Password Strength</p>
         <p>Must contain at least:</p>
@@ -165,7 +210,8 @@ export default function RegistrationForm() {
       /> */}
       <button
         type="submit"
-        className="relative bottom-0 mt-[50px] rounded-xl bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-150 ease-in-out hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]"
+        disabled={!!error || areFieldsEmpty}
+        className={`relative bottom-0 mt-[30px] rounded-xl bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-150 ease-in-out ${!!error || areFieldsEmpty ? "cursor-not-allowed opacity-50" : "opacity-100 hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]"}`}
       >
         Register
       </button>
