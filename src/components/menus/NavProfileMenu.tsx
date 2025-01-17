@@ -59,20 +59,13 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
         throw new Error(errorData.error || "Failed to switch account");
       }
 
-      const newUserData = await response.json();
-
-      // Update the session with the new user data
       await update({
-        // ...session,
-        // user: newUserData,
-
         switchToUserId: accountId,
       });
 
-      // Close the menu and redirect to the home page
       closeMenu();
       router.push("/home");
-      // router.refresh();
+
       window.location.reload();
     } catch (error) {
       console.error("Error switching account:", error);
@@ -101,10 +94,6 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
     }
     return user.username;
   };
-
-  // For testing:
-  // console.log("User prop:", user);
-  // console.log("Session user:", session?.user);
 
   const renderSwitchView = () => (
     <div className="flex flex-col gap-2.5">
