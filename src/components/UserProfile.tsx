@@ -10,6 +10,7 @@ import { PostProps } from "@/types/PostProps";
 import ProfilePicture from "./ProfilePicture";
 import DropdownMenu from "@/components/buttons/DropdownMenu";
 import NotificationSettingsModal from "./modals/NotificationSettingsModal";
+import { Tooltip } from "./Tooltip";
 
 interface UserProfileProps {
   user: UserProps;
@@ -57,7 +58,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
 
   let profileDropdownMenu = [
     {
-      label: "Block @{username}", // TODO: Make dynamic
+      label: "Block",
       href: "#",
     },
     {
@@ -71,7 +72,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
       <div className="mt-[60px] flex justify-center">
         {/* Banner */}
         <img
-          src={user.profileBanner || DEFAULT_PROFILE_BANNER}
+          src={user.profileBanner}
           alt=""
           className="absolute top-[100px] -z-10 m-auto h-[350px] rounded-3xl"
         />
@@ -105,26 +106,33 @@ const UserProfile: React.FC<UserProfileProps> = ({
                 ) : null}
                 {currentUserId ? (
                   <div className="flex items-center gap-2.5">
-                    <button
-                      onClick={() => setIsNotificationSettingsModalOpen(true)}
-                      className="group flex size-[40px] select-none items-center justify-center rounded-full font-semibold transition duration-200 ease-in-out hover:bg-gray-700/40 active:bg-gray-700/60"
+                    <Tooltip
+                      text={"Notification Settings"}
+                      position="top"
+                      offset="50"
                     >
-                      <svg
-                        viewBox="0 0 36 36"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="size-6 fill-white/50 group-hover:fill-white"
+                      {/* TODO: Clicking outside the modal should close it. */}
+                      <button
+                        onClick={() => setIsNotificationSettingsModalOpen(true)}
+                        className="group flex size-[40px] select-none items-center justify-center rounded-full font-semibold transition duration-200 ease-in-out hover:bg-gray-700/40 active:bg-gray-700/60"
                       >
-                        <path
-                          d="m32.85 28.13l-.34-.3A14.37 14.37 0 0 1 30 24.9a12.63 12.63 0 0 1-1.35-4.81v-4.94A10.81 10.81 0 0 0 19.21 4.4V3.11a1.33 1.33 0 1 0-2.67 0v1.31a10.81 10.81 0 0 0-9.33 10.73v4.94a12.63 12.63 0 0 1-1.35 4.81a14.4 14.4 0 0 1-2.47 2.93l-.34.3v2.82h29.8Z"
-                          className="clr-i-solid clr-i-solid-path-1"
-                        />
-                        <path
-                          d="M15.32 32a2.65 2.65 0 0 0 5.25 0Z"
-                          className="clr-i-solid clr-i-solid-path-2"
-                        />
-                        <path fill="none" d="M0 0h36v36H0z" />
-                      </svg>
-                    </button>
+                        <svg
+                          viewBox="0 0 36 36"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="size-6 fill-white/50 group-hover:fill-white"
+                        >
+                          <path
+                            d="m32.85 28.13l-.34-.3A14.37 14.37 0 0 1 30 24.9a12.63 12.63 0 0 1-1.35-4.81v-4.94A10.81 10.81 0 0 0 19.21 4.4V3.11a1.33 1.33 0 1 0-2.67 0v1.31a10.81 10.81 0 0 0-9.33 10.73v4.94a12.63 12.63 0 0 1-1.35 4.81a14.4 14.4 0 0 1-2.47 2.93l-.34.3v2.82h29.8Z"
+                            className="clr-i-solid clr-i-solid-path-1"
+                          />
+                          <path
+                            d="M15.32 32a2.65 2.65 0 0 0 5.25 0Z"
+                            className="clr-i-solid clr-i-solid-path-2"
+                          />
+                          <path fill="none" d="M0 0h36v36H0z" />
+                        </svg>
+                      </button>
+                    </Tooltip>
 
                     {/* TODO: Fix styling. Add TwMerge to the component. */}
                     <DropdownMenu menuItems={profileDropdownMenu} />
