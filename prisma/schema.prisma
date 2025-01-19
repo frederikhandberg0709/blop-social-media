@@ -47,6 +47,11 @@ model User {
   postShares       PostShare[]
   commentShares    CommentShare[]
   Bookmark         Bookmark[]
+
+  receivedNotifications  NotificationHistory[]  @relation("UserNotifications")
+  triggeredNotifications NotificationHistory[]  @relation("NotificationsTriggered")
+  notificationSettings   NotificationSettings[] @relation("UserNotificationSettings")
+  targetProfileSettings  NotificationSettings[] @relation("TargetProfileSettings")
 }
 
 model Account {
@@ -207,4 +212,50 @@ model Bookmark {
   @@index([userId])
   @@index([postId])
   @@index([commentId])
+}
+
+enum NotificationTypes {
+  NEW_POST
+  REPLY
+}
+
+enum NotificationSettingType {
+  ALL
+  SPECIFIC
+  DISABLE
+}
+
+model NotificationHistory {
+  id               String            @id @default(uuid())
+  userId           String
+  user             User              @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  fromUserId       String
+  fromUser         User              @relation("NotificationsTriggered", fields: [fromUserId], references: [id], onDelete: Cascade)
+  notificationType NotificationTypes
+  content          String            @db.Text
+  isRead           Boolean           @default(false)
+  createdAt        DateTime          @default(now()) @db.Timestamptz()
+  viewedAt         DateTime?         @db.Timestamptz()
+  metaData         Json?
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([fromUserId])
+  @@map("notification_history")
+}
+
+model NotificationSettings {
+  id               String                  @id @default(uuid())
+  userId           String
+  user             User                    @relation("UserNotificationSettings", fields: [userId], references: [id], onDelete: Cascade)
+  targetProfileId  String
+  targetProfile    User                    @relation("TargetProfileSettings", fields: [targetProfileId], references: [id], onDelete: Cascade)
+  notificationType NotificationSettingType @default(ALL)
+  notifyNewPosts   Boolean                 @default(true)
+  notifyReplies    Boolean                 @default(true)
+  createdAt        DateTime                @default(now()) @db.Timestamptz()
+  updatedAt        DateTime                @updatedAt @db.Timestamptz()
+
+  @@unique([userId, targetProfileId])
+  @@index([userId])
+  @@map("notification_settings")
 }

@@ -31,6 +31,60 @@ const MainNavBar: React.FC = () => {
 
   const { data: session, status } = useSession();
 
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    const handleClickOutsideNotificationPanel = (event: MouseEvent) => {
+      if (
+        notificationPanelRef.current &&
+        !notificationPanelRef.current.contains(event.target as Node) &&
+        notificationButtonRef.current &&
+        !notificationButtonRef.current.contains(event.target as Node)
+      ) {
+        closeNotificationPanel();
+      }
+    };
+
+    const handleClickOutsideProfileMenu = (event: MouseEvent) => {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node) &&
+        profileMenuButtonRef.current &&
+        !profileMenuButtonRef.current.contains(event.target as Node)
+      ) {
+        closeProfileMenu();
+      }
+    };
+
+    if (isNotificationPanelVisible) {
+      document.addEventListener(
+        "mousedown",
+        handleClickOutsideNotificationPanel,
+      );
+    } else {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutsideNotificationPanel,
+      );
+    }
+
+    if (isProfileMenuVisible) {
+      document.addEventListener("mousedown", handleClickOutsideProfileMenu);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutsideProfileMenu);
+    }
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutsideNotificationPanel,
+      );
+      document.removeEventListener("mousedown", handleClickOutsideProfileMenu);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isNotificationPanelVisible, isProfileMenuVisible]);
+
   const isLoggedIn = session ? true : false;
 
   if (status === "loading") {
@@ -107,60 +161,6 @@ const MainNavBar: React.FC = () => {
     setTimeout(() => setIsProfileMenuVisible(false), 300);
   };
 
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    handleResize();
-
-    const handleClickOutsideNotificationPanel = (event: MouseEvent) => {
-      if (
-        notificationPanelRef.current &&
-        !notificationPanelRef.current.contains(event.target as Node) &&
-        notificationButtonRef.current &&
-        !notificationButtonRef.current.contains(event.target as Node)
-      ) {
-        closeNotificationPanel();
-      }
-    };
-
-    const handleClickOutsideProfileMenu = (event: MouseEvent) => {
-      if (
-        profileMenuRef.current &&
-        !profileMenuRef.current.contains(event.target as Node) &&
-        profileMenuButtonRef.current &&
-        !profileMenuButtonRef.current.contains(event.target as Node)
-      ) {
-        closeProfileMenu();
-      }
-    };
-
-    if (isNotificationPanelVisible) {
-      document.addEventListener(
-        "mousedown",
-        handleClickOutsideNotificationPanel,
-      );
-    } else {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutsideNotificationPanel,
-      );
-    }
-
-    if (isProfileMenuVisible) {
-      document.addEventListener("mousedown", handleClickOutsideProfileMenu);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutsideProfileMenu);
-    }
-
-    return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutsideNotificationPanel,
-      );
-      document.removeEventListener("mousedown", handleClickOutsideProfileMenu);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [isNotificationPanelVisible, isProfileMenuVisible]);
-
   return (
     <>
       <nav className="fixed left-0 right-0 top-0 z-[99] flex w-full items-center justify-center bg-white px-[50px] dark:bg-black">
@@ -235,13 +235,13 @@ const MainNavBar: React.FC = () => {
             <div className="flex items-center gap-[30px]">
               <Link
                 href={"/login"}
-                className="rounded-xl border-[3px] border-blue-500 px-4 py-2 font-semibold text-black transition-all duration-150 ease-in-out hover:border-blue-700 hover:bg-blue-700 hover:text-white dark:text-white"
+                className="rounded-xl border-[3px] border-blue-500 px-4 py-2 text-center font-semibold text-black transition-all duration-150 ease-in-out hover:border-blue-700 hover:bg-blue-700 hover:text-white dark:text-white"
               >
                 Login
               </Link>
               <Link
                 href={"/create-account"}
-                className="rounded-xl bg-blue-500 px-4 py-2 font-semibold text-white transition-all duration-150 ease-in-out hover:bg-blue-700"
+                className="rounded-xl bg-blue-500 px-4 py-2 text-center font-semibold text-white transition-all duration-150 ease-in-out hover:bg-blue-700"
               >
                 Create Account
               </Link>
@@ -249,11 +249,11 @@ const MainNavBar: React.FC = () => {
           )}
           {isLoggedIn && (
             /* Create Post, Notifications, DMs, & Profile menu */
-            <div className="flex w-[200px] items-center justify-end gap-[30px]">
+            <div className="flex w-[200px] items-center justify-end gap-5">
               {/* Create Post */}
               <Tooltip text={"Create Post"} position="bottom" offset="60">
                 <Link href={"/create-post"} className="rounded-full">
-                  <div className="h-[45px] w-[45px] rounded-full fill-primaryGray p-[7px] transition duration-150 ease-in-out hover:bg-lightHover hover:fill-black active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:hover:fill-white dark:active:bg-darkActive dark:active:fill-primaryBlue">
+                  <div className="size-10 rounded-full fill-primaryGray p-[7px] transition duration-150 ease-in-out hover:bg-lightHover hover:fill-black active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:hover:fill-white dark:active:bg-darkActive dark:active:fill-primaryBlue">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -277,7 +277,7 @@ const MainNavBar: React.FC = () => {
                 <button
                   onClick={toggleNotificationPanel}
                   ref={notificationButtonRef}
-                  className="h-[45px] w-[45px] rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black active:fill-primaryBlue dark:fill-white/50 dark:hover:bg-white/10 dark:hover:fill-white dark:active:fill-primaryBlue"
+                  className="size-10 rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black active:fill-primaryBlue dark:fill-white/50 dark:hover:bg-white/10 dark:hover:fill-white dark:active:fill-primaryBlue"
                 >
                   <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
                     <path
