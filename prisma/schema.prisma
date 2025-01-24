@@ -48,10 +48,10 @@ model User {
   commentShares    CommentShare[]
   Bookmark         Bookmark[]
 
-  receivedNotifications  NotificationHistory[]  @relation("UserNotifications")
-  triggeredNotifications NotificationHistory[]  @relation("NotificationsTriggered")
-  notificationSettings   NotificationSettings[] @relation("UserNotificationSettings")
-  targetProfileSettings  NotificationSettings[] @relation("TargetProfileSettings")
+  receivedNotifications  NotificationHistory[]         @relation("UserNotifications")
+  triggeredNotifications NotificationHistory[]         @relation("NotificationsTriggered")
+  notificationSettings   ProfileNotificationSettings[] @relation("UserNotificationSettings")
+  targetProfileSettings  ProfileNotificationSettings[] @relation("TargetProfileSettings")
 }
 
 model Account {
@@ -243,7 +243,7 @@ model NotificationHistory {
   @@map("notification_history")
 }
 
-model NotificationSettings {
+model ProfileNotificationSettings {
   id               String                  @id @default(uuid())
   userId           String
   user             User                    @relation("UserNotificationSettings", fields: [userId], references: [id], onDelete: Cascade)
@@ -252,10 +252,11 @@ model NotificationSettings {
   notificationType NotificationSettingType @default(ALL)
   notifyNewPosts   Boolean                 @default(true)
   notifyReplies    Boolean                 @default(true)
+  notifyShares     Boolean                 @default(true)
   createdAt        DateTime                @default(now()) @db.Timestamptz()
   updatedAt        DateTime                @updatedAt @db.Timestamptz()
 
   @@unique([userId, targetProfileId])
   @@index([userId])
-  @@map("notification_settings")
+  @@map("profile_notification_settings")
 }

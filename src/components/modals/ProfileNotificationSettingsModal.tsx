@@ -1,22 +1,21 @@
+import { ProfileNotificationSettingsProps } from "@/types/NotificationProps";
 import { useEffect, useRef, useState } from "react";
 
-interface NotificationSettings {
-  mainOption: "all" | "specific" | "disable";
-  newPost: boolean;
-  reply: boolean;
-}
-
-const NotificationSettingsModal = ({
+const ProfileNotificationSettingsModal = ({
   isOpen,
   onClose,
+  userProfileId,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  userProfileId: string;
 }) => {
-  const [settings, setSettings] = useState<NotificationSettings>({
+  const [settings, setSettings] = useState<ProfileNotificationSettingsProps>({
     mainOption: "all",
     newPost: false,
     reply: false,
+    share: false,
+    targetProfileId: userProfileId,
   });
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -41,29 +40,56 @@ const NotificationSettingsModal = ({
   }, [isOpen, onClose]);
 
   const handleMainOptionChange = (
-    option: NotificationSettings["mainOption"],
+    option: ProfileNotificationSettingsProps["mainOption"],
   ) => {
     setSettings((prev) => ({
       ...prev,
       mainOption: option,
-      ...(option === "specific" && !prev.newPost && !prev.reply
+      ...(option === "specific" && !prev.newPost && !prev.reply && !prev.share
         ? { newPost: true }
         : {}),
-      ...(option !== "specific" && { newPost: false, reply: false }),
+      ...(option !== "specific" && {
+        newPost: false,
+        reply: false,
+        share: false,
+      }),
     }));
   };
 
-  const handleSubOptionChange = (option: "newPost" | "reply") => {
+  const handleSubOptionChange = (option: "newPost" | "reply" | "share") => {
     setSettings((prev) => {
       const newValue = !prev[option];
-      if (!newValue && option === "newPost" && !prev.reply) return prev;
-      if (!newValue && option === "reply" && !prev.newPost) return prev;
+      if (!newValue && option === "newPost" && !prev.reply && !prev.share)
+        return prev;
+      if (!newValue && option === "reply" && !prev.newPost && !prev.share)
+        return prev;
+      if (!newValue && option === "share" && !prev.newPost && !prev.reply)
+        return prev;
 
       return {
         ...prev,
         [option]: newValue,
       };
     });
+  };
+
+  const handleSaveChanges = async (
+    settings: ProfileNotificationSettingsProps,
+  ) => {
+    const response = await fetch("/api/save-profile-notification-settings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(settings),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to save notification settings");
+    }
+
+    onClose();
+    return response.json();
   };
 
   if (!isOpen) return null;
@@ -74,7 +100,9 @@ const NotificationSettingsModal = ({
         ref={modalRef}
         className="w-[300px] rounded-xl border-2 border-darkBorder bg-black pt-2 transition duration-150 ease-in-out hover:border-darkBorderHover"
       >
-        <h1 className="text-center font-semibold">Notification Settings</h1>
+        <h1 className="text-center font-semibold">
+          Profile Notification Settings
+        </h1>
 
         <div className="m-5">
           {/* TODO: Add profile info for which the notifications settings will apply */}
@@ -103,7 +131,7 @@ const NotificationSettingsModal = ({
               </label>
 
               {settings.mainOption === "specific" && (
-                <div className="ml-7 space-y-3">
+                <div className="ml-7 flex flex-col gap-2">
                   <label className="flex items-center space-x-3">
                     <input
                       type="checkbox"
@@ -123,6 +151,18 @@ const NotificationSettingsModal = ({
                     />
                     <span className="select-none">Publishes a reply</span>
                   </label>
+
+                  <label className="flx items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={settings.share}
+                      onChange={() => handleSubOptionChange("share")}
+                      className="h-4 w-4 rounded text-blue-600"
+                    />
+                    <span className="select-none">
+                      Shares a post or comment
+                    </span>
+                  </label>
                 </div>
               )}
             </div>
@@ -141,7 +181,7 @@ const NotificationSettingsModal = ({
           {/* TODO: Save the settings */}
           <div className="mt-6 flex justify-end">
             <button
-              onClick={onClose}
+              onClick={() => handleSaveChanges(settings)}
               className="rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
             >
               Save Changes
@@ -153,4 +193,4 @@ const NotificationSettingsModal = ({
   );
 };
 
-export default NotificationSettingsModal;
+export default ProfileNotificationSettingsModal;
