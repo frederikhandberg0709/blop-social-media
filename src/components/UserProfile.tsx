@@ -9,7 +9,7 @@ import PostTemplate from "./post/PostTemplate";
 import { PostProps } from "@/types/PostProps";
 import ProfilePicture from "./ProfilePicture";
 import DropdownMenu from "@/components/buttons/DropdownMenu";
-import NotificationSettingsModal from "./modals/NotificationSettingsModal";
+import ProfileNotificationSettingsModal from "./modals/ProfileNotificationSettingsModal";
 import { Tooltip } from "./Tooltip";
 
 interface UserProfileProps {
@@ -210,14 +210,11 @@ const UserProfile: React.FC<UserProfileProps> = ({
           </div>
         </div>
       </div>
-
-      {/* {notificationSettingsModalOpen && ( */}
-
-      <NotificationSettingsModal
+      <ProfileNotificationSettingsModal
         isOpen={isNotificationSettingsModalOpen}
         onClose={() => setIsNotificationSettingsModalOpen(false)}
+        userProfileId={user.id}
       />
-      {/* )} */}
     </>
   );
 };

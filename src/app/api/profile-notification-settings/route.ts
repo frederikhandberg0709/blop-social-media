@@ -4,6 +4,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 
+// export async function GET(req: NextRequest) {
+//   const session = await getServerSession(authOptions);
+
+//   if (!session?.user?.id) {
+//     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+//   }
+
+//   const settings = await prisma.profileNotificationSettings.findMany({
+//     where: { userId: session.user.id },
+//   });
+
+//   return NextResponse.json(settings, { status: 200 });
+// }
+
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -21,7 +35,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await prisma.profileNotificationSettings.upsert({
+    if (body.mainOption === "disable") {
+      await prisma.profileNotificationSettings.deleteMany({
+        where: {
+          userId: session.user.id,
+          targetProfileId: body.targetProfileId,
+        },
+      });
+
+      return NextResponse.json({ status: "disabled" }, { status: 200 });
+    }
+
+    const settings = await prisma.profileNotificationSettings.upsert({
       where: {
         userId_targetProfileId: {
           userId: session.user.id,
@@ -31,29 +56,20 @@ export async function POST(req: NextRequest) {
       create: {
         userId: session.user.id,
         targetProfileId: body.targetProfileId,
-        notificationType: body.mainOption.toUpperCase() as
-          | "ALL"
-          | "SPECIFIC"
-          | "DISABLE",
+        notificationType: body.mainOption.toUpperCase() as "ALL" | "SPECIFIC",
         notifyNewPosts: body.newPost,
         notifyReplies: body.reply,
         notifyShares: body.share,
       },
       update: {
-        notificationType: body.mainOption.toUpperCase() as
-          | "ALL"
-          | "SPECIFIC"
-          | "DISABLE",
+        notificationType: body.mainOption.toUpperCase() as "ALL" | "SPECIFIC",
         notifyNewPosts: body.newPost,
         notifyReplies: body.reply,
         notifyShares: body.share,
       },
     });
 
-    return NextResponse.json(
-      { message: "Notification settings saved successfully" },
-      { status: 200 },
-    );
+    return NextResponse.json(settings, { status: 200 });
   } catch (error) {
     console.error("Failed to save notification settings");
     return NextResponse.json(

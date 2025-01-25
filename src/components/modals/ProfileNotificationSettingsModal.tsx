@@ -1,4 +1,6 @@
+import { useProfileNotificationSettings } from "@/hooks/useProfileNotificationSettings";
 import { ProfileNotificationSettingsProps } from "@/types/NotificationProps";
+import { NextApiResponse } from "next";
 import { useEffect, useRef, useState } from "react";
 
 const ProfileNotificationSettingsModal = ({
@@ -10,13 +12,8 @@ const ProfileNotificationSettingsModal = ({
   onClose: () => void;
   userProfileId: string;
 }) => {
-  const [settings, setSettings] = useState<ProfileNotificationSettingsProps>({
-    mainOption: "all",
-    newPost: false,
-    reply: false,
-    share: false,
-    targetProfileId: userProfileId,
-  });
+  const { settings, updateLocalSettings, saveSettings, isLoading } =
+    useProfileNotificationSettings(userProfileId);
 
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -39,60 +36,57 @@ const ProfileNotificationSettingsModal = ({
     };
   }, [isOpen, onClose]);
 
-  const handleMainOptionChange = (
-    option: ProfileNotificationSettingsProps["mainOption"],
-  ) => {
-    setSettings((prev) => ({
-      ...prev,
+  const handleMainOptionChange = (option: typeof settings.mainOption) => {
+    const newSettings = {
+      ...settings,
       mainOption: option,
-      ...(option === "specific" && !prev.newPost && !prev.reply && !prev.share
-        ? { newPost: true }
-        : {}),
-      ...(option !== "specific" && {
-        newPost: false,
-        reply: false,
-        share: false,
-      }),
-    }));
+      targetProfileId: userProfileId,
+    };
+
+    if (option === "all") {
+      newSettings.newPost = true;
+      newSettings.reply = true;
+      newSettings.share = true;
+    } else if (option === "specific") {
+      if (!settings.newPost && !settings.reply && !settings.share) {
+        newSettings.newPost = true;
+      }
+    } else if (option === "disable") {
+      newSettings.newPost = false;
+      newSettings.reply = false;
+      newSettings.share = false;
+    }
+
+    updateLocalSettings(newSettings);
   };
 
   const handleSubOptionChange = (option: "newPost" | "reply" | "share") => {
-    setSettings((prev) => {
-      const newValue = !prev[option];
-      if (!newValue && option === "newPost" && !prev.reply && !prev.share)
-        return prev;
-      if (!newValue && option === "reply" && !prev.newPost && !prev.share)
-        return prev;
-      if (!newValue && option === "share" && !prev.newPost && !prev.reply)
-        return prev;
+    const newValue = !settings[option];
 
-      return {
-        ...prev,
-        [option]: newValue,
-      };
+    if (!newValue) {
+      const otherOptionsEnabled =
+        (option === "newPost" && (settings.reply || settings.share)) ||
+        (option === "reply" && (settings.newPost || settings.share)) ||
+        (option === "share" && (settings.newPost || settings.reply));
+
+      if (!otherOptionsEnabled) return;
+    }
+
+    updateLocalSettings({
+      ...settings,
+      targetProfileId: userProfileId,
+      mainOption: "specific",
+      [option]: newValue,
     });
   };
 
-  const handleSaveChanges = async (
-    settings: ProfileNotificationSettingsProps,
-  ) => {
-    const response = await fetch("/api/save-profile-notification-settings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(settings),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to save notification settings");
-    }
-
+  const handleSave = () => {
+    saveSettings(settings);
     onClose();
-    return response.json();
   };
 
   if (!isOpen) return null;
+  if (isLoading || !settings) return <div>Loading...</div>;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 top-0 z-40 flex h-full w-full items-center justify-center bg-black/50">
@@ -181,7 +175,7 @@ const ProfileNotificationSettingsModal = ({
           {/* TODO: Save the settings */}
           <div className="mt-6 flex justify-end">
             <button
-              onClick={() => handleSaveChanges(settings)}
+              onClick={handleSave}
               className="rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
             >
               Save Changes
