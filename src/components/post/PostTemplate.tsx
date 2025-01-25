@@ -19,6 +19,8 @@ import ProfilePicture from "../ProfilePicture";
 import PostShareMenu from "../menus/PostShareMenu";
 import { useRouter } from "next/navigation";
 import QuotedTemplate from "./QuotedTemplate";
+import { usePostLikes } from "@/hooks/api/useLikesQuery";
+import { usePostLikeMutation } from "@/hooks/api/useLikeMutation";
 
 const PostTemplate: React.FC<PostProps> = (props) => {
   const { data: session } = useSession();
@@ -26,9 +28,6 @@ const PostTemplate: React.FC<PostProps> = (props) => {
   const isShared = props.type === "shared";
   const sharedPost = isShared ? (props as SharedPostProps) : null;
   const post = isShared ? sharedPost!.post : (props as OriginalPostProps);
-
-  const [likesCount, setLikesCount] = useState(post.initialLikesCount);
-  const [liked, setLiked] = useState(post.userLiked);
   const [comments, setComments] = useState<any[]>([]);
   const [commentSectionHeight, setCommentSectionHeight] = useState<0 | "auto">(
     0,
@@ -41,6 +40,9 @@ const PostTemplate: React.FC<PostProps> = (props) => {
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const shareButtonRef = useRef<HTMLButtonElement>(null);
   const shareMenuRef = useRef<HTMLDivElement>(null);
+
+  const { data: likesData, isLoading, error } = usePostLikes(post.id);
+  const { mutate: toggleLike } = usePostLikeMutation();
 
   const extractQuotedPostId = (content: any): string | null => {
     if (typeof content === "string") {
@@ -67,23 +69,23 @@ const PostTemplate: React.FC<PostProps> = (props) => {
     setIsShareMenuOpen(!isShareMenuOpen);
   };
 
-  useEffect(() => {
-    const fetchLikesCount = async () => {
-      try {
-        const userId = session?.user?.id;
-        const response = await fetch(
-          `/api/likes-count-post?postId=${post.id}&userId=${userId}`,
-        );
-        const data = await response.json();
-        setLikesCount(data.likesCount);
-        setLiked(data.userLiked);
-      } catch (error) {
-        console.error("Error fetching likes count:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchLikesCount = async () => {
+  //     try {
+  //       const userId = session?.user?.id;
+  //       const response = await fetch(
+  //         `/api/likes-count-post?postId=${post.id}&userId=${userId}`,
+  //       );
+  //       const data = await response.json();
+  //       setLikesCount(data.likesCount);
+  //       setLiked(data.userLiked);
+  //     } catch (error) {
+  //       console.error("Error fetching likes count:", error);
+  //     }
+  //   };
 
-    fetchLikesCount();
-  }, [post.id, session?.user?.id]);
+  //   fetchLikesCount();
+  // }, [post.id, session?.user?.id]);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -136,55 +138,12 @@ const PostTemplate: React.FC<PostProps> = (props) => {
     fetchShareStatus();
   }, [session?.user, post.id]);
 
-  const handleLike = async () => {
-    if (!session) {
-      return alert("You need to be logged in to like posts");
-    }
-
-    try {
-      const response = await fetch("/api/like-post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ postId: post.id, userId: session.user.id }),
-      });
-
-      if (response.ok) {
-        setLikesCount(likesCount + 1);
-        setLiked(true);
-      } else {
-        console.error("Failed to like post");
-      }
-    } catch (error) {
-      console.error("Error liking post:", error);
-    }
+  const handleLikeToggle = async () => {
+    const action = likesData?.userLiked ? "unlike" : "like";
+    toggleLike({ postId: post.id, action });
   };
 
-  const handleUnlike = async () => {
-    if (!session) {
-      return alert("You need to be logged in to unlike posts");
-    }
-    try {
-      const response = await fetch("/api/unlike-post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ postId: post.id, userId: session.user.id }),
-      });
-
-      if (response.ok) {
-        setLikesCount(likesCount - 1);
-        setLiked(false);
-      } else {
-        console.error("Failed to unlike post");
-      }
-    } catch (error) {
-      console.error("Error unliking post:", error);
-    }
-  };
-
+  // TODO: Make into a custom hook
   const handleShare = async () => {
     if (!session) {
       return alert("You need to be logged in to share posts");
@@ -417,7 +376,7 @@ const PostTemplate: React.FC<PostProps> = (props) => {
           {/* <p className="text-base leading-normal">{parsedContent}</p> */}
         </div>
         <PostActionButtons
-          likesCount={likesCount}
+          likesCount={likesData?.likesCount ?? post.initialLikesCount}
           commentsCount={comments?.length}
           onCommentClick={() =>
             setCommentSectionHeight(commentSectionHeight === 0 ? "auto" : 0)
@@ -426,9 +385,9 @@ const PostTemplate: React.FC<PostProps> = (props) => {
           onShareClick={handleShareClick}
           shareButtonRef={shareButtonRef}
           donationCount={0}
-          liked={liked}
-          onLike={handleLike}
-          onUnlike={handleUnlike}
+          liked={likesData?.userLiked ?? post.userLiked}
+          onLike={handleLikeToggle}
+          onUnlike={handleLikeToggle}
         />
       </div>
       {isShareMenuOpen && (

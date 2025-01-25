@@ -104,14 +104,13 @@ const UserProfile: React.FC<UserProfileProps> = ({
                     />
                   )
                 ) : null}
-                {currentUserId ? (
+                {currentUserId && currentUserId !== user.id ? (
                   <div className="flex items-center gap-2.5">
                     <Tooltip
                       text={"Notification Settings"}
                       position="top"
                       offset="50"
                     >
-                      {/* TODO: Clicking outside the modal should close it. */}
                       <button
                         onClick={() => setIsNotificationSettingsModalOpen(true)}
                         className="group flex size-[40px] select-none items-center justify-center rounded-full font-semibold transition duration-200 ease-in-out hover:bg-gray-700/40 active:bg-gray-700/60"
@@ -214,6 +213,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
         isOpen={isNotificationSettingsModalOpen}
         onClose={() => setIsNotificationSettingsModalOpen(false)}
         userProfileId={user.id}
+        user={user}
       />
     </>
   );
