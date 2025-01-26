@@ -19,8 +19,13 @@ import ProfilePicture from "../ProfilePicture";
 import PostShareMenu from "../menus/PostShareMenu";
 import { useRouter } from "next/navigation";
 import QuotedTemplate from "./QuotedTemplate";
-import { usePostLikes } from "@/hooks/api/useLikesQuery";
+import { usePostLikes } from "@/hooks/api/useLikesQueries";
 import { usePostLikeMutation } from "@/hooks/api/useLikeMutation";
+import {
+  usePostShareCount,
+  usePostShareStatus,
+} from "@/hooks/api/useShareQueries";
+import { usePostShareMutation } from "@/hooks/api/useShareMutation";
 
 const PostTemplate: React.FC<PostProps> = (props) => {
   const { data: session } = useSession();
@@ -32,9 +37,7 @@ const PostTemplate: React.FC<PostProps> = (props) => {
   const [commentSectionHeight, setCommentSectionHeight] = useState<0 | "auto">(
     0,
   );
-  const [userHasShared, setUserHasShared] = useState(isShared);
   const [shareId, setShareId] = useState(isShared ? sharedPost!.id : null);
-  const [sharesCount, setSharesCount] = useState(0);
   const [overlayImage, setOverlayImage] = useState<string | null>(null);
   const [isDeleted, setIsDeleted] = useState(false);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
@@ -43,6 +46,9 @@ const PostTemplate: React.FC<PostProps> = (props) => {
 
   const { data: likesData, isLoading, error } = usePostLikes(post.id);
   const { mutate: toggleLike } = usePostLikeMutation();
+  const { data: sharesData } = usePostShareCount(post.id);
+  const { data: postShareStatus } = usePostShareStatus(post.id);
+  const { mutate: toggleShare } = usePostShareMutation();
 
   const extractQuotedPostId = (content: any): string | null => {
     if (typeof content === "string") {
@@ -69,24 +75,6 @@ const PostTemplate: React.FC<PostProps> = (props) => {
     setIsShareMenuOpen(!isShareMenuOpen);
   };
 
-  // useEffect(() => {
-  //   const fetchLikesCount = async () => {
-  //     try {
-  //       const userId = session?.user?.id;
-  //       const response = await fetch(
-  //         `/api/likes-count-post?postId=${post.id}&userId=${userId}`,
-  //       );
-  //       const data = await response.json();
-  //       setLikesCount(data.likesCount);
-  //       setLiked(data.userLiked);
-  //     } catch (error) {
-  //       console.error("Error fetching likes count:", error);
-  //     }
-  //   };
-
-  //   fetchLikesCount();
-  // }, [post.id, session?.user?.id]);
-
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -102,99 +90,14 @@ const PostTemplate: React.FC<PostProps> = (props) => {
     fetchComments();
   }, [post.id]);
 
-  useEffect(() => {
-    const fetchSharesCount = async () => {
-      try {
-        const response = await fetch(
-          `/api/fetch-post-share-count?postId=${post.id}`,
-        );
-        const data = await response.json();
-        setSharesCount(data.sharesCount);
-      } catch (error) {
-        console.error("Error fetching shares count:", error);
-      }
-    };
-
-    fetchSharesCount();
-  }, [post.id]);
-
-  useEffect(() => {
-    const fetchShareStatus = async () => {
-      if (!session?.user) return;
-
-      try {
-        const response = await fetch(
-          `/api/check-share-status?postId=${post.id}`,
-        );
-        const data = await response.json();
-        setUserHasShared(data.hasShared);
-        setShareId(data.shareId);
-        setSharesCount(data.sharesCount);
-      } catch (error) {
-        console.error("Error fetching share status:", error);
-      }
-    };
-
-    fetchShareStatus();
-  }, [session?.user, post.id]);
-
   const handleLikeToggle = async () => {
     const action = likesData?.userLiked ? "unlike" : "like";
     toggleLike({ id: post.id, action });
   };
 
-  // TODO: Make into a custom hook
-  const handleShare = async () => {
-    if (!session) {
-      return alert("You need to be logged in to share posts");
-    }
-
-    try {
-      const response = await fetch("/api/share-post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ postId: post.id }),
-      });
-
-      if (response.ok) {
-        alert("Post shared successfully!");
-        // setSharesCount(sharesCount + 1);
-        setSharesCount((prevCount) => prevCount + 1);
-        setUserHasShared(true);
-        setIsShareMenuOpen(false);
-      } else {
-        console.error("Failed to share post");
-      }
-    } catch (error) {
-      console.error("Error sharing post:", error);
-    }
-  };
-
-  const handleUnshare = async () => {
-    if (!session || !isShared) return;
-
-    try {
-      const response = await fetch("/api/unshare-post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ shareId: shareId }),
-      });
-
-      if (response.ok) {
-        setSharesCount((prevCount) => prevCount - 1);
-        setUserHasShared(false);
-        setIsShareMenuOpen(false);
-        setIsDeleted(true);
-      } else {
-        console.error("Failed to unshare post");
-      }
-    } catch (error) {
-      console.error("Error unsharing post:", error);
-    }
+  const handleShareToggle = async () => {
+    const action = postShareStatus?.hasShared ? "unshare" : "share";
+    toggleShare({ id: post.id, action });
   };
 
   const handleQuote = () => {
@@ -381,7 +284,7 @@ const PostTemplate: React.FC<PostProps> = (props) => {
           onCommentClick={() =>
             setCommentSectionHeight(commentSectionHeight === 0 ? "auto" : 0)
           }
-          sharesCount={sharesCount}
+          sharesCount={sharesData?.sharesCount ?? 0}
           onShareClick={handleShareClick}
           shareButtonRef={shareButtonRef}
           donationCount={0}
@@ -394,9 +297,9 @@ const PostTemplate: React.FC<PostProps> = (props) => {
         <div ref={shareMenuRef}>
           <PostShareMenu
             postId={post.id}
-            onShare={userHasShared ? handleUnshare : handleShare}
+            onShare={handleShareToggle}
             onQuote={handleQuote}
-            userHasShared={userHasShared}
+            userHasShared={postShareStatus?.hasShared ?? false}
           />
         </div>
       )}
