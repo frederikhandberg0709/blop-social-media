@@ -140,7 +140,7 @@ const PostTemplate: React.FC<PostProps> = (props) => {
 
   const handleLikeToggle = async () => {
     const action = likesData?.userLiked ? "unlike" : "like";
-    toggleLike({ postId: post.id, action });
+    toggleLike({ id: post.id, action });
   };
 
   // TODO: Make into a custom hook

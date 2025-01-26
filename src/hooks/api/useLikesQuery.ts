@@ -1,4 +1,3 @@
-import { PostProps } from "@/types/PostProps";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
@@ -43,4 +42,38 @@ export const usePostLikes = (postId: string) => {
   });
 };
 
-// TODO: Fetch like count for a comment
+export const useCommentLikes = (commentId: string) => {
+  const session = useSession();
+  const userId = session?.data?.user?.id;
+
+  return useQuery<LikesData>({
+    queryKey: ["commentLikes", commentId, userId],
+
+    queryFn: async () => {
+      const url = new URL("api/likes-count-comment", window.location.origin);
+      url.searchParams.append("commentId", commentId);
+
+      if (userId) {
+        url.searchParams.append("userId", userId);
+      }
+
+      const response = await fetch(url.toString());
+
+      if (!response.ok) {
+        throw new Error(`Error fetching likes: ${response.statusText}`);
+      }
+
+      return response.json();
+    },
+
+    enabled: Boolean(commentId),
+
+    staleTime: 3000,
+    refetchOnWindowFocus: false,
+
+    placeholderData: {
+      likesCount: 0,
+      userLiked: false,
+    },
+  });
+};
