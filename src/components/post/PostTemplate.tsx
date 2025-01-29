@@ -19,13 +19,14 @@ import ProfilePicture from "../ProfilePicture";
 import PostShareMenu from "../menus/PostShareMenu";
 import { useRouter } from "next/navigation";
 import QuotedTemplate from "./QuotedTemplate";
-import { usePostLikes } from "@/hooks/api/useLikesQueries";
-import { usePostLikeMutation } from "@/hooks/api/useLikeMutation";
+import { usePostLikes } from "@/utils/hooks/api/useLikesQueries";
+import { usePostLikeMutation } from "@/utils/hooks/api/useLikeMutation";
 import {
   usePostShareCount,
   usePostShareStatus,
-} from "@/hooks/api/useShareQueries";
-import { usePostShareMutation } from "@/hooks/api/useShareMutation";
+} from "@/utils/hooks/api/useShareQueries";
+import { usePostShareMutation } from "@/utils/hooks/api/useShareMutation";
+import { useCommentQueries } from "@/utils/hooks/api/useCommentQueries";
 
 const PostTemplate: React.FC<PostProps> = (props) => {
   const { data: session } = useSession();
@@ -33,18 +34,25 @@ const PostTemplate: React.FC<PostProps> = (props) => {
   const isShared = props.type === "shared";
   const sharedPost = isShared ? (props as SharedPostProps) : null;
   const post = isShared ? sharedPost!.post : (props as OriginalPostProps);
-  const [comments, setComments] = useState<any[]>([]);
   const [commentSectionHeight, setCommentSectionHeight] = useState<0 | "auto">(
     0,
   );
-  const [shareId, setShareId] = useState(isShared ? sharedPost!.id : null);
   const [overlayImage, setOverlayImage] = useState<string | null>(null);
   const [isDeleted, setIsDeleted] = useState(false);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const shareButtonRef = useRef<HTMLButtonElement>(null);
   const shareMenuRef = useRef<HTMLDivElement>(null);
 
-  const { data: likesData, isLoading, error } = usePostLikes(post.id);
+  const {
+    data: commentsData,
+    isLoading: isLoadingComments,
+    error: commentsError,
+  } = useCommentQueries(post.id);
+  const {
+    data: likesData,
+    isLoading: isLoadingLikes,
+    error: postsError,
+  } = usePostLikes(post.id);
   const { mutate: toggleLike } = usePostLikeMutation();
   const { data: sharesData } = usePostShareCount(post.id);
   const { data: postShareStatus } = usePostShareStatus(post.id);
@@ -74,21 +82,6 @@ const PostTemplate: React.FC<PostProps> = (props) => {
     event.stopPropagation();
     setIsShareMenuOpen(!isShareMenuOpen);
   };
-
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await fetch(
-          `/api/fetch-all-comments?postId=${post.id}`,
-        );
-        const data = await response.json();
-        setComments(data.comments);
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      }
-    };
-    fetchComments();
-  }, [post.id]);
 
   const handleLikeToggle = async () => {
     const action = likesData?.userLiked ? "unlike" : "like";
@@ -280,7 +273,7 @@ const PostTemplate: React.FC<PostProps> = (props) => {
         </div>
         <PostActionButtons
           likesCount={likesData?.likesCount ?? post.initialLikesCount}
-          commentsCount={comments?.length}
+          commentsCount={commentsData?.comments.length ?? 0}
           onCommentClick={() =>
             setCommentSectionHeight(commentSectionHeight === 0 ? "auto" : 0)
           }
@@ -308,7 +301,9 @@ const PostTemplate: React.FC<PostProps> = (props) => {
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold">Comments</h2>
             <span className="text-xl font-bold text-primaryGray">·</span>
-            <p className="text-xl text-primaryGray">{comments?.length}</p>
+            <p className="text-xl text-primaryGray">
+              {commentsData?.comments.length || 0}
+            </p>
           </div>
           <div className="mt-3 flex flex-col items-start gap-2">
             <div className="flex flex-col items-start gap-4">
@@ -353,10 +348,10 @@ const PostTemplate: React.FC<PostProps> = (props) => {
               </Link>
             </div>
             <div className="mt-5 flex w-full flex-col gap-5">
-              {comments?.length === 0 ? (
+              {commentsData?.comments?.length === 0 ? (
                 <p className="text-md text-gray-500">No comments yet...</p>
               ) : (
-                comments?.map((comment) => (
+                commentsData?.comments.map((comment) => (
                   <CommentTemplate
                     key={comment.id}
                     id={comment.id}
@@ -367,7 +362,7 @@ const PostTemplate: React.FC<PostProps> = (props) => {
                     updatedAt={comment.updatedAt}
                     timestamp={comment.createdAt}
                     replies={comment.replies || []}
-                    initialLikesCount={comment.likesCount}
+                    initialLikesCount={comment.initialLikesCount}
                     userLiked={comment.userLiked}
                   />
                 ))
