@@ -1,41 +1,15 @@
 "use client";
 
 import PostTemplate from "@/components/post/PostTemplate";
-import { PostProps } from "@/types/PostProps";
-import { UserProps } from "@/types/UserProps";
+import { useHomeTimeline } from "@/hooks/api/queries/useTimelineQueries";
+import { UserProps } from "@/types/user";
 import { useEffect, useState } from "react";
 
 const Home: React.FC = () => {
-  // const [timeline, setTimeline] = useState<PostProps[]>([]);
-  const [posts, setPosts] = useState<PostProps[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
+  const { data, error, isLoading } = useHomeTimeline();
 
-  useEffect(() => {
-    const fetchTimeline = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`/api/home-timeline?page=${page}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch home timeline");
-        }
-        const data = await response.json();
-        setPosts((prevPosts) => [...prevPosts, ...data.posts]);
-        setPage((prevPage) => prevPage + 1);
-
-        // setTimeline(data.posts);
-      } catch (error) {
-        console.error("Error fetching home timeline:", error);
-        setError("Failed to load posts. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTimeline();
-  }, []);
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
@@ -52,13 +26,11 @@ const Home: React.FC = () => {
           {isLoading && <p>Loading posts...</p>}
           {error && <p className="text-red-500">{error}</p>}
 
-          {!isLoading && !error && posts.length === 0 && (
+          {/* {!isLoading && !error && data?.timeline.length === 0 && (
             <p>No posts to display. Try following some users!</p>
-          )}
+          )} */}
 
-          {posts.map((post) => (
-            <PostTemplate key={post.id} {...post} />
-          ))}
+          {data?.posts.map((post) => <PostTemplate key={post.id} {...post} />)}
         </div>
       </div>
     </>

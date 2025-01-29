@@ -1,6 +1,6 @@
-import { UserProps } from "./UserProps";
+import { UserProps } from "./user";
 
-export interface BasePostProps {
+export interface BasePost {
   id: string;
   user: UserProps;
   createdAt: string;
@@ -12,15 +12,15 @@ export interface BasePostProps {
   userLiked: boolean;
 }
 
-export interface OriginalPostProps extends BasePostProps {
+export interface OriginalPost extends BasePost {
   type: "original";
 }
 
-export interface SharedPostProps extends BasePostProps {
+export interface SharedPost extends BasePost {
   type: "shared";
   sharedBy: UserProps;
   sharedAt: string;
-  post: BasePostProps;
+  originalPost: BasePost;
 }
 
-export type PostProps = OriginalPostProps | SharedPostProps;
+export type Post = OriginalPost | SharedPost;

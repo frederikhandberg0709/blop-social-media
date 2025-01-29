@@ -1,46 +1,18 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { PostProps } from "@/types/PostProps";
 import PostTemplate from "@/components/post/PostTemplate";
 import { useSession } from "next-auth/react";
+import { useDiscoverTimeline } from "@/hooks/api/queries/useTimelineQueries";
 
 const Discover: React.FC = () => {
-  const { data: session } = useSession();
-  const [error, setError] = useState<string | null>(null);
-  const [posts, setPosts] = useState<PostProps[]>([]);
+  // const { data: session } = useSession();
+  const { data, error, isLoading } = useDiscoverTimeline();
   const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  useEffect(() => {
-    const fetchDiscoverPosts = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const url = new URL("/api/discover-timeline", window.location.origin);
-        if (session?.user?.id)
-          url.searchParams.append("userId", session.user.id);
-
-        const response = await fetch(url.toString());
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch discover posts");
-        }
-
-        const data = await response.json();
-        setPosts(data.posts);
-      } catch (error) {
-        console.error("Error loading discover posts:", error);
-        setError("Failed to load posts. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDiscoverPosts();
-  }, [session]);
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <>
@@ -55,29 +27,25 @@ const Discover: React.FC = () => {
             </button>
           </div>
 
-          {!session ?? (
+          {/* {!session ?? (
             <p className="text-sm text-primaryGray">
               <span className="font-semibold">Discover New Poeple</span>:
               Explore posts from people you don&apos;t follow.
             </p>
-          )}
+          )} */}
 
-          {isLoading ? (
+          {isLoading && <p>Loading posts...</p>}
+          {error && <p className="text-red-500">{error}</p>}
+
+          {/* {isLoading ? (
             <p className="mt-4 text-center">Loading...</p>
-          ) : (
-            <div className="space-y-4">
-              {posts.map((post) => (
-                <PostTemplate
-                  key={`${post.id}-${post.createdAt}`}
-                  // post={post}
-                  {...post}
-                />
-              ))}
-            </div>
-          )}
-          {!isLoading && posts.length === 0 && (
-            <p className="mt-4 text-center">No posts found.</p>
-          )}
+          ) : ( */}
+          {/* <div className="space-y-4"> */}
+          {data?.posts.map((post) => (
+            <PostTemplate key={`${post.id}-${post.createdAt}`} {...post} />
+          ))}
+          {/* </div> */}
+          {/* )} */}
         </div>
       </div>
     </>
