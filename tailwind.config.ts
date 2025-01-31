@@ -10,12 +10,12 @@ const config: Config = {
     extend: {
       colors: {
         primaryBlue: "#3b82f6",
-        primaryGray: "#808080", // Black 50%
+        primaryGray: "#808080",
         hoverBlue: "#1d4ed8",
-        lightHover: "#E5E5E5", // Black 10%
-        lightActive: "#CCC", // Black 20%
-        darkHover: "#1A1A1A", // White 10%
-        darkActive: "#333", // White 20%
+        lightHover: "#E5E5E5",
+        lightActive: "#CCC",
+        darkHover: "#1A1A1A",
+        darkActive: "#333",
         lightBorder: "#e5e7eb",
         lightBorderHover: "##B5BAC3",
         darkBorder: "#111827",
@@ -26,9 +26,14 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
     },
   },
-  plugins: [],
-  darkMode: "class",
+  plugins: [require("tailwindcss-animate")],
+  darkMode: ["class"],
 };
 export default config;

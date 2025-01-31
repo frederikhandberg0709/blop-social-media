@@ -24,9 +24,9 @@ export default function PrimaryButton({
       onClick={onClick}
       disabled={disabled}
       className={twMerge(
-        "font-semibold text-base text-white px-4 py-2 rounded-xl transition-all duration-150 ease-in-out",
+        "rounded-xl px-4 py-2 text-base font-semibold text-white transition-all duration-150 ease-in-out",
         disabled ? "cursor-not-allowed opacity-50" : "",
-        className
+        className,
       )}
       style={
         {

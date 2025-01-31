@@ -1,9 +1,12 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import DropdownMenu from "../buttons/DropdownMenu";
+import DropdownMenu from "./DropdownMenu";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDeletePost } from "@/hooks/api/mutations/useDeletePost";
+import DeleteConfirmationDialog from "../dialog/DeleteConfirmationDialog";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface PostDropdownMenuProps {
   postId: string;
@@ -22,8 +25,11 @@ export default function PostDropdownMenu({
   const router = useRouter();
   const isAuthor = session?.user?.id === authorId;
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const { mutate: deletePost, isPending } = useDeletePost();
 
+  // Create hook
   useEffect(() => {
     const checkBookmarkStatus = async () => {
       if (!session) return;
@@ -41,6 +47,7 @@ export default function PostDropdownMenu({
     checkBookmarkStatus();
   }, [postId, session]);
 
+  // Create hook
   const handleSaveBookmark = async () => {
     if (!session) return;
     try {
@@ -63,6 +70,7 @@ export default function PostDropdownMenu({
     }
   };
 
+  // Create hook
   const handleDeleteBookmark = async () => {
     if (!session) return;
     try {
@@ -81,28 +89,17 @@ export default function PostDropdownMenu({
     }
   };
 
-  const handleDeletePost = async () => {
-    if (!session) return;
-    if (window.confirm("Are you sure you want to delete this post?")) {
-      setIsDeleting(true);
-      try {
-        const response = await fetch(`/api/delete-post?postId=${postId}`, {
-          method: "DELETE",
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to delete post");
-        }
-
-        onPostDeleted();
-        router.push("/");
-      } catch (error) {
-        console.error("Error deleting post: ", error);
-        alert("Failed to delete post. Please try again.");
-      } finally {
-        setIsDeleting(false);
-      }
-    }
+  const handleDeletePost = () => {
+    deletePost(
+      { userId: authorId, postId },
+      {
+        onSuccess: () => {
+          setIsDeleteDialogOpen(false);
+          // TODO: Implement user timeline hook (for UserProfile) before below will work:
+          queryClient.invalidateQueries({ queryKey: ["timeline"] });
+        },
+      },
+    );
   };
 
   const commonItems = [{ label: "Open post", href: `/post/${postId}` }];
@@ -121,7 +118,7 @@ export default function PostDropdownMenu({
       label: "Delete post",
       href: "#",
       className: "text-red-500/50 hover:text-red-500",
-      onClick: handleDeletePost,
+      onClick: () => setIsDeleteDialogOpen(true),
     },
   ];
 
@@ -163,6 +160,15 @@ export default function PostDropdownMenu({
   return (
     <div>
       <DropdownMenu menuItems={menuItems} />
+
+      <DeleteConfirmationDialog
+        title="Delete Post"
+        text="Are you sure you want to delete this post? This action cannot be undone."
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleDeletePost}
+        isLoading={isPending}
+      />
     </div>
   );
 }

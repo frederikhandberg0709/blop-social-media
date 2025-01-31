@@ -6,15 +6,15 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import PostTemplate from "./post/PostTemplate";
-import { PostProps } from "@/types/post";
+import { Post } from "@/types/post";
 import ProfilePicture from "./ProfilePicture";
-import DropdownMenu from "@/components/buttons/DropdownMenu";
+import DropdownMenu from "@/components/menus/DropdownMenu";
 import ProfileNotificationSettingsModal from "./modals/ProfileNotificationSettingsModal";
 import { Tooltip } from "./Tooltip";
 
 interface UserProfileProps {
   user: UserProps;
-  posts: PostProps[];
+  posts: Post[];
   currentUserId: string | undefined;
 }
 
