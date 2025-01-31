@@ -8,32 +8,28 @@ import { useSession } from "next-auth/react";
 import CommentTemplate from "../CommentTemplate";
 import PostDropdownMenu from "../menus/PostDropdownMenu";
 import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
-import {
-  PostProps,
-  SharedPostProps,
-  OriginalPostProps,
-} from "@/types/PostProps";
+import { Post, SharedPost, OriginalPost } from "@/types/post";
 import { formatDate } from "@/utils/formattedDate";
 import AnimateHeight from "react-animate-height";
 import ProfilePicture from "../ProfilePicture";
 import PostShareMenu from "../menus/PostShareMenu";
 import { useRouter } from "next/navigation";
 import QuotedTemplate from "./QuotedTemplate";
-import { usePostLikes } from "@/utils/hooks/api/useLikesQueries";
-import { usePostLikeMutation } from "@/utils/hooks/api/useLikeMutation";
+import { usePostLikes } from "@/hooks/api/queries/useLikesQueries";
+import { usePostLikeMutation } from "@/hooks/api/mutations/useLikeMutation";
 import {
   usePostShareCount,
   usePostShareStatus,
-} from "@/utils/hooks/api/useShareQueries";
-import { usePostShareMutation } from "@/utils/hooks/api/useShareMutation";
-import { useCommentQueries } from "@/utils/hooks/api/useCommentQueries";
+} from "@/hooks/api/queries/useShareQueries";
+import { usePostShareMutation } from "@/hooks/api/mutations/useShareMutation";
+import { useCommentQueries } from "@/hooks/api/queries/useCommentQueries";
 
-const PostTemplate: React.FC<PostProps> = (props) => {
+const PostTemplate: React.FC<Post> = (props) => {
   const { data: session } = useSession();
   const router = useRouter();
   const isShared = props.type === "shared";
-  const sharedPost = isShared ? (props as SharedPostProps) : null;
-  const post = isShared ? sharedPost!.post : (props as OriginalPostProps);
+  const sharedPost = isShared ? (props as SharedPost) : null;
+  const post = isShared ? sharedPost!.originalPost : (props as OriginalPost);
   const [commentSectionHeight, setCommentSectionHeight] = useState<0 | "auto">(
     0,
   );

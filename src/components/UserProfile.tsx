@@ -1,12 +1,12 @@
 "use client";
 
 import FollowButton from "@/components/buttons/FollowButton";
-import { UserProps } from "@/types/UserProps";
+import { UserProps } from "@/types/user";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import PostTemplate from "./post/PostTemplate";
-import { PostProps } from "@/types/PostProps";
+import { PostProps } from "@/types/post";
 import ProfilePicture from "./ProfilePicture";
 import DropdownMenu from "@/components/buttons/DropdownMenu";
 import ProfileNotificationSettingsModal from "./modals/ProfileNotificationSettingsModal";

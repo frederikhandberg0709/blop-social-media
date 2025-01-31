@@ -1,4 +1,4 @@
-import { UserProps } from "./UserProps";
+import { UserProps } from "./user";
 
 export interface CommentProps {
   id: string;

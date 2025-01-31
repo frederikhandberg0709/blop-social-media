@@ -1,4 +1,4 @@
-import { UserProps } from "@/types/UserProps";
+import { UserProps } from "@/types/user";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";

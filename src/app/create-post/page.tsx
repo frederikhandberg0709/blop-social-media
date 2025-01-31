@@ -10,17 +10,16 @@ import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import useUserColor from "@/hooks/useUserColor";
 import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
-import { UserProps } from "@/types/UserProps";
+import { UserProps } from "@/types/user";
 import TiptapEditor from "@/components/TipTapEditor";
 import DOMPurify from "dompurify";
-import { createPost } from "@/utils/api-calls/post-apis/createPostApi";
+import { useCreatePostMutation } from "@/hooks/api/mutations/useCreatePost";
 
 const CreatePost: React.FC = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
   const [isPostTitleFocused, setIsPostTitleFocused] = useState<boolean>(false);
@@ -32,6 +31,8 @@ const CreatePost: React.FC = () => {
   const [overlayImage, setOverlayImage] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const borderColor = useUserColor();
+
+  const { mutate: createPost, isPending, error } = useCreatePostMutation();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -70,54 +71,7 @@ const CreatePost: React.FC = () => {
   };
 
   const handleCreatePost = async () => {
-    if (!content.trim()) return;
-    setIsLoading(true);
-    // const createPost = async () => {
-    //   if (!content.trim()) return;
-    //   setIsLoading(true);
-
-    try {
-      const post = await createPost({
-        userId: session?.user.id,
-        title,
-        content,
-        // content: processContent(content),
-        timestamp: new Date().toISOString(),
-      });
-
-      // Old POST request. Importing API call now above:
-      // const response = await fetch("/api/create-post", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     userId: session?.user.id,
-      //     title,
-      //     content,
-      //     timestamp: new Date().toISOString(),
-      //   }),
-      // });
-
-      // if (!response.ok) {
-      //   throw new Error("Error creating post");
-      // }
-
-      // const post = await response.json();
-
-      console.log("Post created:", post);
-
-      setTitle("");
-      setContent("");
-      setCharacterCount(0);
-      setWordCount(0);
-
-      router.push(`/post/${post.id}?success=true`);
-    } catch (error) {
-      console.error("Error creating post:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    createPost({ userId: session?.user.id, content });
   };
 
   const user: UserProps = {
@@ -257,9 +211,9 @@ const CreatePost: React.FC = () => {
                 </Link>
                 <PrimaryButton
                   onClick={handleCreatePost}
-                  disabled={!content.trim() || isLoading}
+                  disabled={!content.trim() || isPending}
                 >
-                  {isLoading ? "Publishing..." : "Publish"}
+                  {isPending ? "Publishing..." : "Publish"}
                 </PrimaryButton>
                 {/* Show warning modal before cancelling */}
                 <DangerButton onClick={() => router.push("/home")}>

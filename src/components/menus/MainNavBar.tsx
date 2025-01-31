@@ -253,11 +253,11 @@ const MainNavBar: React.FC = () => {
               {/* Create Post */}
               <Tooltip text={"Create Post"} position="bottom" offset="60">
                 <Link href={"/create-post"} className="rounded-full">
-                  <div className="size-10 rounded-full fill-primaryGray p-[7px] transition duration-150 ease-in-out hover:bg-lightHover hover:fill-black active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:hover:fill-white dark:active:bg-darkActive dark:active:fill-primaryBlue">
+                  <div className="flex size-10 items-center justify-center rounded-full fill-primaryGray p-[7px] transition duration-150 ease-in-out hover:bg-lightHover hover:fill-black active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:hover:fill-white dark:active:bg-darkActive dark:active:fill-primaryBlue">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
-                      className=""
+                      className="size-[35px]"
                     >
                       <path d="M12 4a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5a1 1 0 0 1 1-1z" />
                     </svg>
@@ -279,7 +279,11 @@ const MainNavBar: React.FC = () => {
                   ref={notificationButtonRef}
                   className="size-10 rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black active:fill-primaryBlue dark:fill-white/50 dark:hover:bg-white/10 dark:hover:fill-white dark:active:fill-primaryBlue"
                 >
-                  <svg viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+                  <svg
+                    viewBox="0 0 36 36"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="m-auto size-6"
+                  >
                     <path
                       d="m32.85 28.13l-.34-.3A14.37 14.37 0 0 1 30 24.9a12.63 12.63 0 0 1-1.35-4.81v-4.94A10.81 10.81 0 0 0 19.21 4.4V3.11a1.33 1.33 0 1 0-2.67 0v1.31a10.81 10.81 0 0 0-9.33 10.73v4.94a12.63 12.63 0 0 1-1.35 4.81a14.4 14.4 0 0 1-2.47 2.93l-.34.3v2.82h29.8Z"
                       className="clr-i-solid clr-i-solid-path-1"
@@ -320,7 +324,7 @@ const MainNavBar: React.FC = () => {
           // onFocus={handleSearchFocus}
           // onBlur={handleSearchBlur}
           tabIndex={-1}
-          className={`fixed left-1/2 top-[80px] z-50 ml-[-350px] h-[500px] w-[700px] rounded-[15px] border-2 border-lightBorder bg-white/80 backdrop-blur-2xl`}
+          className={`fixed left-1/2 top-[80px] z-50 ml-[-350px] h-[500px] w-[700px] rounded-[15px] border-2 border-white/5 bg-black/80 backdrop-blur-2xl transition duration-150 ease-in-out hover:border-white/10`}
         >
           <NavSearchResults />
         </div>

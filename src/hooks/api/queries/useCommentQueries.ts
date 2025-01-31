@@ -11,7 +11,7 @@ export const useCommentQueries = (postId: string) => {
   return useQuery<CommentsResponse, Error>({
     queryKey: ["comments", postId],
     queryFn: async () => {
-      const response = await fetch(`api/fetch-all-comments?postId=${postId}`);
+      const response = await fetch(`/api/fetch-all-comments?postId=${postId}`);
 
       if (!response.ok) {
         throw new Error(`Error fetching comments: ${response.statusText}`);
