@@ -15,3 +15,5 @@ Option 2: Download ZIP
 1. Click the green `Code` dropdown button
 2. Select `Download ZIP`
 3. Extract the downloaded ZIP file to your desired location
+
+![Screenshot](.github/option-2.png)
