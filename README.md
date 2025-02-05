@@ -46,7 +46,10 @@ BLOP is a social network I created as a portfolio project, designed to closely m
 
 Option 1: Clone via Git
 Run the following command in your terminal:
-`git clone https://github.com/frederikhandberg0709/blop-social-media.git`
+
+```bash
+git clone https://github.com/frederikhandberg0709/blop-social-media.git
+```
 
 Option 2: Download ZIP
 
@@ -63,3 +66,14 @@ npm install
 # or
 yarn install
 ```
+
+**Step 3: Setup Environment Variables**
+
+```.env
+DATABASE_URL="postgresql://USERNAME:PASSWORD@localhost:5432/DATABASE_NAME"
+```
+
+Replace the placeholders with your local database credentials:
+• `USERNAME`: Your database username
+• `PASSWORD`: Your database password
+• `DATABASE_NAME`: Name of your database
