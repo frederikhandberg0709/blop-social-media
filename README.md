@@ -57,7 +57,7 @@ Option 2: Download ZIP
 2. Select `Download ZIP`
 3. Extract the downloaded ZIP file to your desired location
 
-![Screenshot](.github/option-2.png)
+![Screenshot](.github/github-repo-download.png)
 
 **Step 2: Install Dependencies**
 
@@ -67,7 +67,12 @@ npm install
 yarn install
 ```
 
-**Step 3: Setup Environment Variables**
+**Step 3: Set up Environment Variables**
+
+Create a file named `.env` in the root directory.
+Copy the contents from `.env.template` located in the `.github` folder and paste them into the new `.env` file.
+
+Make sure to enter values for `AUTH_SECRET` and `NEXTAUTH_SECRET`, as otherwise, the user authentication will not work.
 
 ```.env
 DATABASE_URL="postgresql://USERNAME:PASSWORD@localhost:5432/DATABASE_NAME"
@@ -77,3 +82,15 @@ Replace the placeholders with your local database credentials:
 • `USERNAME`: Your database username
 • `PASSWORD`: Your database password
 • `DATABASE_NAME`: Name of your database
+
+Note: If you're using cloud providers like AWS, you'll need to use the credentials provided by your cloud service instead of your local database credentials.
+
+**Step 4: Prisma Migration**
+
+Run the following command in a terminal:
+
+```zsh
+npx prisma migrate dev --name init
+```
+
+This command creates and applies a database migration based on the Prisma schema (`schema.prisma`). A migration is necessary to sync your database structure with the Prisma schema. It creates the required tables, columns, and relationships in your database.
