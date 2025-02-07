@@ -72,7 +72,7 @@ yarn install
 Create a file named `.env` in the root directory.
 Copy the contents from `.env.template` located in the `.github` folder and paste them into the new `.env` file.
 
-Make sure to enter values for `AUTH_SECRET` and `NEXTAUTH_SECRET`, as otherwise, the user authentication will not work.
+Make sure to enter a value for `NEXTAUTH_SECRET`, as otherwise, the user authentication will not work.
 
 ```.env
 DATABASE_URL="postgresql://USERNAME:PASSWORD@localhost:5432/DATABASE_NAME"
@@ -85,7 +85,7 @@ Replace the placeholders with your local database credentials:
 
 Note: If you're using cloud providers like AWS, you'll need to use the credentials provided by your cloud service instead of your local database credentials.
 
-**Step 4: Prisma Migration**
+**Step 4: Initialize Database**
 
 Run the following command in a terminal:
 
@@ -94,3 +94,11 @@ npx prisma migrate dev --name init
 ```
 
 This command creates and applies a database migration based on the Prisma schema (`schema.prisma`). A migration is necessary to sync your database structure with the Prisma schema. It creates the required tables, columns, and relationships in your database.
+
+**Step 5: Run Development Server**
+
+Run the following command in a terminal:
+
+```zsh
+npm run dev
+```
