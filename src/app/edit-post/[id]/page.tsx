@@ -8,15 +8,14 @@ import PostHistory from "@/components/PostHistory";
 import useUserColor from "@/hooks/useUserColor";
 import PostTemplate from "@/components/post/PostTemplate";
 import DangerButton from "@/components/buttons/DangerButton";
+import { useUpdatePost } from "@/hooks/api/posts/useUpdatePost";
+import { usePost } from "@/hooks/api/posts/usePost";
 
 const EditPost: React.FC = () => {
   const { id } = useParams();
-  const postId = Array.isArray(id) ? id[0] : id;
+  const postId = id as string;
   const { data: session } = useSession();
   const router = useRouter();
-  const [post, setPost] = useState<{ title: string; content: string } | null>(
-    null,
-  );
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [initialTitle, setInitialTitle] = useState<string>("");
@@ -32,6 +31,17 @@ const EditPost: React.FC = () => {
     useState<boolean>(false);
   const [view, setView] = useState<"preview" | "history">("preview");
 
+  const {
+    data: post,
+    isPending: isLoadingPost,
+    error: postError,
+  } = usePost({ postId });
+  const {
+    mutate: updatePost,
+    isPending: isUpdatingPost,
+    error: errorUpdatingPost,
+  } = useUpdatePost();
+
   const handlePostTitleFocus = () => setIsPostTitleFocused(true);
   const handlePostTitleBlur = () => setIsPostTitleFocused(false);
   const handlePostTitleMouseOver = () => setIsPostTitleHovered(true);
@@ -43,27 +53,16 @@ const EditPost: React.FC = () => {
   const handlePostContentMouseOut = () => setIsPostContentHovered(false);
 
   useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const response = await fetch(`/api/fetch-post/${postId}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch post");
-        }
-        const data = await response.json();
-        setPost(data);
-        setTitle(data.title || "");
-        setContent(data.content);
-        setInitialTitle(data.title || "");
-        setInitialContent(data.content);
-      } catch (error) {
-        console.error("Error fetching post:", error);
-      }
-    };
-
-    fetchPost();
-  }, [postId]);
+    if (post) {
+      setTitle(post.title || "");
+      setContent(post.content);
+      setInitialTitle(post.title || "");
+      setInitialContent(post.content);
+    }
+  }, [post]);
 
   const handleUpdatePost = async () => {
+    if (!postId) return;
     if (!content.trim()) return;
 
     if (!session) {
@@ -71,30 +70,20 @@ const EditPost: React.FC = () => {
       return;
     }
 
-    try {
-      const response = await fetch("/api/update-post", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
+    updatePost(
+      { postId, title, content },
+      {
+        onSuccess: (updatedPost) => {
+          router.push(`/post/${updatedPost.id}`);
         },
-        body: JSON.stringify({
-          postId,
-          title,
-          content,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error updating post");
-      }
-
-      const updatedPost = await response.json();
-      console.log("Post updated:", updatedPost);
-
-      router.push(`/post/${updatedPost.id}`);
-    } catch (error) {
-      console.error("Error updating post:", error);
-    }
+        onError: (error) => {
+          console.error("Error updating post:", error);
+          alert(
+            error instanceof Error ? error.message : "Failed to update post",
+          );
+        },
+      },
+    );
   };
 
   const calculateTitleBorderColor = () => {
@@ -179,6 +168,10 @@ const EditPost: React.FC = () => {
     return title !== initialTitle || content !== initialContent;
   };
 
+  if (isLoadingPost) return <div>Loading...</div>;
+  if (postError) return <div>Error loading post: {postError.message}</div>;
+  if (!post) return <div>Post not found</div>;
+
   return (
     <>
       <div className="mb-[100px] mt-[90px] flex justify-center">
@@ -226,9 +219,11 @@ const EditPost: React.FC = () => {
               <div className="flex gap-[30px]">
                 <PrimaryButton
                   onClick={handleUpdatePost}
-                  disabled={!isPostChanged() || !content.trim()}
+                  disabled={
+                    !isPostChanged() || !content.trim() || isUpdatingPost
+                  }
                 >
-                  Update Post
+                  {isUpdatingPost ? "Updating..." : "Update Post"}
                 </PrimaryButton>
                 <DangerButton>Cancel</DangerButton>
               </div>
@@ -257,6 +252,8 @@ const EditPost: React.FC = () => {
               <PostTemplate
                 id={session?.user.id || ""}
                 user={session?.user}
+                reatedAt={new Date().toISOString()}
+                updatedAt={new Date().toISOString()}
                 timestamp={new Date().toISOString()}
                 title={title}
                 content={parseTextWithEnhancements(content)}

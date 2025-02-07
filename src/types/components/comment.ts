@@ -1,6 +1,6 @@
 import { UserProps } from "./user";
 
-export interface Comment {
+export interface CommentProps {
   id: string;
   user: UserProps;
   createdAt: string;

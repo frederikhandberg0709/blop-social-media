@@ -1,5 +1,5 @@
-import { Comment } from "../comment";
+import { CommentProps } from "../components/comment";
 
 export interface CommentsResponse {
-  comments: Comment[];
+  comments: CommentProps[];
 }

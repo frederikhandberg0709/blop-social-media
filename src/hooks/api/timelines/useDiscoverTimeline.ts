@@ -1,4 +1,4 @@
-import { Post } from "@/types/post";
+import { Post } from "@/types/components/post";
 import { useQuery } from "@tanstack/react-query";
 
 interface TimelineResponse {

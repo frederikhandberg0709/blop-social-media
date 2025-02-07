@@ -1,4 +1,4 @@
-import { PostActionResponse } from "@/types/api/posts";
+import { PostResponse } from "@/types/api/posts";
 import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
@@ -10,7 +10,7 @@ interface DeletePostData {
 export function useDeletePost() {
   const session = useSession();
 
-  return useMutation<PostActionResponse, Error, DeletePostData, unknown>({
+  return useMutation<PostResponse, Error, DeletePostData, unknown>({
     mutationFn: async ({ userId, postId }) => {
       if (!session.data?.user?.id) {
         throw new Error("You need to be logged in to delete posts");
