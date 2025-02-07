@@ -1,9 +1,7 @@
 "use client";
 
 import PostTemplate from "@/components/post/PostTemplate";
-import { useHomeTimeline } from "@/hooks/api/queries/useTimelineQueries";
-import { UserProps } from "@/types/user";
-import { useEffect, useState } from "react";
+import { useHomeTimeline } from "@/hooks/api/timelines/useHomeTimeline";
 
 const Home: React.FC = () => {
   const { data, error, isLoading } = useHomeTimeline();

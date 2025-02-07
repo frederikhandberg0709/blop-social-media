@@ -1,6 +1,6 @@
 import { UserProps } from "./user";
 
-export interface CommentProps {
+export interface Comment {
   id: string;
   user: UserProps;
   createdAt: string;
@@ -10,7 +10,7 @@ export interface CommentProps {
   content: string | React.ReactNode;
   imageContent?: string;
   videoContent?: string;
-  replies?: CommentProps[];
+  replies?: Comment[];
   initialLikesCount: number;
   userLiked: boolean;
 }
