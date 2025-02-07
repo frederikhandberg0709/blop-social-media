@@ -1,4 +1,4 @@
-export interface PostActionResponse {
+export interface PostResponse {
   success: boolean;
   postId: string;
 }

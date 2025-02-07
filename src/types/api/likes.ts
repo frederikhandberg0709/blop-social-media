@@ -1,4 +1,4 @@
-export interface LikeActionParams {
+export interface LikeParams {
   id: string;
   type: "post" | "comment";
 }

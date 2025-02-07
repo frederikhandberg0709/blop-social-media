@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { LikeActionParams, LikeResponse } from "@/types/api/likes";
+import { LikeParams, LikeResponse } from "@/types/api/likes";
 import { likeKeys } from "./keys";
 
 export function useDeleteLike() {
@@ -8,7 +8,7 @@ export function useDeleteLike() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, type }: LikeActionParams) => {
+    mutationFn: async ({ id, type }: LikeParams) => {
       if (!session.data?.user?.id) {
         throw new Error(`You need to be logged in to like ${type}`);
       }
@@ -35,7 +35,7 @@ export function useDeleteLike() {
       return response.json();
     },
 
-    onMutate: async (params: LikeActionParams) => {
+    onMutate: async (params: LikeParams) => {
       const queryKey = likeKeys.single(params);
       await queryClient.cancelQueries({ queryKey });
 
@@ -55,7 +55,7 @@ export function useDeleteLike() {
       return { previousData };
     },
 
-    onError: (error, params: LikeActionParams, context) => {
+    onError: (error, params: LikeParams, context) => {
       if (context?.previousData) {
         const queryKey = likeKeys.single(params);
         queryClient.setQueryData(queryKey, context.previousData);
@@ -64,7 +64,7 @@ export function useDeleteLike() {
       alert(error instanceof Error ? error.message : "An error occurred");
     },
 
-    onSettled: (_, __, params: LikeActionParams) => {
+    onSettled: (_, __, params: LikeParams) => {
       const queryKey = likeKeys.single(params);
       queryClient.invalidateQueries({ queryKey });
     },

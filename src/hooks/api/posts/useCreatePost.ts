@@ -1,4 +1,4 @@
-import { PostActionResponse } from "@/types/api/posts";
+import { PostResponse } from "@/types/api/posts";
 import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
@@ -16,38 +16,36 @@ interface QuotePostData extends CreatePostData {
 export function useCreatePost() {
   const session = useSession();
 
-  return useMutation<PostActionResponse, Error, CreatePostData | QuotePostData>(
-    {
-      mutationFn: async (postData: CreatePostData | QuotePostData) => {
-        if (!session.data?.user?.id) {
-          throw new Error("You need to be logged in to create posts");
-        }
+  return useMutation<PostResponse, Error, CreatePostData | QuotePostData>({
+    mutationFn: async (postData: CreatePostData | QuotePostData) => {
+      if (!session.data?.user?.id) {
+        throw new Error("You need to be logged in to create posts");
+      }
 
-        const data = {
-          ...postData,
-          userId: session.data.user.id,
-          timestamp: postData.timestamp || new Date().toISOString,
-        };
+      const data = {
+        ...postData,
+        userId: session.data.user.id,
+        timestamp: postData.timestamp || new Date().toISOString,
+      };
 
-        const response = await fetch("/api/create-post", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
+      const response = await fetch("/api/create-post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || "Failed to create post");
-        }
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to create post");
+      }
 
-        return response.json();
-      },
-
-      onError: (error) => {
-        console.error("Error creating post:", error);
-      },
+      return response.json();
     },
-  );
+
+    onError: (error) => {
+      console.error("Error creating post:", error);
+    },
+  });
 }
