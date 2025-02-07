@@ -15,14 +15,14 @@ import ProfilePicture from "../ProfilePicture";
 import PostShareMenu from "../menus/PostShareMenu";
 import { useRouter } from "next/navigation";
 import QuotedTemplate from "./QuotedTemplate";
-import { usePostLikes } from "@/hooks/api/queries/useLikesQueries";
-import { usePostLikeMutation } from "@/hooks/api/mutations/useLikeMutation";
-import {
-  usePostShareCount,
-  usePostShareStatus,
-} from "@/hooks/api/queries/useShareQueries";
-import { usePostShareMutation } from "@/hooks/api/mutations/useShareMutation";
-import { useCommentQueries } from "@/hooks/api/queries/useCommentQueries";
+import { useCreateLike } from "@/hooks/api/likes/useCreateLike";
+import { useDeleteLike } from "@/hooks/api/likes/useDeleteLike";
+import { useLikeCount } from "@/hooks/api/likes/useLikes";
+import { useComments } from "@/hooks/api/comments/useComments";
+import { useCreateShare } from "@/hooks/api/shares/useCreateShare";
+import { useDeleteShare } from "@/hooks/api/shares/useDeleteShare";
+import { useShareStatus } from "@/hooks/api/shares/useShareStatus";
+import { useShareCount } from "@/hooks/api/shares/useShares";
 
 const PostTemplate: React.FC<Post> = (props) => {
   const { data: session } = useSession();
@@ -41,18 +41,38 @@ const PostTemplate: React.FC<Post> = (props) => {
 
   const {
     data: commentsData,
-    isLoading: isLoadingComments,
+    isPending: isPendingComments,
     error: commentsError,
-  } = useCommentQueries(post.id);
+  } = useComments(post.id);
   const {
-    data: likesData,
-    isLoading: isLoadingLikes,
-    error: postsError,
-  } = usePostLikes(post.id);
-  const { mutate: toggleLike } = usePostLikeMutation();
-  const { data: sharesData } = usePostShareCount(post.id);
-  const { data: postShareStatus } = usePostShareStatus(post.id);
-  const { mutate: toggleShare } = usePostShareMutation();
+    mutate: createLike,
+    isPending: isCreatingLike,
+    error: createLikeError,
+  } = useCreateLike();
+  const {
+    mutate: deleteLike,
+    isPending: isDeletingLike,
+    error: deleteLikeError,
+  } = useDeleteLike();
+  const { data: likesData } = useLikeCount({
+    type: "post",
+    id: post.id,
+  });
+  const {
+    mutate: createShare,
+    isPending: isCreatingShare,
+    error: createShareError,
+  } = useCreateShare();
+  const {
+    mutate: deleteShare,
+    isPending: isDeletingShare,
+    error: deleteShareError,
+  } = useDeleteShare();
+  const { data: shareStatus } = useShareStatus({
+    type: "post",
+    id: post.id,
+  });
+  const { data: shareCount } = useShareCount({ id: post.id, type: "post" });
 
   const extractQuotedPostId = (content: any): string | null => {
     if (typeof content === "string") {
@@ -79,14 +99,16 @@ const PostTemplate: React.FC<Post> = (props) => {
     setIsShareMenuOpen(!isShareMenuOpen);
   };
 
-  const handleLikeToggle = async () => {
-    const action = likesData?.userLiked ? "unlike" : "like";
-    toggleLike({ id: post.id, action });
-  };
-
   const handleShareToggle = async () => {
-    const action = postShareStatus?.hasShared ? "unshare" : "share";
-    toggleShare({ id: post.id, action });
+    if (shareStatus?.hasShared) {
+      deleteShare({
+        id: post.id,
+        shareId: shareStatus.shareId,
+        type: "post",
+      });
+    } else {
+      createShare({ id: post.id, type: "post" });
+    }
   };
 
   const handleQuote = () => {
@@ -273,13 +295,13 @@ const PostTemplate: React.FC<Post> = (props) => {
           onCommentClick={() =>
             setCommentSectionHeight(commentSectionHeight === 0 ? "auto" : 0)
           }
-          sharesCount={sharesData?.sharesCount ?? 0}
+          sharesCount={shareCount?.sharesCount ?? 0}
           onShareClick={handleShareClick}
           shareButtonRef={shareButtonRef}
           donationCount={0}
           liked={likesData?.userLiked ?? post.userLiked}
-          onLike={handleLikeToggle}
-          onUnlike={handleLikeToggle}
+          onLike={() => createLike({ type: "post", id: post.id })}
+          onUnlike={() => deleteLike({ type: "post", id: post.id })}
         />
       </div>
       {isShareMenuOpen && (
@@ -288,7 +310,7 @@ const PostTemplate: React.FC<Post> = (props) => {
             postId={post.id}
             onShare={handleShareToggle}
             onQuote={handleQuote}
-            userHasShared={postShareStatus?.hasShared ?? false}
+            userHasShared={shareStatus?.hasShared ?? false}
           />
         </div>
       )}
