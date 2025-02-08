@@ -3,10 +3,8 @@ import { prisma } from "@/db/prisma";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { postId: string } },
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ postId: string }> }) {
+  const params = await props.params;
   const { postId } = params;
   const { parentId, title, content } = await req.json();
   const session = await getServerSession(authOptions);

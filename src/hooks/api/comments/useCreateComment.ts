@@ -1,4 +1,6 @@
-import { CreateCommentParams } from "@/types/api/comments";
+import { CommentsResponse, CreateCommentParams } from "@/types/api/comments";
+import { CommentProps } from "@/types/components/comment";
+import { UserProps } from "@/types/components/user";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
@@ -41,35 +43,45 @@ export function useCreateComment() {
       const queryKey = ["comments", newComment.postId];
       await queryClient.cancelQueries({ queryKey });
 
-      const previousComments = queryClient.getQueryData<Comment[]>(queryKey);
+      const previousData = queryClient.getQueryData<CommentsResponse>(queryKey);
 
-      if (previousComments) {
-        queryClient.setQueryData(queryKey, [
-          ...previousComments,
-          {
-            id: `temp-${Date.now()}`,
-            postId: newComment.postId,
-            parentId: newComment.parentId,
-            userId: session.data?.user?.id,
-            title: newComment.title,
-            content: newComment.content,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            user: session.data?.user,
-          },
-        ]);
-      }
+      const user: UserProps = {
+        id: session.data?.user?.id ?? "",
+        username: session.data?.user?.username ?? "",
+        profileName: session.data?.user?.profileName || null,
+        profilePicture: session.data?.user?.profilePicture || null,
+        profileBanner: session.data?.user?.profileBanner,
+        bio: "",
+        followersCount: 0,
+        followingCount: 0,
+        postsCount: 0,
+      };
 
-      return { previousComments };
+      const optimisticComment: CommentProps = {
+        id: `temp-${Date.now()}`,
+        user,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        timestamp: new Date().toISOString(),
+        title: newComment.title,
+        content: newComment.content,
+        replies: [],
+        initialLikesCount: 0,
+        userLiked: false,
+      };
+
+      queryClient.setQueryData<CommentsResponse>(queryKey, {
+        comments: [...(previousData?.comments || []), optimisticComment],
+      });
+
+      return { previousData };
     },
 
     onError: (error, newComment, context) => {
-      if (context?.previousComments) {
-        queryClient.setQueryData(
-          ["comments", newComment.postId],
-          context.previousComments,
-        );
-      }
+      queryClient.setQueryData(
+        ["comments", newComment.postId],
+        context?.previousData,
+      );
     },
 
     onSuccess: (data, variables) => {

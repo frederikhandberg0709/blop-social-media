@@ -12,8 +12,6 @@ export async function GET() {
       },
     });
 
-    // return NextResponse.json(posts, { status: 200 });
-
     const formattedPosts = posts.map((post) => ({
       id: post.id,
       title: post.title,
@@ -25,7 +23,7 @@ export async function GET() {
         post.updatedAt?.toISOString(),
       ),
       likesCount: post.likes.length,
-      userLiked: false, // Replace this with actual logic if needed
+      userLiked: false,
       user: {
         id: post.user.id,
         username: post.user.username,

@@ -10,10 +10,10 @@ import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import useUserColor from "@/hooks/useUserColor";
 import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
-import { UserProps } from "@/types/user";
+import { UserProps } from "@/types/components/user";
 import TiptapEditor from "@/components/TipTapEditor";
 import DOMPurify from "dompurify";
-import { useCreatePostMutation } from "@/hooks/api/mutations/useCreatePost";
+import { useCreatePost } from "@/hooks/api/posts/useCreatePost";
 
 const CreatePost: React.FC = () => {
   const { data: session } = useSession();
@@ -32,7 +32,11 @@ const CreatePost: React.FC = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const borderColor = useUserColor();
 
-  const { mutate: createPost, isPending, error } = useCreatePostMutation();
+  const {
+    mutate: createPost,
+    isPending: isCreatingPost,
+    error: createPostError,
+  } = useCreatePost();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -85,76 +89,6 @@ const CreatePost: React.FC = () => {
     followingCount: 0,
     postsCount: 0,
   };
-
-  // Testing for TipTapEditor:
-  // const handleContentUpdate = (newContent: string) => {
-  //   setContent(newContent);
-  // };
-
-  // const processContent = (htmlContent: string) => {
-  //   // Sanitize the HTML content
-  //   const sanitizedHtml = DOMPurify.sanitize(htmlContent);
-
-  //   // Create a temporary element to parse the HTML
-  //   const tempDiv = document.createElement("div");
-  //   tempDiv.innerHTML = sanitizedHtml;
-
-  //   // Function to convert a single node to Markdown-like syntax
-  //   const nodeToMarkdown = (node: Node): string => {
-  //     if (node.nodeType === Node.TEXT_NODE) {
-  //       return node.textContent || "";
-  //     }
-
-  //     if (node.nodeType === Node.ELEMENT_NODE) {
-  //       const element = node as HTMLElement;
-  //       let result = "";
-
-  //       for (const childNode of element.childNodes) {
-  //         let childText = nodeToMarkdown(childNode);
-
-  //         switch (element.tagName.toLowerCase()) {
-  //           case "p":
-  //             childText += "\n\n";
-  //             break;
-  //           case "br":
-  //             childText += "\n";
-  //             break;
-  //           case "strong":
-  //           case "b":
-  //             childText = `**${childText}**`;
-  //             break;
-  //           case "em":
-  //           case "i":
-  //             childText = `*${childText}*`;
-  //             break;
-  //           case "u":
-  //             childText = `__${childText}__`;
-  //             break;
-  //           case "s":
-  //             childText = `~~${childText}~~`;
-  //             break;
-  //           case "a":
-  //             const href = element.getAttribute("href");
-  //             childText = `[${childText}](${href})`;
-  //             break;
-  //           // Add more cases for other HTML elements as needed
-  //         }
-
-  //         result += childText;
-  //       }
-
-  //       return result;
-  //     }
-
-  //     return "";
-  //   };
-
-  //   // Convert the entire content
-  //   const markdownContent = nodeToMarkdown(tempDiv);
-
-  //   // Remove extra newlines and trim
-  //   return markdownContent.replace(/\n{3,}/g, "\n\n").trim();
-  // };
 
   return (
     <>
@@ -211,9 +145,9 @@ const CreatePost: React.FC = () => {
                 </Link>
                 <PrimaryButton
                   onClick={handleCreatePost}
-                  disabled={!content.trim() || isPending}
+                  disabled={!content.trim() || isCreatingPost}
                 >
-                  {isPending ? "Publishing..." : "Publish"}
+                  {isCreatingPost ? "Publishing..." : "Publish"}
                 </PrimaryButton>
                 {/* Show warning modal before cancelling */}
                 <DangerButton onClick={() => router.push("/home")}>

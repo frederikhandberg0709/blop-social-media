@@ -39,7 +39,7 @@ const EditPost: React.FC = () => {
   const {
     mutate: updatePost,
     isPending: isUpdatingPost,
-    error: errorUpdatingPost,
+    error: updatePostError,
   } = useUpdatePost();
 
   const handlePostTitleFocus = () => setIsPostTitleFocused(true);

@@ -6,38 +6,47 @@ import PrimaryButton from "@/components/buttons/PrimaryButton";
 import ToggleSwitch from "@/components/buttons/ToggleSwitch";
 import CommentTemplate from "@/components/CommentTemplate";
 import PostDropdownMenu from "@/components/menus/PostDropdownMenu";
-import PostCommentPreview from "@/components/post/PostCommentPreview";
-import PostTemplate from "@/components/post/PostTemplate";
+import { useCreateComment } from "@/hooks/api/comments/useCreateComment";
+import { usePost } from "@/hooks/api/posts/usePost";
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import useUserColor from "@/hooks/useUserColor";
-import { PostProps } from "@/types/PostProps";
 import { formatDate } from "@/utils/formattedDate";
 import { getTimestamp } from "@/utils/getTimestamp";
 import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 
 interface SendCommentClientProps {
-  post: PostProps;
+  postId: string;
+  onCommentSubmitted?: () => void;
 }
 
-export default function SendCommentClient({ post }: SendCommentClientProps) {
+export default function SendCommentClient({
+  postId,
+  onCommentSubmitted,
+}: SendCommentClientProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  const [likesCount, setLikesCount] = useState(post.initialLikesCount);
-  const [liked, setLiked] = useState(post.userLiked);
+  const {
+    data: post,
+    isPending: isPostPending,
+    error: postError,
+  } = usePost({ postId });
+
+  const createComment = useCreateComment();
+
+  const [likesCount, setLikesCount] = useState(post?.initialLikesCount ?? 0);
+  const [liked, setLiked] = useState(post?.userLiked ?? false);
   const [commentTitle, setCommentTitle] = useState<string>("");
   const [commentContent, setCommentContent] = useState<string>("");
-  const [comments, setComments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
   const [overlayImage, setOverlayImage] = useState<string | null>(null);
   const [showPost, setShowPost] = useState(true);
-  // const [comment, setcomment] = useState<any>(null);
   const [isCommentTitleFocused, setIsCommentTitleFocused] =
     useState<boolean>(false);
   const [isCommentTitleHovered, setIsCommentTitleHovered] =
@@ -53,67 +62,23 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
     setCommentTitle(event.target.value);
   };
 
-  useEffect(() => {
-    const fetchLikesCount = async () => {
-      try {
-        const userId = session?.user?.id;
-        const response = await fetch(
-          `/api/likes-count-post?postId=${post.id}&userId=${userId}`,
-        );
-        const data = await response.json();
-        setLikesCount(data.likesCount);
-        setLiked(data.userLiked);
-      } catch (error) {
-        console.error("Error fetching likes count:", error);
-      }
-    };
-
-    fetchLikesCount();
-  }, [post.id, session?.user?.id]);
-
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await fetch(
-          `/api/fetch-all-comments?postId=${post.id}`,
-        );
-        const data = await response.json();
-        setComments(data.comments);
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-      }
-    };
-
-    fetchComments();
-  }, [post.id]);
-
   const submitComment = async () => {
     if (!commentContent.trim()) return;
     setIsLoading(true);
     setError(null);
 
-    let title = commentTitle;
-    let content = commentContent;
-
     try {
-      const response = await fetch(`/api/send-comment/${post.id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          content,
-        }),
+      createComment.mutate({
+        postId: post.id,
+        title: commentTitle || undefined,
+        content: commentContent,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to send comment");
-      }
+      setCommentTitle("");
+      setCommentContent("");
 
-      const comment = await response.json();
-      console.log("Comment created:", comment);
+      onCommentSubmitted?.();
+
       router.push(`/post/${post.id}`);
     } catch (error) {
       setError((error as Error).message);
@@ -121,14 +86,6 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleLike = async () => {
-    // Function should be disabled
-  };
-
-  const handleUnlike = async () => {
-    // Function should be disabled
   };
 
   useAutosizeTextArea(textareaRef.current, commentContent);
@@ -163,10 +120,6 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
     setCommentContent(val);
   };
 
-  if (!session?.user) {
-    return <div>Loading...</div>;
-  }
-
   const handleImageClick = (src: string) => {
     setOverlayImage(src);
     document.body.style.overflow = "hidden"; // Disable scrolling
@@ -182,6 +135,14 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
       closeOverlay();
     }
   };
+
+  if (isPostPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (postError || !post) {
+    return <div>Error loading post</div>;
+  }
 
   const parsedContent =
     typeof post.content === "string"
@@ -244,7 +205,7 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
               >
                 {isLoading ? "Publishing..." : "Publish"}
               </PrimaryButton>
-              {/* Show warning modal before cancelling */}
+              {/* TODO: Show warning modal before cancelling */}
               <DangerButton onClick={() => router.back()} type="button">
                 Cancel
               </DangerButton>
@@ -316,17 +277,13 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
                   <p className="text-base leading-normal">{parsedContent}</p>
                 </div>
                 <PostActionButtons
-                  likesCount={likesCount}
-                  commentsCount={comments.length}
-                  onCommentClick={
-                    () => {}
-                    // setIsCommentSectionVisible(!isCommentSectionVisible)
-                  }
+                  likesCount={post.likesCount}
+                  commentsCount={post.commentsCount}
+                  onCommentClick={() => {}}
                   sharesCount={0}
-                  donationCount={0}
                   liked={liked}
-                  onLike={handleLike}
-                  onUnlike={handleUnlike}
+                  onLike={() => {}}
+                  onUnlike={() => {}}
                 />
               </>
             )}
@@ -344,7 +301,6 @@ export default function SendCommentClient({ post }: SendCommentClientProps) {
           </div>
         </div>
       </div>
-      {/* Fullscreen  image overlay */}
       {overlayImage && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"

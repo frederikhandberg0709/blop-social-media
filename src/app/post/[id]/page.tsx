@@ -1,12 +1,14 @@
 import { notFound } from "next/navigation";
 import PostDetailClient from "@/components/post/PostDetailClient";
-import { PostProps } from "@/types/PostProps";
+import { PostProps } from "@/types/components/post";
 
 interface PostDetailProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-const PostDetail = async ({ params }: PostDetailProps) => {
+const PostDetail = async (props: PostDetailProps) => {
+  const params = await props.params;
+  // TODO: Replace with custom hook
   const response = await fetch(
     `${process.env.NEXTAUTH_URL}/api/fetch-post/${params.id}`,
     {

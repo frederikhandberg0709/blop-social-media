@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import CommentTemplate from "../CommentTemplate";
 import PostDropdownMenu from "../menus/PostDropdownMenu";
 import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
-import { Post, SharedPost, OriginalPost } from "@/types/post";
+import { Post, SharedPost, OriginalPost } from "@/types/components/post";
 import { formatDate } from "@/utils/formattedDate";
 import AnimateHeight from "react-animate-height";
 import ProfilePicture from "../ProfilePicture";
@@ -18,7 +18,7 @@ import QuotedTemplate from "./QuotedTemplate";
 import { useCreateLike } from "@/hooks/api/likes/useCreateLike";
 import { useDeleteLike } from "@/hooks/api/likes/useDeleteLike";
 import { useLikeCount } from "@/hooks/api/likes/useLikes";
-import { useComments } from "@/hooks/api/comments/useComments";
+import { useCommentList } from "@/hooks/api/comments/useCommentList";
 import { useCreateShare } from "@/hooks/api/shares/useCreateShare";
 import { useDeleteShare } from "@/hooks/api/shares/useDeleteShare";
 import { useShareStatus } from "@/hooks/api/shares/useShareStatus";
@@ -43,7 +43,7 @@ const PostTemplate: React.FC<Post> = (props) => {
     data: commentsData,
     isPending: isPendingComments,
     error: commentsError,
-  } = useComments(post.id);
+  } = useCommentList(post.id);
   const {
     mutate: createLike,
     isPending: isCreatingLike,
@@ -298,7 +298,6 @@ const PostTemplate: React.FC<Post> = (props) => {
           sharesCount={shareCount?.sharesCount ?? 0}
           onShareClick={handleShareClick}
           shareButtonRef={shareButtonRef}
-          donationCount={0}
           liked={likesData?.userLiked ?? post.userLiked}
           onLike={() => createLike({ type: "post", id: post.id })}
           onUnlike={() => deleteLike({ type: "post", id: post.id })}
