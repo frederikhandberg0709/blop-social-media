@@ -5,28 +5,44 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { commentId: string } },
 ) {
-  // const { commentId } = params;
+  const { commentId } = params;
 
-  // if (!commentId) {
-  //   return NextResponse.json(
-  //     { error: "Comment ID is required" },
-  //     { status: 400 },
-  //   );
-  // }
+  if (!commentId) {
+    return NextResponse.json(
+      { error: "Comment ID is required" },
+      { status: 400 },
+    );
+  }
 
   try {
     const comment = await prisma.comment.findUnique({
-      where: { id: params.commentId },
+      where: {
+        id: commentId,
+      },
       include: {
-        user: true,
-        // user: {
-        // select: {
-        //   id: true,
-        //   username: true,
-        //   profileName: true,
-        //   profilePicture: true,
-        // },
-        // },
+        user: {
+          select: {
+            id: true,
+            username: true,
+            profileName: true,
+            profilePicture: true,
+          },
+        },
+        replies: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                profileName: true,
+                profilePicture: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
       },
     });
 

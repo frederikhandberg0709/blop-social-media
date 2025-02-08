@@ -4,36 +4,25 @@ import DangerButton from "@/components/buttons/DangerButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import ToggleSwitch from "@/components/buttons/ToggleSwitch";
 import CommentTemplate from "@/components/CommentTemplate";
-import PostTemplate from "@/components/post/PostTemplate";
+import { useComment } from "@/hooks/api/comments/useComment";
+import { useCreateComment } from "@/hooks/api/comments/useCreateComment";
 import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import useUserColor from "@/hooks/useUserColor";
-import { CommentProps } from "@/types/CommentProps";
-import { PostProps } from "@/types/PostProps";
 import { formatDate } from "@/utils/formattedDate";
-import { getTimestamp } from "@/utils/getTimestamp";
 import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { notFound, useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 
 interface SendReplyClientProps {
-  comment: CommentProps;
-  postId: string;
+  commentId: string;
 }
 
-export default function SendReplyClient({
-  comment,
-  postId,
-}: SendReplyClientProps) {
+export default function SendReplyClient({ commentId }: SendReplyClientProps) {
   const { data: session } = useSession();
   const router = useRouter();
-  const [likesCount, setLikesCount] = useState(comment?.initialLikesCount);
-  const [liked, setLiked] = useState(comment?.userLiked);
   const [replyTitle, setReplyTitle] = useState<string>("");
   const [replyContent, setReplyContent] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
   const [overlayImage, setOverlayImage] = useState<string | null>(null);
@@ -48,6 +37,14 @@ export default function SendReplyClient({
   const [showParentComment, setShowParentComment] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const borderColor = useUserColor();
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const {
+    data: comment,
+    isPending: isCommentPending,
+    error: commentError,
+  } = useComment(commentId);
+  const createComment = useCreateComment();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setReplyTitle(event.target.value);
@@ -85,41 +82,30 @@ export default function SendReplyClient({
     setReplyContent(val);
   };
 
-  const submitReply = async () => {
+  const submitReply = () => {
     if (!replyContent.trim()) return;
-    setIsLoading(true);
-    setError(null);
 
-    try {
-      const response = await fetch(`/api/send-comment/${postId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    createComment.mutate(
+      {
+        postId: comment.postId,
+        parentId: comment.id,
+        title: replyTitle || undefined,
+        content: replyContent,
+      },
+      {
+        onSuccess: () => {
+          setReplyTitle("");
+          setReplyContent("");
+          router.push(`/post/${comment.postId}`);
         },
-        body: JSON.stringify({
-          parentId: comment.id,
-          title: replyTitle,
-          content: replyContent,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to send reply");
-      }
-
-      const reply = await response.json();
-      console.log("Reply created:", reply);
-      router.push(`/post/${comment.id}`);
-    } catch (error) {
-      setError((error as Error).message);
-      console.error("Error sending reply:", error);
-    } finally {
-      setIsLoading(false);
-    }
+        onError: (error) => {
+          setSubmitError(error.message);
+        },
+      },
+    );
   };
 
-  if (!session?.user) {
+  if (isCommentPending) {
     return <div>Loading...</div>;
   }
 
@@ -139,13 +125,19 @@ export default function SendReplyClient({
     }
   };
 
-  // const timestamp = getTimestamp(comment.createdAt, comment.updatedAt);
+  if (commentError?.message.includes("not found")) {
+    notFound();
+  }
+
+  if (!comment || !comment.postId) {
+    notFound();
+  }
 
   return (
     <div className="mb-[100px] mt-[90px] flex justify-center">
       <div className="flex w-[800px] flex-col gap-[30px]">
         <h1 className="text-2xl font-semibold">Send Reply</h1>
-        {error && <p className="text-red-500">{error}</p>}
+        {submitError && <p className="text-red-500">{submitError}</p>}
         <div className="flex flex-col gap-[20px]">
           <input
             type="text"
@@ -189,8 +181,11 @@ export default function SendReplyClient({
               >
                 Save Draft
               </button>
-              <PrimaryButton onClick={submitReply} disabled={isLoading}>
-                {isLoading ? "Publishing..." : "Publish"}
+              <PrimaryButton
+                onClick={submitReply}
+                disabled={isCommentPending || !replyContent.trim()}
+              >
+                {isCommentPending ? "Publishing..." : "Publish"}
               </PrimaryButton>
               {/* Show warning modal before cancelling */}
               <DangerButton onClick={() => router.back()} type="button">
@@ -225,8 +220,8 @@ export default function SendReplyClient({
                 timestamp={comment.updatedAt || comment.createdAt}
                 title={comment.title}
                 content={comment.content}
-                initialLikesCount={likesCount}
-                userLiked={liked}
+                initialLikesCount={comment.initialLikesCount}
+                userLiked={comment.userLiked}
               />
             )}
             <CommentTemplate
