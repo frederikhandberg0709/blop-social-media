@@ -13,19 +13,14 @@ export function useCreateLike() {
         throw new Error(`You need to be logged in to like ${type}`);
       }
 
-      const endpoint = `/api/${type === "post" ? "like-post" : "like-comment"}`;
-
-      const body = {
-        [type === "post" ? "postId" : "commentId"]: id,
-        userId: session.data.user.id,
-      };
+      const endpoint = `/api/${type}s/${id}/likes`;
 
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ userId: session.data.user.id }),
       });
 
       if (!response.ok) {

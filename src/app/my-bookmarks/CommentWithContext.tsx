@@ -1,6 +1,6 @@
 import Link from "next/link";
 import CommentTemplate from "@/components/CommentTemplate";
-import { CommentProps } from "@/types/CommentProps";
+import { CommentProps } from "@/types/components/comment";
 
 interface ExtendedCommentProps extends CommentProps {
   post?: {

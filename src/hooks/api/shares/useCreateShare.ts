@@ -18,7 +18,7 @@ export function useCreateShare() {
         throw new Error(`You need to be logged in to share ${type}s`);
       }
 
-      const endpoint = `/api/share-${type === "post" ? "post" : "comment"}`;
+      const endpoint = `/api/${type}s/${id}/shares`;
 
       const response = await fetch(endpoint, {
         method: "POST",

@@ -18,10 +18,10 @@ export function useDeleteShare() {
         throw new Error(`You need to be logged in to unshare ${type}s`);
       }
 
-      const endpoint = `/api/unshare-${type === "post" ? "post" : "comment"}`;
+      const endpoint = `/api/${type}s/${id}/shares`;
 
       const response = await fetch(endpoint, {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },

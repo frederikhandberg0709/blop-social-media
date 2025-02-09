@@ -11,8 +11,7 @@ export function useLikeCount({ type, id }: LikeParams) {
     queryKey: likeKeys.single({ type, id }),
 
     queryFn: async () => {
-      const url = new URL(`api/likes-count-${type}`, window.location.origin);
-      url.searchParams.append(type === "post" ? "postId" : "commentId", id);
+      const url = new URL(`/api/${type}s/${id}/likes`, window.location.origin);
 
       if (userId) {
         url.searchParams.append("userId", userId);

@@ -21,7 +21,7 @@ export function useCreatePost() {
         timestamp: postData.timestamp || new Date().toISOString,
       };
 
-      const response = await fetch("/api/create-post", {
+      const response = await fetch("/api/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

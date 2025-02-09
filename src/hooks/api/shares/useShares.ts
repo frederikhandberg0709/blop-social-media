@@ -7,7 +7,7 @@ export function useShareCount({ type, id }: ShareParams) {
     queryKey: shareKeys.count({ type, id }),
     queryFn: async () => {
       const url = new URL(
-        `/api/fetch-${type}-share-count`,
+        `/api/${type}s/${id}/shares/count`,
         window.location.origin,
       );
       url.searchParams.append(`${type}Id`, id);

@@ -4,7 +4,7 @@ export function useComment(commentId: string) {
   return useQuery({
     queryKey: ["comment", commentId],
     queryFn: async () => {
-      const response = await fetch(`/api/fetch-comment/${commentId}`);
+      const response = await fetch(`/api/comments/${commentId}`);
 
       if (!response.ok) {
         const error = await response.json();

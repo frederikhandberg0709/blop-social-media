@@ -6,7 +6,7 @@ export function useUpdatePost() {
 
   return useMutation<UpdatePostResponse, Error, UpdatePostParams>({
     mutationFn: async ({ postId, title, content }: UpdatePostParams) => {
-      const response = await fetch(`/api/update-post/${postId}`, {
+      const response = await fetch(`/api/posts/${postId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ postId, title, content }),

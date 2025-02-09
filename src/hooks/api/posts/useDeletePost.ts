@@ -16,7 +16,7 @@ export function useDeletePost() {
         throw new Error("You need to be logged in to delete posts");
       }
 
-      const response = await fetch(`/api/delete-post?postId=${postId}`, {
+      const response = await fetch(`/api/posts/?postId=${postId}`, {
         method: "DELETE",
       });
 

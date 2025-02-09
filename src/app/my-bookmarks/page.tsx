@@ -2,8 +2,8 @@
 
 import CommentTemplate from "@/components/CommentTemplate";
 import PostTemplate from "@/components/post/PostTemplate";
-import { CommentProps } from "@/types/CommentProps";
-import { PostProps } from "@/types/PostProps";
+import { CommentProps } from "@/types/components/comment";
+import { PostProps } from "@/types/components/post";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import CommentWithContext from "./CommentWithContext";

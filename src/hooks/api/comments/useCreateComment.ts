@@ -19,7 +19,7 @@ export function useCreateComment() {
         throw new Error("You need to be logged in to publish a comment");
       }
 
-      const response = await fetch(`/api/send-comment/${postId}`, {
+      const response = await fetch(`/api/posts/${postId}/comments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

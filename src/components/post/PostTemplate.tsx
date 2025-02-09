@@ -18,7 +18,7 @@ import QuotedTemplate from "./QuotedTemplate";
 import { useCreateLike } from "@/hooks/api/likes/useCreateLike";
 import { useDeleteLike } from "@/hooks/api/likes/useDeleteLike";
 import { useLikeCount } from "@/hooks/api/likes/useLikes";
-import { useCommentList } from "@/hooks/api/comments/useCommentList";
+import { useComments } from "@/hooks/api/comments/useComments";
 import { useCreateShare } from "@/hooks/api/shares/useCreateShare";
 import { useDeleteShare } from "@/hooks/api/shares/useDeleteShare";
 import { useShareStatus } from "@/hooks/api/shares/useShareStatus";
@@ -43,7 +43,7 @@ const PostTemplate: React.FC<Post> = (props) => {
     data: commentsData,
     isPending: isPendingComments,
     error: commentsError,
-  } = useCommentList(post.id);
+  } = useComments(post.id);
   const {
     mutate: createLike,
     isPending: isCreatingLike,

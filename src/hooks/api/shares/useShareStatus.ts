@@ -10,7 +10,7 @@ export function useShareStatus({ type, id }: ShareParams) {
   return useQuery<ShareStatus>({
     queryKey: shareKeys.status({ type, id }, userId ?? ""),
     queryFn: async () => {
-      const url = new URL(`/api/check-share-status`, window.location.origin);
+      const url = new URL(`/api/${type}s/${id}/shares`, window.location.origin);
       url.searchParams.append(type === "post" ? "postId" : "commentId", id);
 
       const response = await fetch(url.toString());
