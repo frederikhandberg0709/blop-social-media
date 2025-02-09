@@ -23,7 +23,6 @@ export async function GET(req: NextRequest) {
         comment: {
           include: {
             user: true,
-            // post: true, // Include parent post data
             post: {
               include: {
                 user: true,
@@ -54,9 +53,8 @@ export async function GET(req: NextRequest) {
               author: bookmark.comment.user,
               post: {
                 ...bookmark.comment.post,
-                user: bookmark.comment.post.user, // Ensure post user is included
+                user: bookmark.comment.post.user,
               },
-              //   post: bookmark.comment.post, // Include parent post data
             },
             bookmarkedAt: bookmark.createdAt.toISOString(),
           };
@@ -101,36 +99,6 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to create bookmark" },
-      { status: 500 },
-    );
-  }
-}
-
-export async function DELETE(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const userId = session.user.id;
-  const { searchParams } = new URL(req.url);
-  const id = searchParams.get("id");
-
-  if (!id) {
-    return NextResponse.json(
-      { error: "Bookmark ID is required" },
-      { status: 400 },
-    );
-  }
-
-  try {
-    await prisma.bookmark.delete({
-      where: { id: String(id), userId },
-    });
-    return new NextResponse(null, { status: 204 });
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to delete bookmark" },
       { status: 500 },
     );
   }

@@ -1,5 +1,5 @@
-import { LikeActionParams } from "@/types/api/likes";
+import { LikeParams } from "@/types/api/likes";
 
 export const likeKeys = {
-  single: ({ type, id }: LikeActionParams) => ["likes", type, id] as const,
+  single: ({ type, id }: LikeParams) => ["likes", type, id] as const,
 };

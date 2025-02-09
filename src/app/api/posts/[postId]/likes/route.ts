@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: { postId: string } },
 ) {
   const userId = req.nextUrl.searchParams.get("userId");
-  const { postId } = params;
+  const { postId } = await params;
 
   if (!postId) {
     return NextResponse.json({ error: "Post ID is required" }, { status: 400 });

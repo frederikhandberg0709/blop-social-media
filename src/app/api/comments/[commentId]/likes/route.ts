@@ -5,11 +5,11 @@ import { NextRequest, NextResponse } from "next/server";
 // Get likes count for a comment
 
 export async function GET(
-  req: NextRequest,
+  request: NextRequest,
   { params }: { params: { commentId: string } },
 ) {
-  const userId = req.nextUrl.searchParams.get("userId");
-  const { commentId } = params;
+  const userId = request.nextUrl.searchParams.get("userId");
+  const { commentId } = await params;
 
   try {
     const likesCount = await prisma.commentLike.count({
@@ -45,11 +45,11 @@ export async function GET(
 // Like a comment
 
 export async function POST(
-  req: NextRequest,
+  request: NextRequest,
   { params }: { params: { commentId: string } },
 ) {
   try {
-    const { userId } = await req.json();
+    const { userId } = await request.json();
     const { commentId } = params;
 
     const like = await prisma.commentLike.create({
@@ -72,11 +72,11 @@ export async function POST(
 // Unlike a comment
 
 export async function DELETE(
-  req: NextRequest,
+  request: NextRequest,
   { params }: { params: { commentId: string } },
 ) {
   try {
-    const { userId } = await req.json();
+    const { userId } = await request.json();
     const { commentId } = params;
 
     const like = await prisma.commentLike.findFirst({

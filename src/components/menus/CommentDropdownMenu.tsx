@@ -1,9 +1,15 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import DropdownMenu from "../buttons/DropdownMenu";
+import DropdownMenu from "./DropdownMenu";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useDeleteComment } from "@/hooks/api/comments/useDeleteComment";
+import { useQueryClient } from "@tanstack/react-query";
+import DeleteConfirmationDialog from "../dialog/DeleteConfirmationDialog";
+import { useBookmarkStatus } from "@/hooks/api/bookmark/useBookmarkStatus";
+import { useCreateBookmark } from "@/hooks/api/bookmark/useCreateBookmark";
+import { useDeleteBookmark } from "@/hooks/api/bookmark/useDeleteBookmark";
 
 interface CommentDropdownMenuProps {
   commentId: string;
@@ -21,92 +27,50 @@ export default function CommentDropdownMenu({
   onCommentDeleted,
 }: CommentDropdownMenuProps) {
   const { data: session } = useSession();
-  const router = useRouter();
+  const queryClient = useQueryClient();
   const isAuthor = session?.user?.id === authorId;
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const { data: bookmarkStatus, isPending: isBookmarkStatusPending } =
+    useBookmarkStatus({ type: "comment", id: commentId });
+  const { mutate: createBookmark, isPending: isCreatingBookmark } =
+    useCreateBookmark();
+  const { mutate: deleteBookmark, isPending: isDeletingBookmark } =
+    useDeleteBookmark();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const { mutate: deleteComment, isPending: isDeletingComment } =
+    useDeleteComment();
 
-  useEffect(() => {
-    const checkBookmarkStatus = async () => {
-      if (!session) return;
-      try {
-        const response = await fetch(`/api/bookmarks?commentId=${commentId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setIsBookmarked(data.isBookmarked);
-        }
-      } catch (error) {
-        console.error("Error checking bookmark status: ", error);
-      }
-    };
-
-    checkBookmarkStatus();
-  }, [commentId, session]);
-
-  const handleSaveBookmark = async () => {
-    if (!session) return;
-    try {
-      const response = await fetch("/api/bookmarks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+  const handleSaveBookmark = () => {
+    createBookmark(
+      { type: "comment", id: commentId },
+      {
+        onSuccess: () => {
+          console.log("Bookmark created");
         },
-        body: JSON.stringify({ commentId }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to save bookmark");
-      }
-
-      setIsBookmarked(true);
-      alert("Post saved to bookmarks");
-    } catch (error) {
-      console.log("Error saving bookmark: ", error);
-    }
+      },
+    );
   };
 
-  const handleDeleteBookmark = async () => {
-    if (!session) return;
-    try {
-      const response = await fetch("/api/bookmarks", {
-        method: "DELETE",
-      });
+  const handleDeleteBookmark = () => {
+    if (!bookmarkStatus?.bookmarkId) return;
 
-      if (!response.ok) {
-        throw new Error("Failed to delete bookmark");
-      }
-
-      setIsBookmarked(false);
-      alert("Bookmark removed");
-    } catch (error) {
-      console.log("Error deleting bookmark: ", error);
-    }
+    deleteBookmark({
+      bookmarkId: bookmarkStatus.bookmarkId,
+      type: "comment",
+      id: commentId,
+    });
   };
 
-  const handleDeleteComment = async () => {
-    if (!session) return;
-    if (window.confirm("Are you sure you want to delete this comment?")) {
-      setIsDeleting(true);
-      try {
-        const response = await fetch(
-          `/api/delete-comment?commentId=${commentId}`,
-          {
-            method: "DELETE",
-          },
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to delete comment");
-        }
-
-        onCommentDeleted();
-      } catch (error) {
-        console.error("Error deleting comment:", error);
-        alert("Failed to delete comment. Please try again.");
-      } finally {
-        setIsDeleting(false);
-      }
-    }
+  const handleDeleteComment = () => {
+    deleteComment(
+      { commentId },
+      {
+        onSuccess: () => {
+          setIsDeleteDialogOpen(false);
+          queryClient.invalidateQueries({ queryKey: ["comments", postId] });
+          onCommentDeleted();
+        },
+      },
+    );
   };
 
   const commonItems = [
@@ -124,9 +88,11 @@ export default function CommentDropdownMenu({
 
   const loggedInItems = [
     {
-      label: isBookmarked ? "Remove bookmark" : "Save bookmark",
+      label: bookmarkStatus?.isBookmarked ? "Remove bookmark" : "Save bookmark",
       href: "#",
-      onClick: isBookmarked ? handleDeleteBookmark : handleSaveBookmark,
+      onClick: bookmarkStatus?.isBookmarked
+        ? handleDeleteBookmark
+        : handleSaveBookmark,
     },
   ];
 
@@ -139,7 +105,7 @@ export default function CommentDropdownMenu({
       label: "Delete comment",
       href: "#",
       className: "text-red-500/50 hover:text-red-500",
-      onClick: handleDeleteComment,
+      onClick: () => setIsDeleteDialogOpen(true),
     },
   ];
 
@@ -181,6 +147,15 @@ export default function CommentDropdownMenu({
   return (
     <div>
       <DropdownMenu menuItems={menuItems} />
+
+      <DeleteConfirmationDialog
+        title="Delete Comment"
+        text="Are you sure you want to delete this comment? This action cannot be undone."
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleDeleteComment}
+        isLoading={isDeletingComment}
+      />
     </div>
   );
 }

@@ -6,16 +6,12 @@ import { authOptions } from "../../../auth/[...nextauth]/route";
 // Get all commments for a post
 
 export async function GET(
-  req: NextRequest,
+  request: NextRequest,
   { params }: { params: { postId: string } },
 ) {
-  const { searchParams } = new URL(req.url);
+  const { searchParams } = new URL(request.url);
   const userId = searchParams.get("userId");
-  const { postId } = params;
-
-  if (!postId) {
-    return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
-  }
+  const { postId } = await params;
 
   try {
     const comments = await prisma.comment.findMany({
@@ -95,7 +91,6 @@ export async function GET(
 
     return NextResponse.json({ comments: formattedComments });
   } catch (error) {
-    console.error("Error fetching comments:", error);
     return NextResponse.json(
       { error: "Failed to fetch comments" },
       { status: 500 },
@@ -106,12 +101,12 @@ export async function GET(
 // Create a new comment
 
 export async function POST(
-  req: NextRequest,
+  request: NextRequest,
   props: { params: Promise<{ postId: string }> },
 ) {
   const params = await props.params;
   const { postId } = params;
-  const { parentId, title, content } = await req.json();
+  const { parentId, title, content } = await request.json();
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -137,7 +132,6 @@ export async function POST(
 
     return NextResponse.json(newComment, { status: 200 });
   } catch (error) {
-    console.error("Error creating comment:", error);
     return NextResponse.json(
       { error: "Failed to create comment", details: error },
       { status: 500 },

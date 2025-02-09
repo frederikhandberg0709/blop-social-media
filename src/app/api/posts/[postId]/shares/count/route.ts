@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: { postId: string } },
 ) {
   try {
-    const { postId } = params;
+    const { postId } = await params;
 
     const sharesCount = await prisma.postShare.count({
       where: { postId },
