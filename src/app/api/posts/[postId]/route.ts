@@ -111,7 +111,10 @@ export async function PUT(req: NextRequest) {
 
 // Delete a post by ID
 
-export async function DELETE(request: NextRequest) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { postId: string } },
+) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
@@ -119,7 +122,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     const userId = session.user.id;
-    const postId = request.nextUrl.searchParams.get("postId");
+    const postId = params.postId;
 
     if (!postId) {
       return NextResponse.json(

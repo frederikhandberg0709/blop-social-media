@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import DropdownMenu from "./DropdownMenu";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useDeletePost } from "@/hooks/api/mutations/useDeletePost";
+import { useDeletePost } from "@/hooks/api/posts/useDeletePost";
 import DeleteConfirmationDialog from "../dialog/DeleteConfirmationDialog";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -23,13 +23,13 @@ export default function PostDropdownMenu({
 }: PostDropdownMenuProps) {
   const { data: session } = useSession();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const isAuthor = session?.user?.id === authorId;
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const queryClient = useQueryClient();
-  const { mutate: deletePost, isPending } = useDeletePost();
+  const { mutate: deletePost, isPending: isDeletingPost } = useDeletePost();
 
-  // Create hook
+  // TODO: Replace with hook
   useEffect(() => {
     const checkBookmarkStatus = async () => {
       if (!session) return;
@@ -47,7 +47,7 @@ export default function PostDropdownMenu({
     checkBookmarkStatus();
   }, [postId, session]);
 
-  // Create hook
+  // TODO: Replace with hook
   const handleSaveBookmark = async () => {
     if (!session) return;
     try {
@@ -70,7 +70,7 @@ export default function PostDropdownMenu({
     }
   };
 
-  // Create hook
+  // TODO: Replace with hook
   const handleDeleteBookmark = async () => {
     if (!session) return;
     try {
@@ -91,7 +91,7 @@ export default function PostDropdownMenu({
 
   const handleDeletePost = () => {
     deletePost(
-      { userId: authorId, postId },
+      { postId },
       {
         onSuccess: () => {
           setIsDeleteDialogOpen(false);
@@ -167,7 +167,7 @@ export default function PostDropdownMenu({
         isOpen={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}
         onConfirm={handleDeletePost}
-        isLoading={isPending}
+        isLoading={isDeletingPost}
       />
     </div>
   );
