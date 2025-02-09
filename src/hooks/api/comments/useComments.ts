@@ -1,8 +1,8 @@
-import { CommentsResponse } from "@/types/api/comments";
+import { CommentResponse } from "@/types/api/comments";
 import { useQuery } from "@tanstack/react-query";
 
 export function useComments(postId: string) {
-  return useQuery<CommentsResponse, Error>({
+  return useQuery<CommentResponse, Error>({
     queryKey: ["comments", postId],
     queryFn: async () => {
       const response = await fetch(`/api/posts/${postId}/comments`);

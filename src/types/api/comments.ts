@@ -1,7 +1,20 @@
+import { QueryKey } from "@tanstack/react-query";
 import { CommentProps } from "../components/comment";
 
-export interface CommentsResponse {
+export interface CommentResponse {
   comments: CommentProps[];
+}
+
+export interface DeleteCommentResponse {
+  message: string;
+}
+
+export interface DeleteCommentParams {
+  commentId: string;
+}
+
+export interface DeleteCommentContext {
+  queries: [QueryKey, CommentResponse | undefined][];
 }
 
 export interface CreateCommentParams {

@@ -1,4 +1,4 @@
-import { CommentsResponse, CreateCommentParams } from "@/types/api/comments";
+import { CommentResponse, CreateCommentParams } from "@/types/api/comments";
 import { CommentProps } from "@/types/components/comment";
 import { UserProps } from "@/types/components/user";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -43,7 +43,7 @@ export function useCreateComment() {
       const queryKey = ["comments", newComment.postId];
       await queryClient.cancelQueries({ queryKey });
 
-      const previousData = queryClient.getQueryData<CommentsResponse>(queryKey);
+      const previousData = queryClient.getQueryData<CommentResponse>(queryKey);
 
       const user: UserProps = {
         id: session.data?.user?.id ?? "",
@@ -70,7 +70,7 @@ export function useCreateComment() {
         userLiked: false,
       };
 
-      queryClient.setQueryData<CommentsResponse>(queryKey, {
+      queryClient.setQueryData<CommentResponse>(queryKey, {
         comments: [...(previousData?.comments || []), optimisticComment],
       });
 

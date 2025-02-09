@@ -70,7 +70,10 @@ export async function PUT(req: NextRequest) {}
 
 // Delete a comment by ID
 
-export async function DELETE(request: NextRequest) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { commentId: string } },
+) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
@@ -78,7 +81,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     const userId = session.user.id;
-    const commentId = request.nextUrl.searchParams.get("commentId");
+    const commentId = params.commentId;
 
     if (!commentId) {
       return NextResponse.json(
