@@ -19,7 +19,7 @@ export function useDeleteBookmark() {
   return useMutation<void, Error, DeleteBookmarkParams, DeleteBookmarkContext>({
     mutationFn: async ({ bookmarkId }) => {
       if (!session.data?.user?.id) {
-        throw new Error(`You need to be logged in to delete bookmarks`);
+        throw new Error("You need to be logged in to delete bookmarks");
       }
 
       const response = await fetch(`/api/bookmarks/${bookmarkId}`, {

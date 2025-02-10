@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/db/prisma";
 
-// List following users
+// Gets the list of all users that a specific user follows
 
-export async function GET(req: NextRequest) {
-  const userId = req.nextUrl.searchParams.get("userId");
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { userId: string } },
+) {
+  const { userId } = params;
 
   if (!userId) {
     return NextResponse.json({ error: "User ID is required" }, { status: 400 });
@@ -27,7 +30,7 @@ export async function GET(req: NextRequest) {
 
     const followingUsers = following.map((f) => f.following);
 
-    return NextResponse.json(followingUsers, { status: 200 });
+    return NextResponse.json(followingUsers);
   } catch (error) {
     const err = error as Error;
     return NextResponse.json({ error: err.message }, { status: 500 });
