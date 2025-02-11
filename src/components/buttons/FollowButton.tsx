@@ -1,60 +1,30 @@
 "use client";
 
+import { useCreateFollow } from "@/hooks/api/follow/useCreateFollow";
+import { useDeleteFollow } from "@/hooks/api/follow/useDeleteFollow";
+import { useFollowStatus } from "@/hooks/api/follow/useFollowStatus";
 import { useState } from "react";
 
 interface FollowButtonProps {
-  followerId: string;
-  followingId: string;
-  isFollowing: boolean;
-  onFollowChange: (isFollowing: boolean) => void;
+  userId: string;
+  onSuccess?: () => void;
 }
 
-const FollowButton: React.FC<FollowButtonProps> = ({
-  followerId,
-  followingId,
-  isFollowing,
-  onFollowChange,
-}) => {
+const FollowButton: React.FC<FollowButtonProps> = ({ userId, onSuccess }) => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
+  const { data: followStatus, refetch } = useFollowStatus({ userId });
+  const { mutate: followUser, isPending: isFollowingUser } = useCreateFollow();
+  const { mutate: unfollowUser, isPending: isUnfollowingUser } =
+    useDeleteFollow();
 
-  const handleFollow = async () => {
-    try {
-      const response = await fetch("/api/follow", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ followerId, followingId }),
-      });
+  const isFollowing = followStatus?.isFollowing;
 
-      if (!response.ok) {
-        throw new Error("Failed to follow user");
-      }
-
-      onFollowChange(true);
-    } catch (error) {
-      console.error("Error following user:", error);
-    }
+  const handleFollow = () => {
+    followUser({ userId });
   };
 
-  const handleUnfollow = async () => {
-    try {
-      const response = await fetch("/api/unfollow", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ followerId, followingId }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to unfollow user");
-      }
-
-      onFollowChange(false);
-    } catch (error) {
-      console.error("Error unfollowing user:", error);
-    }
+  const handleUnfollow = () => {
+    unfollowUser({ userId });
   };
 
   return (
@@ -62,7 +32,8 @@ const FollowButton: React.FC<FollowButtonProps> = ({
       onClick={isFollowing ? handleUnfollow : handleFollow}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`px-4 py-2 min-w-[106px] font-semibold text-center rounded-full transition duration-150 ease-in-out ${
+      disabled={isFollowingUser || isUnfollowingUser}
+      className={`min-w-[106px] rounded-full px-4 py-2 text-center font-semibold transition duration-150 ease-in-out ${
         isFollowing
           ? "bg-green-500 hover:bg-red-500"
           : "bg-blue-500 hover:bg-blue-700"
@@ -71,8 +42,8 @@ const FollowButton: React.FC<FollowButtonProps> = ({
       {isHovered && isFollowing
         ? "Unfollow"
         : isFollowing
-        ? "Following"
-        : "Follow"}
+          ? "Following"
+          : "Follow"}
     </button>
   );
 };

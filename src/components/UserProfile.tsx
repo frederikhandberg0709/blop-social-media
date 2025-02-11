@@ -1,16 +1,17 @@
 "use client";
 
 import FollowButton from "@/components/buttons/FollowButton";
-import { UserProps } from "@/types/user";
+import { UserProps } from "@/types/components/user";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import PostTemplate from "./post/PostTemplate";
-import { Post } from "@/types/post";
+import { Post } from "@/types/components/post";
 import ProfilePicture from "./ProfilePicture";
 import DropdownMenu from "@/components/menus/DropdownMenu";
 import ProfileNotificationSettingsModal from "./modals/ProfileNotificationSettingsModal";
 import { Tooltip } from "./Tooltip";
+import { useFollowStatus } from "@/hooks/api/follow/useFollowStatus";
 
 interface UserProfileProps {
   user: UserProps;
@@ -24,34 +25,11 @@ const UserProfile: React.FC<UserProfileProps> = ({
   currentUserId,
 }) => {
   const { data: session } = useSession();
-  const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [isNotificationSettingsModalOpen, setIsNotificationSettingsModalOpen] =
     useState<boolean>(false);
-
-  useEffect(() => {
-    if (!session) return;
-
-    const fetchFollowStatus = async () => {
-      try {
-        const response = await fetch(
-          `/api/follow-status?followerId=${session.user.id}&followingId=${user.id}`,
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch follow status");
-        }
-        const data = await response.json();
-        setIsFollowing(data.isFollowing);
-      } catch (error) {
-        console.error("Error fetching follow status:", error);
-      }
-    };
-
-    fetchFollowStatus();
-  }, [session, user.id]);
-
-  const handleFollowChange = (newIsFollowing: boolean) => {
-    setIsFollowing(newIsFollowing);
-  };
+  const { data: followStatus } = useFollowStatus({
+    userId: user.id,
+  });
 
   const DEFAULT_PROFILE_BANNER =
     "https://pbs.twimg.com/profile_banners/994250907826245635/1569352839/1080x360";
@@ -96,12 +74,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
                       Edit Profile
                     </Link>
                   ) : (
-                    <FollowButton
-                      followerId={currentUserId}
-                      followingId={user.id}
-                      isFollowing={isFollowing}
-                      onFollowChange={handleFollowChange}
-                    />
+                    <FollowButton userId={user.id} />
                   )
                 ) : null}
                 {currentUserId && currentUserId !== user.id ? (

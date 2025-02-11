@@ -1,6 +1,7 @@
 import { FollowParams, FollowResponse } from "@/types/api/follow";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { followKeys } from "./followKeys";
 
 export function useCreateFollow() {
   const session = useSession();
@@ -29,10 +30,13 @@ export function useCreateFollow() {
 
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["followers", variables.userId],
+        queryKey: followKeys.single({ userId: variables.userId }),
       });
       queryClient.invalidateQueries({
-        queryKey: ["following", session.data?.user?.id],
+        queryKey: followKeys.followers(variables.userId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: followKeys.following(session.data?.user?.id!),
       });
     },
   });
