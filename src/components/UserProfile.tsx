@@ -31,9 +31,6 @@ const UserProfile: React.FC<UserProfileProps> = ({
     userId: user.id,
   });
 
-  const DEFAULT_PROFILE_BANNER =
-    "https://pbs.twimg.com/profile_banners/994250907826245635/1569352839/1080x360";
-
   let profileDropdownMenu = [
     {
       label: "Block",

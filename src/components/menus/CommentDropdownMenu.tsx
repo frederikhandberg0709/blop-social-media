@@ -2,14 +2,13 @@
 
 import { useSession } from "next-auth/react";
 import DropdownMenu from "./DropdownMenu";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDeleteComment } from "@/hooks/api/comments/useDeleteComment";
 import { useQueryClient } from "@tanstack/react-query";
 import DeleteConfirmationDialog from "../dialog/DeleteConfirmationDialog";
-import { useBookmarkStatus } from "@/hooks/api/bookmark/useBookmarkStatus";
-import { useCreateBookmark } from "@/hooks/api/bookmark/useCreateBookmark";
-import { useDeleteBookmark } from "@/hooks/api/bookmark/useDeleteBookmark";
+import { useBookmarkStatus } from "@/hooks/api/bookmarks/useBookmarkStatus";
+import { useCreateBookmark } from "@/hooks/api/bookmarks/useCreateBookmark";
+import { useDeleteBookmark } from "@/hooks/api/bookmarks/useDeleteBookmark";
 
 interface CommentDropdownMenuProps {
   commentId: string;
@@ -88,11 +87,16 @@ export default function CommentDropdownMenu({
 
   const loggedInItems = [
     {
-      label: bookmarkStatus?.isBookmarked ? "Remove bookmark" : "Save bookmark",
+      label: isBookmarkStatusPending
+        ? "Loading..."
+        : bookmarkStatus?.isBookmarked
+          ? "Remove bookmark"
+          : "Save bookmark",
       href: "#",
       onClick: bookmarkStatus?.isBookmarked
         ? handleDeleteBookmark
         : handleSaveBookmark,
+      disabled: isCreatingBookmark || isDeletingBookmark,
     },
   ];
 

@@ -9,9 +9,10 @@ import React from "react";
 import CommentDropdownMenu from "./menus/CommentDropdownMenu";
 import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
 import { useRouter } from "next/navigation";
-import { CommentProps } from "@/types/CommentProps";
-import { useCommentLikes } from "@/hooks/api/queries/useLikesQueries";
-import { useCommentLikeMutation } from "@/hooks/api/mutations/useLikeMutation";
+import { CommentProps } from "@/types/components/comment";
+import { useDeleteLike } from "@/hooks/api/likes/useDeleteLike";
+import { useCreateLike } from "@/hooks/api/likes/useCreateLike";
+import { useLikeCount } from "@/hooks/api/likes/useLikes";
 
 export default function CommentTemplate({
   id,
@@ -31,13 +32,20 @@ export default function CommentTemplate({
   const router = useRouter();
   const [commentsCount, setCommentsCount] = useState<number>(0);
   const [sharesCount, setSharesCount] = useState<number>(0);
-  const { data: likesData } = useCommentLikes(id);
-  const { mutate: toggleLike } = useCommentLikeMutation();
-
-  const handleLikeToggle = async () => {
-    const action = likesData?.userLiked ? "unlike" : "like";
-    toggleLike({ id, action });
-  };
+  const {
+    mutate: createLike,
+    isPending: isCreatingLike,
+    error: createLikeError,
+  } = useCreateLike();
+  const {
+    mutate: deleteLike,
+    isPending: isDeletingLike,
+    error: deleteLikeError,
+  } = useDeleteLike();
+  const { data: likesData } = useLikeCount({
+    type: "comment",
+    id: id,
+  });
 
   const handleReplyClick = () => {
     router.push(`/send-reply/${id}`);
@@ -45,9 +53,6 @@ export default function CommentTemplate({
     // Open new page with comment box
     console.log("Reply clicked");
   };
-
-  const defaultProfilePicture =
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRg5CvxCysqjZrsTPUjcl5sN3HIzePiCWM7KQ&s";
 
   const parsedContent =
     typeof content === "string" ? parseTextWithEnhancements(content) : content;
@@ -64,7 +69,7 @@ export default function CommentTemplate({
           className="group flex items-center gap-[10px]"
         >
           <img
-            src={user?.profilePicture || defaultProfilePicture}
+            src={user?.profilePicture}
             alt={`${user?.profileName}'s profile picture`}
             className="h-[40px] w-[40px] rounded-full object-cover"
           />
@@ -108,10 +113,9 @@ export default function CommentTemplate({
           commentsCount={commentsCount}
           onCommentClick={handleReplyClick}
           sharesCount={sharesCount}
-          donationCount={0} // Implement later. Maybe crypto donations?
           liked={likesData?.userLiked ?? userLiked}
-          onLike={handleLikeToggle}
-          onUnlike={handleLikeToggle}
+          onLike={() => createLike({ type: "comment", id })}
+          onUnlike={() => deleteLike({ type: "comment", id })}
         />
       </div>
       {replies.length > 0 && (

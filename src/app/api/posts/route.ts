@@ -48,8 +48,8 @@ export async function GET() {
 
 // Create post
 
-export async function POST(req: NextRequest) {
-  const { userId, title, content } = await req.json();
+export async function POST(request: NextRequest) {
+  const { userId, title, content } = await request.json();
 
   try {
     // Validate that userId is provided
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
         data: {
           userId,
           title,
-          content: content,
+          content,
         },
       });
 
