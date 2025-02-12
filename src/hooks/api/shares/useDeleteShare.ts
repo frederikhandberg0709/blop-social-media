@@ -6,7 +6,7 @@ import {
 } from "@/types/api/shares";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { shareKeys } from "./keys";
+import { shareKeys } from "./shareKeys";
 
 export function useDeleteShare() {
   const session = useSession();

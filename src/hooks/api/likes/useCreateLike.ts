@@ -1,7 +1,7 @@
 import { LikeParams, LikeResponse } from "@/types/api/likes";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { likeKeys } from "./keys";
+import { likeKeys } from "./likeKeys";
 
 export function useCreateLike() {
   const session = useSession();

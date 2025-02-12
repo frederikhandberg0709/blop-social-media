@@ -1,7 +1,7 @@
 import { ShareParams, ShareStatus } from "@/types/api/shares";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { shareKeys } from "./keys";
+import { shareKeys } from "./shareKeys";
 
 export function useShareStatus({ type, id }: ShareParams) {
   const session = useSession();

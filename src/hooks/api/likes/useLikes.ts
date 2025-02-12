@@ -1,7 +1,7 @@
 import { LikeParams, LikesData } from "@/types/api/likes";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { likeKeys } from "./keys";
+import { likeKeys } from "./likeKeys";
 
 export function useLikeCount({ type, id }: LikeParams) {
   const session = useSession();

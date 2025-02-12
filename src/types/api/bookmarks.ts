@@ -1,5 +1,13 @@
+export type BookmarkType = "all" | "post" | "comment";
+export type BookmarkItemType = Exclude<BookmarkType, "all">;
+
 export interface BookmarkParams {
-  type: "post" | "comment";
+  type: BookmarkType;
+  id?: string;
+}
+
+export interface BookmarkStatusParams {
+  type: BookmarkItemType;
   id: string;
 }
 

@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import DropdownMenu from "./DropdownMenu";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDeletePost } from "@/hooks/api/posts/useDeletePost";
 import DeleteConfirmationDialog from "../dialog/DeleteConfirmationDialog";
@@ -24,13 +24,13 @@ export default function PostDropdownMenu({
   authorUsername,
 }: PostDropdownMenuProps) {
   const { data: session } = useSession();
-  const router = useRouter();
   const queryClient = useQueryClient();
   const isAuthor = session?.user?.id === authorId;
-  const { data: bookmarkStatus } = useBookmarkStatus({
-    type: "post",
-    id: postId,
-  });
+  const { data: bookmarkStatus, isPending: isBookmarkStatusPending } =
+    useBookmarkStatus({
+      type: "post",
+      id: postId,
+    });
   const { mutate: createBookmark, isPending: isCreatingBookmark } =
     useCreateBookmark();
   const { mutate: deleteBookmark, isPending: isDeletingBookmark } =
@@ -74,9 +74,12 @@ export default function PostDropdownMenu({
     {
       label: bookmarkStatus?.isBookmarked ? "Remove bookmark" : "Save bookmark",
       href: "#",
-      onClick: bookmarkStatus?.isBookmarked
-        ? handleDeleteBookmark
-        : handleSaveBookmark,
+      onClick: isBookmarkStatusPending
+        ? "Loading..."
+        : bookmarkStatus?.isBookmarked
+          ? handleDeleteBookmark
+          : handleSaveBookmark,
+      disabled: isCreatingBookmark || isDeletingBookmark,
     },
   ];
 

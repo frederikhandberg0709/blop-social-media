@@ -5,17 +5,23 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 // Get all bookmarks for the current user
 
-export async function GET(req: NextRequest) {
+export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const searchParams = request.nextUrl.searchParams;
+  const type = searchParams.get("type");
   const userId = session.user.id;
 
   try {
     const bookmarks = await prisma.bookmark.findMany({
-      where: { userId },
+      where: {
+        userId,
+        ...(type === "post" ? { postId: { not: null } } : {}),
+        ...(type === "comment" ? { commentId: { not: null } } : {}),
+      },
       include: {
         post: {
           include: {
@@ -75,14 +81,14 @@ export async function GET(req: NextRequest) {
 
 // Create a new bookmark for the current user
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const userId = session.user.id;
-  const { postId, commentId } = await req.json();
+  const { postId, commentId } = await request.json();
 
   if (!postId && !commentId) {
     return NextResponse.json(

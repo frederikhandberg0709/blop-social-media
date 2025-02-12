@@ -1,6 +1,11 @@
-import { BookmarkParams, BookmarkStatus } from "@/types/api/bookmarks";
+import {
+  BookmarkParams,
+  BookmarkStatus,
+  BookmarkStatusParams,
+} from "@/types/api/bookmarks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { bookmarkKeys } from "./bookmarkKeys";
 
 interface CreateBookmarkResponse {
   id: string;
@@ -10,7 +15,7 @@ export function useCreateBookmark() {
   const session = useSession();
   const queryClient = useQueryClient();
 
-  return useMutation<CreateBookmarkResponse, Error, BookmarkParams>({
+  return useMutation<CreateBookmarkResponse, Error, BookmarkStatusParams>({
     mutationFn: async ({ type, id }: BookmarkParams) => {
       if (!session.data?.user?.id) {
         throw new Error(`You need to be logged in to create bookmarks`);
@@ -35,28 +40,34 @@ export function useCreateBookmark() {
     },
 
     onMutate: async ({ type, id }) => {
-      await queryClient.cancelQueries({ queryKey: ["bookmark", type, id] });
-
-      const previousData = queryClient.getQueryData<BookmarkStatus>([
-        "bookmark",
-        type,
-        id,
-      ]);
-
-      queryClient.setQueryData<BookmarkStatus>(["bookmark", type, id], {
-        isBookmarked: true,
-        bookmarkId: "temp-id",
+      await queryClient.cancelQueries({
+        queryKey: bookmarkKeys.status({ type, id }),
       });
+
+      const previousData = queryClient.getQueryData<BookmarkStatus>(
+        bookmarkKeys.status({ type, id }),
+      );
+
+      queryClient.setQueryData<BookmarkStatus>(
+        bookmarkKeys.status({ type, id }),
+        {
+          isBookmarked: true,
+          bookmarkId: "temp-id",
+        },
+      );
 
       return { previousData };
     },
 
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["bookmark", variables.type, variables.id],
+        queryKey: bookmarkKeys.status({
+          type: variables.type,
+          id: variables.id,
+        }),
       });
 
-      queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
+      queryClient.invalidateQueries({ queryKey: bookmarkKeys.all() });
     },
   });
 }

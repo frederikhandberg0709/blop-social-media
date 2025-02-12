@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { LikeParams, LikeResponse } from "@/types/api/likes";
-import { likeKeys } from "./keys";
+import { likeKeys } from "./likeKeys";
 
 export function useDeleteLike() {
   const session = useSession();

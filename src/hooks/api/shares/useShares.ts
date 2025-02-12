@@ -1,6 +1,6 @@
 import { ShareParams, ShareCount } from "@/types/api/shares";
 import { useQuery } from "@tanstack/react-query";
-import { shareKeys } from "./keys";
+import { shareKeys } from "./shareKeys";
 
 export function useShareCount({ type, id }: ShareParams) {
   return useQuery<ShareCount>({

@@ -1,6 +1,7 @@
 import { BookmarkParams, BookmarkStatus } from "@/types/api/bookmarks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { bookmarkKeys } from "./bookmarkKeys";
 
 interface DeleteBookmarkParams {
   bookmarkId: string;
@@ -33,7 +34,7 @@ export function useDeleteBookmark() {
 
     onMutate: async ({ type, id }) => {
       await queryClient.cancelQueries({
-        queryKey: ["bookmark", type, id],
+        queryKey: bookmarkKeys.status({ type, id }),
       });
 
       const previousData = queryClient.getQueryData<BookmarkStatus>([
@@ -42,10 +43,13 @@ export function useDeleteBookmark() {
         id,
       ]);
 
-      queryClient.setQueryData<BookmarkStatus>(["bookmark", type, id], {
-        isBookmarked: false,
-        bookmarkId: null,
-      });
+      queryClient.setQueryData<BookmarkStatus>(
+        bookmarkKeys.status({ type, id }),
+        {
+          isBookmarked: false,
+          bookmarkId: null,
+        },
+      );
 
       return { previousData };
     },
@@ -53,7 +57,7 @@ export function useDeleteBookmark() {
     onError: (error, variables, context) => {
       if (context?.previousData) {
         queryClient.setQueryData(
-          ["bookmark", variables.type, variables.id],
+          bookmarkKeys.status({ type: variables.type, id: variables.id }),
           context.previousData,
         );
       }
@@ -61,10 +65,13 @@ export function useDeleteBookmark() {
 
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["bookmark", variables.type, variables.id],
+        queryKey: bookmarkKeys.status({
+          type: variables.type,
+          id: variables.id,
+        }),
       });
       queryClient.invalidateQueries({
-        queryKey: ["bookmarks"],
+        queryKey: bookmarkKeys.all(),
       });
     },
   });
