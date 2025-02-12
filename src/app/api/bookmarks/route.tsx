@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth/next";
 import { prisma } from "@/db/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
+// Get all bookmarks for the current user
+
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session) {
@@ -70,6 +72,8 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+// Create a new bookmark for the current user
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);

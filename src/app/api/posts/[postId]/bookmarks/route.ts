@@ -3,11 +3,11 @@ import { prisma } from "@/db/prisma";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-// Check if comment is bookmarked
+// Check if post is bookmarked
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { commentId: string } },
+  { params }: { params: { postId: string } },
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -15,12 +15,12 @@ export async function GET(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const { commentId } = await params;
+    const { postId } = await params;
     const userId = session.user.id;
 
     const bookmark = await prisma.bookmark.findFirst({
       where: {
-        commentId,
+        postId,
         userId,
       },
     });

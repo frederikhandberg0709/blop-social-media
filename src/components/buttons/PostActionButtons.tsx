@@ -7,11 +7,10 @@ interface PostActionButtonsProps {
   onCommentClick: () => void;
   sharesCount: number;
   onShareClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  donationCount: number;
   liked: boolean;
   onLike: () => void;
   onUnlike: () => void;
-  shareButtonRef: React.RefObject<HTMLButtonElement>;
+  shareButtonRef: React.RefObject<HTMLButtonElement | null>;
 }
 
 const PostActionButtons: React.FC<PostActionButtonsProps> = ({
@@ -20,7 +19,6 @@ const PostActionButtons: React.FC<PostActionButtonsProps> = ({
   onCommentClick,
   sharesCount,
   onShareClick,
-  donationCount,
   liked,
   onLike,
   onUnlike,

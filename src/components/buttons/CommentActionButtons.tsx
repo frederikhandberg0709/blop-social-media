@@ -5,7 +5,6 @@ interface CommentActionButtonsProps {
   commentsCount: number;
   onCommentClick: () => void;
   sharesCount: number;
-  donationCount: number;
   liked: boolean;
   onLike: () => void;
   onUnlike: () => void;
@@ -16,7 +15,6 @@ const CommentActionButtons: React.FC<CommentActionButtonsProps> = ({
   commentsCount,
   onCommentClick,
   sharesCount,
-  donationCount,
   liked,
   onLike,
   onUnlike,

@@ -7,6 +7,9 @@ import { useRouter } from "next/navigation";
 import { useDeletePost } from "@/hooks/api/posts/useDeletePost";
 import DeleteConfirmationDialog from "../dialog/DeleteConfirmationDialog";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCreateBookmark } from "@/hooks/api/bookmarks/useCreateBookmark";
+import { useDeleteBookmark } from "@/hooks/api/bookmarks/useDeleteBookmark";
+import { useBookmarkStatus } from "@/hooks/api/bookmarks/useBookmarkStatus";
 
 interface PostDropdownMenuProps {
   postId: string;
@@ -19,74 +22,37 @@ export default function PostDropdownMenu({
   postId,
   authorId,
   authorUsername,
-  onPostDeleted,
 }: PostDropdownMenuProps) {
   const { data: session } = useSession();
   const router = useRouter();
   const queryClient = useQueryClient();
   const isAuthor = session?.user?.id === authorId;
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const { data: bookmarkStatus } = useBookmarkStatus({
+    type: "post",
+    id: postId,
+  });
+  const { mutate: createBookmark, isPending: isCreatingBookmark } =
+    useCreateBookmark();
+  const { mutate: deleteBookmark, isPending: isDeletingBookmark } =
+    useDeleteBookmark();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { mutate: deletePost, isPending: isDeletingPost } = useDeletePost();
 
-  // TODO: Replace with hook
-  useEffect(() => {
-    const checkBookmarkStatus = async () => {
-      if (!session) return;
-      try {
-        const response = await fetch(`/api/bookmarks?postId=${postId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setIsBookmarked(data.isBookmarked);
-        }
-      } catch (error) {
-        console.error("Error checking bookmark status: ", error);
-      }
-    };
-
-    checkBookmarkStatus();
-  }, [postId, session]);
-
-  // TODO: Replace with hook
-  const handleSaveBookmark = async () => {
-    if (!session) return;
-    try {
-      const response = await fetch("/api/bookmarks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ postId }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to save bookmark");
-      }
-
-      setIsBookmarked(true);
-      alert("Post saved to bookmarks");
-    } catch (error) {
-      console.log("Error saving bookmark: ", error);
-    }
+  const handleSaveBookmark = () => {
+    createBookmark({ id: postId, type: "post" });
   };
 
-  // TODO: Replace with hook
-  const handleDeleteBookmark = async () => {
-    if (!session) return;
-    try {
-      const response = await fetch("/api/bookmarks", {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete bookmark");
-      }
-
-      setIsBookmarked(false);
-      alert("Bookmark removed");
-    } catch (error) {
-      console.log("Error deleting bookmark: ", error);
+  const handleDeleteBookmark = () => {
+    if (!bookmarkStatus?.bookmarkId) {
+      console.error("No bookmark ID found");
+      return;
     }
+
+    deleteBookmark({
+      bookmarkId: bookmarkStatus.bookmarkId,
+      id: postId,
+      type: "post",
+    });
   };
 
   const handleDeletePost = () => {
@@ -106,9 +72,11 @@ export default function PostDropdownMenu({
 
   const loggedInItems = [
     {
-      label: isBookmarked ? "Remove bookmark" : "Save bookmark",
+      label: bookmarkStatus?.isBookmarked ? "Remove bookmark" : "Save bookmark",
       href: "#",
-      onClick: isBookmarked ? handleDeleteBookmark : handleSaveBookmark,
+      onClick: bookmarkStatus?.isBookmarked
+        ? handleDeleteBookmark
+        : handleSaveBookmark,
     },
   ];
 
