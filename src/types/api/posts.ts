@@ -1,6 +1,11 @@
 export interface PostResponse {
-  success: boolean;
-  postId: string;
+  id: string;
+  userId: string;
+  title: string | null;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  quoteCount: number;
 }
 
 export interface CreatePostParams {

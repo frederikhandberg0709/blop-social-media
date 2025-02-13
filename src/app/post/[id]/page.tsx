@@ -1,53 +1,72 @@
-import { notFound } from "next/navigation";
-import PostDetailClient from "@/components/post/PostDetailClient";
-import { PostProps } from "@/types/components/post";
+"use client";
 
-interface PostDetailProps {
-  params: Promise<{ id: string }>;
-}
+import { useParams, useSearchParams } from "next/navigation";
+import Post from "@/components/post/PostTemplate";
+import { useEffect, useState } from "react";
+import { Post as PostProps } from "@/types/components/post";
+import { usePost } from "@/hooks/api/posts/usePost";
+import { AnimatePresence, motion } from "framer-motion";
 
-const PostDetail = async (props: PostDetailProps) => {
-  const params = await props.params;
-  // TODO: Replace with custom hook
-  const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/fetch-post/${params.id}`,
-    {
-      method: "GET",
-      cache: "no-store",
-    },
+const PostDetail: React.FC<{ post: PostProps }> = () => {
+  const searchParams = useSearchParams();
+  const success = searchParams.get("success");
+  const params = useParams();
+
+  const { data: postData, isPending: isPostPending } = usePost({
+    postId: params.id as string,
+  });
+
+  const [showSuccessMessage, setShowSuccessMessage] = useState(
+    success === "true",
   );
 
-  if (!response.ok) {
-    notFound();
-  }
+  useEffect(() => {
+    if (success === "true") {
+      const timer = setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 3000);
 
-  const post = await response.json();
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
-  const postProps: PostProps = {
-    id: post.id,
-    title: post.title,
-    content: post.content,
-    timestamp: post.timestamp,
-    createdAt: post.createdAt,
-    updatedAt: post.updatedAt,
-    initialLikesCount: post.likesCount,
-    userLiked: post.userLiked,
-    user: {
-      id: post.user.id,
-      username: post.user.username,
-      profileName: post.user.profileName,
-      profilePicture: post.user.profilePicture,
-      profileBanner: post.user.profileBanner,
-      bio: post.user.bio,
-      followersCount: post.user.followersCount,
-      followingCount: post.user.followingCount,
-      postsCount: post.user.postsCount,
-    },
-    imageContent: post.imageContent,
-    videoContent: post.videoContent,
-  };
+  return (
+    <>
+      <AnimatePresence>
+        {showSuccessMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className={`fixed inset-x-0 top-[90px] mx-auto max-w-fit select-none rounded-full bg-gradient-to-b from-blue-500 to-blue-800 px-[20px] py-[10px] text-[17px] font-semibold`}
+          >
+            Your new post has been successfully published!
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <div className="mt-[70px] flex min-h-screen flex-col items-center justify-start py-6 sm:py-12">
+        <div className="flex w-[800px] flex-col gap-[30px]">
+          <h1 className="text-3xl font-semibold">POST</h1>
 
-  return <PostDetailClient post={postProps} />;
+          {isPostPending && <p>Loading post...</p>}
+
+          <Post
+            key={postData?.id}
+            id={postData?.id}
+            user={postData?.user}
+            createdAt={postData?.createdAt}
+            updatedAt={postData?.updatedAt}
+            timestamp={postData?.updatedAt || postData?.createdAt}
+            title={postData?.title}
+            content={postData?.content}
+            initialLikesCount={postData?.initialLikesCount}
+            userLiked={postData?.userLiked}
+          />
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default PostDetail;

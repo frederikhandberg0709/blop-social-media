@@ -74,8 +74,17 @@ const CreatePost: React.FC = () => {
     setContent(val);
   };
 
-  const handleCreatePost = async () => {
-    createPost({ userId: session?.user.id, content });
+  const handleCreatePost = () => {
+    if (isCreatingPost) return;
+
+    createPost(
+      { userId: session?.user.id, content },
+      {
+        onSuccess: (response) => {
+          router.push(`/post/${response.id}?success=true`);
+        },
+      },
+    );
   };
 
   const user: UserProps = {
@@ -127,6 +136,16 @@ const CreatePost: React.FC = () => {
               }}
             />
 
+            {createPostError && (
+              <p className="text-center text-red-500">
+                {createPostError.message ===
+                "You need to be logged in to create posts"
+                  ? "Please log in to create a post"
+                  : createPostError.message}
+              </p>
+            )}
+
+            {/* Implement a way to make text bold and italic. Could use TipTap. */}
             {/* <TiptapEditor onUpdate={handleContentUpdate} /> */}
 
             <div className="flex items-center justify-between gap-[30px]">
