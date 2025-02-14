@@ -1,6 +1,5 @@
 import { createPortal } from "react-dom";
 import Button from "../buttons/Button";
-import DangerButton from "../buttons/DangerButton";
 import { useEffect } from "react";
 
 interface DialogProps {
@@ -78,8 +77,6 @@ export default function DeleteConfirmationDialog({
           <Button variant="danger" onClick={onConfirm} disabled={isLoading}>
             Delete
           </Button>
-          {/* TODO: Decide if this button look nicer */}
-          <DangerButton>Delete</DangerButton>
         </div>
       </div>
     </Dialog>
