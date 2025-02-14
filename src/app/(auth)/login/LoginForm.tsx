@@ -5,11 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import FloatingInput from "@/components/inputs/FloatingInput";
+import { Eye, EyeOff } from "lucide-react";
+import { Tooltip } from "@/components/Tooltip";
 
 export default function LoginForm() {
   const router = useRouter();
   const [identifier, setIdentifier] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -72,15 +75,41 @@ export default function LoginForm() {
           required
         />
 
-        <FloatingInput
-          type={"password"}
-          placeholder={"Password"}
-          name={"password"}
-          value={password}
-          onChange={handlePasswordChange}
-          disabled={isLoading}
-          required
-        />
+        <div className="relative">
+          <FloatingInput
+            type={showPassword ? "text" : "password"}
+            placeholder={"Password"}
+            name={"password"}
+            value={password}
+            onChange={handlePasswordChange}
+            disabled={isLoading}
+            required
+          />
+          <div className="absolute inset-y-1.5 right-1.5">
+            <Tooltip
+              text={showPassword ? "Hide Password" : "Show Password"}
+              offset={"50"}
+              className="h-full"
+            >
+              <button
+                type="button"
+                className="hover:black/5 group flex aspect-square h-full items-center justify-center rounded-[6px] transition duration-200 ease-in-out active:bg-white/10 dark:hover:bg-white/5 dark:active:bg-white/10"
+              >
+                {showPassword ? (
+                  <Eye
+                    size={20}
+                    className="opacity-50 transition duration-200 ease-in-out group-hover:opacity-100"
+                  />
+                ) : (
+                  <EyeOff
+                    size={20}
+                    className="opacity-50 transition duration-200 ease-in-out group-hover:opacity-100"
+                  />
+                )}
+              </button>
+            </Tooltip>
+          </div>
+        </div>
       </div>
       <div className="mt-2 w-full text-end">
         <Link

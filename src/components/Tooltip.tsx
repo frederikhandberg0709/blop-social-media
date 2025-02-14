@@ -1,12 +1,14 @@
 "use client";
 
 import React, { FC, useState, useEffect, CSSProperties } from "react";
+import { twMerge } from "tailwind-merge";
 
 interface TooltipProps {
   text: string;
   children: React.ReactNode;
   position?: "top" | "bottom" | "left" | "right";
   offset?: string;
+  className?: string;
   responsive?: {
     sm?: "top" | "bottom" | "left" | "right";
     smOffset?: string;
@@ -22,6 +24,7 @@ export const Tooltip: FC<TooltipProps> = ({
   children,
   position = "top",
   offset = "45",
+  className,
   responsive,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -51,7 +54,7 @@ export const Tooltip: FC<TooltipProps> = ({
 
   const getTooltipPositionStyle = (
     pos: string,
-    offset: string
+    offset: string,
   ): CSSProperties => {
     switch (pos) {
       case "top":
@@ -91,16 +94,16 @@ export const Tooltip: FC<TooltipProps> = ({
 
   return (
     <div
-      className="relative inline-block"
+      className={twMerge("relative inline-block", className)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {children}
       <div
         style={tooltipPositionStyle}
-        className={`absolute z-50 px-[10px] py-[5px] text-center select-none pointer-events-none bg-[#1f1f1f] bg-opacity-95 text-white/75 text-[15px] rounded-md transition-opacity ease-in-out duration-300 ${tooltipOpacity}`}
+        className={`pointer-events-none absolute z-50 select-none rounded-md bg-[#1f1f1f] bg-opacity-95 px-[10px] py-[5px] text-center text-[15px] text-white/75 transition-opacity duration-300 ease-in-out ${tooltipOpacity}`}
       >
-        <span className="whitespace-nowrap overflow-hidden text-ellipsis">
+        <span className="overflow-hidden text-ellipsis whitespace-nowrap">
           {text}
         </span>
       </div>
