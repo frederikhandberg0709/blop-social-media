@@ -28,6 +28,10 @@ export async function GET(
       },
     });
 
+    if (!following.length) {
+      return NextResponse.json([]);
+    }
+
     const followingUsers = following.map((f) => f.following);
 
     return NextResponse.json(followingUsers);

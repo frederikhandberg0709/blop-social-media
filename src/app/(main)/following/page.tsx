@@ -2,13 +2,21 @@
 
 import { useFollowingTimeline } from "@/hooks/api/timelines/useFollowingTimeline";
 import PostTemplate from "@/components/post/PostTemplate";
+import { useFollowingCount } from "@/hooks/api/follow/useFollowing";
+import { useSession } from "next-auth/react";
 
 const Following: React.FC = () => {
+  const { data: session } = useSession();
+
   const {
     data: timelineData,
     error: timelineError,
     isPending: isPendingTimeline,
   } = useFollowingTimeline();
+
+  const { data: followingCountData } = useFollowingCount({
+    userId: session?.user.id ?? "",
+  });
 
   return (
     <>
@@ -26,10 +34,9 @@ const Following: React.FC = () => {
             <p className="text-red-500">{timelineError?.message}</p>
           )}
 
-          {/*TODO: Fetch following users. Missing hook to fetch.*/}
-          {/* {props.user.followingCount === 0 && (
+          {followingCountData?.count === 0 && (
             <p>You are not following anyone.</p>
-          )} */}
+          )}
 
           {timelineData?.posts.map((post) => (
             <PostTemplate key={post.id} {...post} />

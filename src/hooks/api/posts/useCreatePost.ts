@@ -18,7 +18,7 @@ export function useCreatePost() {
       const data = {
         ...postData,
         userId: session.data.user.id,
-        timestamp: postData.timestamp || new Date().toISOString,
+        timestamp: postData.timestamp || new Date().toISOString(),
       };
 
       const response = await fetch("/api/posts", {

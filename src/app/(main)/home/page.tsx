@@ -26,10 +26,6 @@ const Home: React.FC = () => {
             <p className="text-red-500">{timelineError.message}</p>
           )}
 
-          {/* {!isLoading && !error && data?.timeline.length === 0 && (
-            <p>No posts to display. Try following some users!</p>
-          )} */}
-
           {timelineData?.posts.map((post) => (
             <PostTemplate key={post.id} {...post} />
           ))}

@@ -7,3 +7,10 @@ export interface FollowResponse {
   followerId: string;
   followingId: string;
 }
+
+export interface FollowingUser {
+  id: string;
+  username: string;
+  profileName: string;
+  profilePicture: string | null;
+}
