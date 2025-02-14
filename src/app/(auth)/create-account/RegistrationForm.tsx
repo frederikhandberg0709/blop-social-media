@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Input from "@/components/inputs/FloatingInput";
+import { PasswordInput } from "@/components/inputs/PasswordInput";
 
 export default function RegistrationForm() {
   const [email, setEmail] = useState<string>("");
@@ -166,24 +167,18 @@ export default function RegistrationForm() {
           required
         />
 
-        <Input
-          type={"password"}
-          placeholder={"Password"}
-          size={"md"}
-          variant={"default"}
+        <PasswordInput
+          name={"password"}
           value={password}
           onChange={handlePasswordChange}
-          required
+          placeholder={"Password"}
         />
 
-        <Input
-          type={"password"}
-          placeholder={"Confirm Password"}
-          size={"md"}
-          variant={"default"}
+        <PasswordInput
+          name={"confirmPassword"}
           value={confirmPassword}
           onChange={handleConfirmPasswordChange}
-          required
+          placeholder={"Confirm Password"}
         />
       </div>
 
