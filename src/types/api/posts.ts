@@ -15,10 +15,6 @@ export interface CreatePostParams {
   timestamp?: string;
 }
 
-export interface QuotePostParams extends CreatePostParams {
-  quotedPostId: string;
-}
-
 export interface UpdatePostParams {
   postId: string;
   title?: string;

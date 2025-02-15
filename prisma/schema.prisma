@@ -41,7 +41,6 @@ model User {
   commentLikes     CommentLike[]
   Session          Session[]
   accounts         Account[]
-  color            String          @default("#3b82f6")
   linkedAccounts   LinkedAccount[] @relation("UserLinkedAccounts")
   linkedToAccounts LinkedAccount[] @relation("LinkedToAccounts")
   postShares       PostShare[]

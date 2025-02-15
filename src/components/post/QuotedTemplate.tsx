@@ -7,8 +7,8 @@ interface QuotedPostProps {
   user: {
     id: string;
     username: string;
-    profileName?: string;
-    profilePicture?: string;
+    profileName?: string | null;
+    profilePicture?: string | null;
   };
   title?: string;
   content: string;

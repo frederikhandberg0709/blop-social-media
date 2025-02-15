@@ -1,16 +1,12 @@
-import {
-  CreatePostParams,
-  PostResponse,
-  QuotePostParams,
-} from "@/types/api/posts";
+import { CreatePostParams, PostResponse } from "@/types/api/posts";
 import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
 export function useCreatePost() {
   const session = useSession();
 
-  return useMutation<PostResponse, Error, CreatePostParams | QuotePostParams>({
-    mutationFn: async (postData: CreatePostParams | QuotePostParams) => {
+  return useMutation<PostResponse, Error, CreatePostParams>({
+    mutationFn: async (postData: CreatePostParams) => {
       if (!session.data?.user?.id) {
         throw new Error("You need to be logged in to create posts");
       }
@@ -20,6 +16,8 @@ export function useCreatePost() {
         userId: session.data.user.id,
         timestamp: postData.timestamp || new Date().toISOString(),
       };
+
+      console.log("Sending data to API:", data);
 
       const response = await fetch("/api/posts", {
         method: "POST",

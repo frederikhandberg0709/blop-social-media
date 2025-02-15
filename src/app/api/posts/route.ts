@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
 }
 
 function extractQuotedPostIds(content: string): string[] {
-  const regex = /\/post\/([a-zA-Z0-9]+)/g;
+  const regex = /\/post\/([a-zA-Z0-9-_]+)/g;
   const matches = content.matchAll(regex);
-  return Array.from(matches, (m) => m[1]);
+  return [...new Set(Array.from(matches, (m) => m[1]))];
 }

@@ -114,7 +114,7 @@ const PostTemplate: React.FC<Post> = (props) => {
   const handleQuote = () => {
     setIsShareMenuOpen(false);
 
-    router.push(`/quote-post?postId=${props.id}`);
+    router.push(`/create-post?postId=${props.id}`);
   };
 
   useEffect(() => {
