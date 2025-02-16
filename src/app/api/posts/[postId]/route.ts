@@ -148,14 +148,29 @@ export async function DELETE(
       );
     }
 
-    // Delete the post
-    await prisma.post.delete({
-      where: { id: postId },
+    await prisma.$transaction(async (tx) => {
+      // Delete all quote relationships
+      await tx.quotedPost.deleteMany({
+        where: {
+          OR: [
+            { quotingPostId: postId }, // where this post quotes another post
+            { quotedPostId: postId }, // where this post is quoted
+          ],
+        },
+      });
+
+      // Delete the post
+      await tx.post.delete({
+        where: { id: postId },
+      });
     });
 
     return NextResponse.json({ message: "Post deleted successfully" });
   } catch (error) {
-    console.error("Error deleting post:", error);
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
     return NextResponse.json(
       { error: "Failed to delete post" },
       { status: 500 },

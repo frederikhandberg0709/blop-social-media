@@ -15,7 +15,6 @@ interface PostDropdownMenuProps {
   postId: string;
   authorId: string;
   authorUsername: string;
-  onPostDeleted: () => void;
 }
 
 export default function PostDropdownMenu({
@@ -61,7 +60,6 @@ export default function PostDropdownMenu({
       {
         onSuccess: () => {
           setIsDeleteDialogOpen(false);
-          // TODO: Implement user timeline hook (for UserProfile) before below will work:
           queryClient.invalidateQueries({ queryKey: ["timeline"] });
         },
       },

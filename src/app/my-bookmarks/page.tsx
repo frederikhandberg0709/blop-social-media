@@ -2,7 +2,7 @@
 
 import PostTemplate from "@/components/post/PostTemplate";
 import { CommentProps } from "@/types/components/comment";
-import { PostProps } from "@/types/components/post";
+import { Post } from "@/types/components/post";
 import { useState } from "react";
 import CommentWithContext from "./CommentWithContext";
 import { useBookmarks } from "@/hooks/api/bookmarks/useBookmarks";
@@ -13,7 +13,7 @@ const BOOKMARK_TYPES: BookmarkType[] = ["all", "post", "comment"];
 interface BookmarkedItem {
   type: BookmarkType;
   data:
-    | PostProps
+    | Post
     | (CommentProps & {
         post: { id: string; user: { username: string; profileName?: string } };
       });
@@ -86,7 +86,7 @@ const BookmarkRenderer = ({ bookmark }: BookmarkRendererProps) => {
       return (
         <PostTemplate
           key={`post-${bookmark.data.id}`}
-          {...(bookmark.data as PostProps)}
+          {...(bookmark.data as Post)}
         />
       );
 

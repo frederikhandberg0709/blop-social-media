@@ -2,32 +2,32 @@
 
 import FollowButton from "@/components/buttons/FollowButton";
 import { UserProps } from "@/types/components/user";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import PostTemplate from "./post/PostTemplate";
-import { Post } from "@/types/components/post";
-import ProfilePicture from "./ProfilePicture";
+import { useState } from "react";
+import PostTemplate from "../../../components/post/PostTemplate";
+import ProfilePicture from "../../../components/ProfilePicture";
 import DropdownMenu from "@/components/menus/DropdownMenu";
-import ProfileNotificationSettingsModal from "./modals/ProfileNotificationSettingsModal";
-import { Tooltip } from "./Tooltip";
-import { useFollowStatus } from "@/hooks/api/follow/useFollowStatus";
+import ProfileNotificationSettingsModal from "../../../components/modals/ProfileNotificationSettingsModal";
+import { Tooltip } from "@/components/Tooltip";
+import { useUserTimeline } from "@/hooks/api/timelines/useUserTimeline";
+import Button from "@/components/buttons/Button";
 
 interface UserProfileProps {
   user: UserProps;
-  posts: Post[];
   currentUserId: string | undefined;
 }
 
-const UserProfile: React.FC<UserProfileProps> = ({
-  user,
-  posts,
-  currentUserId,
-}) => {
-  const { data: session } = useSession();
+const UserProfile: React.FC<UserProfileProps> = ({ user, currentUserId }) => {
   const [isNotificationSettingsModalOpen, setIsNotificationSettingsModalOpen] =
     useState<boolean>(false);
-  const { data: followStatus } = useFollowStatus({
+
+  const {
+    data: timelineData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useUserTimeline({
     userId: user.id,
   });
 
@@ -51,7 +51,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
           alt=""
           className="absolute top-[100px] -z-10 m-auto h-[350px] rounded-3xl"
         />
-        <div className="mt-[350px] flex w-[650px] flex-col gap-[30px]">
+        <div className="mt-[350px] flex w-[800px] flex-col gap-[30px]">
           <div>
             <div className="flex items-center gap-[50px]">
               {/* Profile picture */}
@@ -151,31 +151,29 @@ const UserProfile: React.FC<UserProfileProps> = ({
             <button className="rounded-full bg-blue-500 px-[20px] py-[5px] transition duration-200 ease-in-out hover:bg-blue-600 active:scale-95 active:bg-blue-700">
               All
             </button>
-            <button className="rounded-full bg-slate-800 px-[20px] py-[5px] text-slate-300">
+            <button className="rounded-full bg-slate-700 px-[20px] py-[5px] transition duration-200 ease-in-out hover:bg-slate-800 active:scale-95 active:bg-slate-900">
               Pictures
             </button>
-            <button className="rounded-full bg-gray-700 px-[20px] py-[5px]">
+            <button className="rounded-full bg-slate-700 px-[20px] py-[5px] transition duration-200 ease-in-out hover:bg-slate-800 active:scale-95 active:bg-slate-900">
               Videos
             </button>
-            <button className="rounded-full bg-gray-700 px-[20px] py-[5px]">
-              Livestreams
-            </button>
           </div>
-          <div>
-            {posts?.map((post) => (
-              <PostTemplate
-                key={post.id}
-                id={post.id}
-                user={post.user}
-                createdAt={post.createdAt}
-                updatedAt={post.updatedAt}
-                timestamp={post.updatedAt || post.createdAt}
-                title={post.title}
-                content={post.content}
-                initialLikesCount={post.initialLikesCount ?? 0}
-                userLiked={post.userLiked}
-              />
-            ))}
+          <div className="flex w-full flex-col gap-[15px]">
+            {timelineData?.pages.map((page) =>
+              page.posts.map((post) => (
+                <PostTemplate key={`${post.id}-${post.createdAt}`} {...post} />
+              )),
+            )}
+
+            {hasNextPage && (
+              <Button
+                variant="secondary"
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+              >
+                {isFetchingNextPage ? "Loading more..." : "Load more"}
+              </Button>
+            )}
           </div>
         </div>
       </div>
