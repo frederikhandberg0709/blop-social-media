@@ -9,11 +9,13 @@ export interface ShareResponse {
   sharesCount: number;
   hasShared: boolean;
   shareId: string | null;
+  quoteId: string | null;
 }
 
 export interface ShareStatus {
   hasShared: boolean;
   shareId: string | undefined;
+  quoteId: string | undefined;
   sharesCount: number;
 }
 

@@ -12,10 +12,9 @@ import { useDeleteBookmark } from "@/hooks/api/bookmarks/useDeleteBookmark";
 
 interface CommentDropdownMenuProps {
   commentId: string;
-  postId: string;
+  postId?: string;
   authorId: string;
   authorUsername: string;
-  onCommentDeleted: () => void;
 }
 
 export default function CommentDropdownMenu({
@@ -23,7 +22,6 @@ export default function CommentDropdownMenu({
   postId,
   authorId,
   authorUsername,
-  onCommentDeleted,
 }: CommentDropdownMenuProps) {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
@@ -66,7 +64,6 @@ export default function CommentDropdownMenu({
         onSuccess: () => {
           setIsDeleteDialogOpen(false);
           queryClient.invalidateQueries({ queryKey: ["comments", postId] });
-          onCommentDeleted();
         },
       },
     );

@@ -10,11 +10,16 @@ export async function GET(
   try {
     const { postId } = await params;
 
-    const sharesCount = await prisma.postShare.count({
-      where: { postId },
-    });
+    const [regularShares, quotes] = await Promise.all([
+      prisma.postShare.count({
+        where: { postId },
+      }),
+      prisma.quotedPost.count({
+        where: { quotedPostId: postId },
+      }),
+    ]);
 
-    return NextResponse.json({ sharesCount });
+    return NextResponse.json({ sharesCount: regularShares + quotes });
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch post share count" },

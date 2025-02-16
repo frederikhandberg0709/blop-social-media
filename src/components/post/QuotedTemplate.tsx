@@ -11,7 +11,7 @@ interface QuotedPostProps {
     profilePicture?: string | null;
   };
   title?: string;
-  content: string;
+  content: string | React.ReactNode;
   createdAt: string;
 }
 
@@ -22,6 +22,14 @@ export default function QuotedTemplate({
   content,
   createdAt,
 }: QuotedPostProps) {
+  const renderContent = () => {
+    if (typeof content === "string") {
+      return content.length > 150 ? `${content.substring(0, 150)}...` : content;
+    }
+
+    return content;
+  };
+
   return (
     <div className="rounded-2xl border border-gray-200 p-4 transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover">
       <div className="flex items-center">
@@ -46,9 +54,7 @@ export default function QuotedTemplate({
         </span>
       </div>
       {title && <h3 className="mt-2 text-lg font-semibold">{title}</h3>}
-      <p className="mt-2 text-sm">
-        {content.length > 150 ? `${content.substring(0, 150)}...` : content}
-      </p>
+      <p className="mt-2 text-sm">{renderContent()}</p>
       <Link
         href={`/post/${id}`}
         className="mt-2 block text-sm font-semibold text-blue-500 hover:underline"

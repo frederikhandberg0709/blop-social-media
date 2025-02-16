@@ -13,6 +13,7 @@ import { CommentProps } from "@/types/components/comment";
 import { useDeleteLike } from "@/hooks/api/likes/useDeleteLike";
 import { useCreateLike } from "@/hooks/api/likes/useCreateLike";
 import { useLikeCount } from "@/hooks/api/likes/useLikes";
+import ProfilePicture from "@/components/ProfilePicture";
 
 export default function CommentTemplate({
   id,
@@ -68,7 +69,7 @@ export default function CommentTemplate({
           href={`/profile/${user.username}`}
           className="group flex items-center gap-[10px]"
         >
-          <img
+          <ProfilePicture
             src={user?.profilePicture}
             alt={`${user?.profileName}'s profile picture`}
             className="h-[40px] w-[40px] rounded-full object-cover"
@@ -99,10 +100,14 @@ export default function CommentTemplate({
         </Link>
         <div className="flex items-center gap-[15px]">
           <div className="text-right text-[15px] text-gray-500">
-            {/* {formatDate(!updatedAt ? createdAt : updatedAt)} */}
+            {formatDate(!updatedAt ? createdAt : updatedAt)}
           </div>
           {/* Dropdown menu */}
-          <CommentDropdownMenu authorId={user.id} commentId={id} />
+          <CommentDropdownMenu
+            authorId={user.id}
+            commentId={id}
+            authorUsername={user.username}
+          />
         </div>
       </div>
       {title && <h1 className="text-base font-bold">{title}</h1>}
@@ -120,8 +125,23 @@ export default function CommentTemplate({
       </div>
       {replies.length > 0 && (
         <div className="mt-4 border-l-2 border-gray-200 pl-4">
-          {replies.map((reply) => (
-            <CommentTemplate key={reply.id} {...reply} />
+          {replies.map((reply: CommentProps) => (
+            //<CommentTemplate key={reply.id} {...reply} />
+            <CommentTemplate
+              key={reply.id}
+              id={reply.id}
+              user={reply.user}
+              createdAt={reply.createdAt}
+              updatedAt={reply.updatedAt}
+              timestamp={reply.timestamp}
+              title={reply.title}
+              content={reply.content}
+              imageContent={reply.imageContent}
+              videoContent={reply.videoContent}
+              replies={reply.replies}
+              initialLikesCount={reply.initialLikesCount}
+              userLiked={reply.userLiked}
+            />
           ))}
         </div>
       )}

@@ -36,7 +36,6 @@ declare module "next-auth" {
       profileName?: string;
       profilePicture?: string;
       profileBanner?: string;
-      color?: string;
     } & DefaultSession["user"];
   }
 
@@ -45,6 +44,5 @@ declare module "next-auth" {
     profileName?: string;
     profilePicture?: string;
     profileBanner?: string;
-    color?: string;
   }
 }

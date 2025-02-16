@@ -7,7 +7,7 @@ export interface BasePost {
   updatedAt: string;
   timestamp: string;
   title?: string;
-  content: string;
+  content: string | React.ReactNode;
   initialLikesCount: number;
   userLiked: boolean;
 }

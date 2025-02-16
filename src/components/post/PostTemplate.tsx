@@ -176,15 +176,18 @@ const PostTemplate: React.FC<Post> = (props) => {
       return <p className="text-base leading-normal">{parsedContent}</p>;
     }
 
+    const originalContent =
+      typeof post.content === "string" ? post.content : "";
+
     const regex = new RegExp(
       `${window.location.origin}/post/([a-zA-Z0-9-_]+)`,
       "g",
     );
-    const parts = post.content.split(regex);
+    const parts = originalContent.split(regex);
 
     return (
       <>
-        {parts.map((part, index) => {
+        {parts.map((part: string, index: number) => {
           const quotedPost = quotedPostsMap.get(
             quotedPostIds[Math.floor(index / 2)],
           );

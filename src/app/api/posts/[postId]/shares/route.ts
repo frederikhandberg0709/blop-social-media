@@ -8,13 +8,12 @@ import { authOptions } from "../../../auth/[...nextauth]/route";
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
+    if (!session?.user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
     const userId = session.user.id;
 
     const postId = request.nextUrl.searchParams.get("postId");
-
     if (!postId) {
       return NextResponse.json(
         { error: "Post ID is required" },
@@ -22,21 +21,32 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const share = await prisma.postShare.findFirst({
-      where: { userId, postId },
-    });
-
-    const sharesCount = await prisma.postShare.count({
-      where: { postId },
-    });
+    const [share, quote, regularShares, quotes] = await Promise.all([
+      prisma.postShare.findFirst({
+        where: { userId, postId },
+      }),
+      prisma.quotedPost.findFirst({
+        where: {
+          quotedPostId: postId,
+          quotingPost: {
+            userId: userId,
+          },
+        },
+      }),
+      prisma.postShare.count({
+        where: { postId },
+      }),
+      prisma.quotedPost.count({
+        where: { quotedPostId: postId },
+      }),
+    ]);
 
     return NextResponse.json({
-      hasShared: !!share,
+      hasShared: !!share || !!quote,
       shareId: share?.id || null,
-      sharesCount,
+      sharesCount: regularShares + quotes,
     });
   } catch (error) {
-    console.error("Error checking share status:", error);
     return NextResponse.json(
       { error: "Failed to check share status" },
       { status: 500 },

@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-import Post from "@/components/post/PostTemplate";
+import PostTemplate from "@/components/post/PostTemplate";
 import { useEffect, useState } from "react";
 import { Post as PostProps } from "@/types/components/post";
 import { usePost } from "@/hooks/api/posts/usePost";
@@ -51,9 +51,10 @@ const PostDetail: React.FC<{ post: PostProps }> = () => {
 
           {isPostPending && <p>Loading post...</p>}
 
-          <Post
+          <PostTemplate
             key={postData?.id}
             id={postData?.id}
+            type="original"
             user={postData?.user}
             createdAt={postData?.createdAt}
             updatedAt={postData?.updatedAt}

@@ -2,7 +2,7 @@ import React from "react";
 
 export const parseTextWithEnhancements = (
   inputText: string,
-  handleImageClick: (src: string) => void,
+  handleImageClick: (src: string) => void = () => {},
 ) => {
   const mediaRegex = /(https:\/\/.*?\.(jpg|jpeg|png|gif|mp4|avi|mov))/g;
   const hashtagRegex = /(#\w+)/g;
