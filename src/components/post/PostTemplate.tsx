@@ -23,6 +23,8 @@ import { useCreateShare } from "@/hooks/api/shares/useCreateShare";
 import { useDeleteShare } from "@/hooks/api/shares/useDeleteShare";
 import { useShareStatus } from "@/hooks/api/shares/useShareStatus";
 import { useShareCount } from "@/hooks/api/shares/useShares";
+import { usePosts } from "@/hooks/api/posts/usePosts";
+import { extractQuotedPostIds } from "@/utils/extractQuotedPostIds";
 
 const PostTemplate: React.FC<Post> = (props) => {
   const { data: session } = useSession();
@@ -34,7 +36,6 @@ const PostTemplate: React.FC<Post> = (props) => {
     0,
   );
   const [overlayImage, setOverlayImage] = useState<string | null>(null);
-  const [isDeleted, setIsDeleted] = useState(false);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const shareButtonRef = useRef<HTMLButtonElement>(null);
   const shareMenuRef = useRef<HTMLDivElement>(null);
@@ -44,54 +45,52 @@ const PostTemplate: React.FC<Post> = (props) => {
     isPending: isPendingComments,
     error: commentsError,
   } = useComments(post.id);
+
   const {
     mutate: createLike,
     isPending: isCreatingLike,
     error: createLikeError,
   } = useCreateLike();
+
   const {
     mutate: deleteLike,
     isPending: isDeletingLike,
     error: deleteLikeError,
   } = useDeleteLike();
+
   const { data: likesData } = useLikeCount({
     type: "post",
     id: post.id,
   });
+
   const {
     mutate: createShare,
     isPending: isCreatingShare,
     error: createShareError,
   } = useCreateShare();
+
   const {
     mutate: deleteShare,
     isPending: isDeletingShare,
     error: deleteShareError,
   } = useDeleteShare();
+
   const { data: shareStatus } = useShareStatus({
     type: "post",
     id: post.id,
   });
+
   const { data: shareCount } = useShareCount({ id: post.id, type: "post" });
 
-  const extractQuotedPostId = (content: any): string | null => {
-    if (typeof content === "string") {
-      const match = content.match(/\/post\/([a-zA-Z0-9]+)/);
-      return match ? match[1] : null;
-    }
-    if (Array.isArray(content)) {
-      for (const item of content) {
-        if (typeof item === "string") {
-          const match = item.match(/\/post\/([a-zA-Z0-9]+)/);
-          if (match) return match[1];
-        }
-      }
-    }
-    return null;
-  };
+  const quotedPostIds = extractQuotedPostIds(post.content);
+  const { posts: quotedPosts, isLoading } = usePosts({
+    postIds: quotedPostIds,
+    enabled: quotedPostIds.length > 0,
+  });
 
-  const quotedPostId = extractQuotedPostId(post.content);
-  const [quotedPost, setQuotedPost] = useState<any | null>(null);
+  const quotedPostsMap = React.useMemo(() => {
+    return new Map(quotedPosts?.map((post) => [post?.id, post]));
+  }, [quotedPosts]);
 
   const handleShareClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -147,20 +146,6 @@ const PostTemplate: React.FC<Post> = (props) => {
     }
   }, [isShareMenuOpen]);
 
-  React.useEffect(() => {
-    if (quotedPostId) {
-      // Fetch the quoted post data
-      fetch(`/api/post/${quotedPostId}`)
-        .then((res) => res.json())
-        .then((data) => setQuotedPost(data))
-        .catch((err) => console.error("Error fetching quoted post:", err));
-    }
-  }, [quotedPostId]);
-
-  if (isDeleted) {
-    return null;
-  }
-
   const handleImageClick = (src: string) => {
     setOverlayImage(src);
     document.body.style.overflow = "hidden"; // Disable scrolling
@@ -187,30 +172,40 @@ const PostTemplate: React.FC<Post> = (props) => {
   }
 
   const renderContent = () => {
-    if (!quotedPostId) {
+    if (quotedPostIds.length === 0) {
       return <p className="text-base leading-normal">{parsedContent}</p>;
     }
 
-    const parts = post.content.split(new RegExp(`(\\/post\\/${quotedPostId})`));
+    const regex = new RegExp(
+      `${window.location.origin}/post/([a-zA-Z0-9-_]+)`,
+      "g",
+    );
+    const parts = post.content.split(regex);
+
     return (
       <>
         {parts.map((part, index) => {
-          if (part === `/post/${quotedPostId}`) {
-            return quotedPost ? (
+          const quotedPost = quotedPostsMap.get(
+            quotedPostIds[Math.floor(index / 2)],
+          );
+
+          if (index % 2 === 1) {
+            return isLoading ? (
+              <p key={index} className="text-gray-500">
+                Loading quoted post...
+              </p>
+            ) : quotedPost ? (
               <QuotedTemplate
-                key={quotedPostId}
+                key={quotedPost.id}
                 id={quotedPost.id}
                 user={quotedPost.user}
                 title={quotedPost.title}
                 content={quotedPost.content}
                 createdAt={quotedPost.createdAt}
               />
-            ) : (
-              <p key={index} className="text-gray-500">
-                Loading quoted post...
-              </p>
-            );
+            ) : null;
           }
+
           return (
             <p key={index} className="text-base leading-normal">
               {parseTextWithEnhancements(part, handleImageClick)}
