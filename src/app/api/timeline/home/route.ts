@@ -16,9 +16,11 @@ export async function GET(request: NextRequest) {
       // User is logged in
       const followedUsers = await prisma.follow.findMany({
         where: { followerId: session.user.id },
-        select: { followingId: true },
+        select: { followedUserId: true },
       });
-      const followedUserIds = followedUsers.map((follow) => follow.followingId);
+      const followedUserIds = followedUsers.map(
+        (follow) => follow.followedUserId,
+      );
 
       // 70% posts from followed users, 30% from others
       const followedPosts = await prisma.post.findMany({

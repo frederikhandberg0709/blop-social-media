@@ -15,13 +15,13 @@ export async function POST(
   }
 
   const followerId = session.user.id;
-  const followingId = params.userId;
+  const followedUserId = params.userId;
 
   try {
     const follow = await prisma.follow.create({
       data: {
         followerId,
-        followingId,
+        followedUserId,
       },
     });
 
@@ -44,14 +44,14 @@ export async function DELETE(
   }
 
   const followerId = session.user.id;
-  const followingId = params.userId;
+  const followedUserId = params.userId;
 
   try {
     const unfollow = await prisma.follow.delete({
       where: {
-        followerId_followingId: {
+        followerId_followedUserId: {
           followerId,
-          followingId,
+          followedUserId,
         },
       },
     });

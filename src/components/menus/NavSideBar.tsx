@@ -47,10 +47,10 @@ const NavSideBar: React.FC = () => {
           null}
       </div>
       <div className="h-[1px] w-full bg-lightHover dark:bg-white/5"></div>
-      {(isLoggedIn && (
+      {(isLoggedIn && session?.user?.id && (
         <div className="flex flex-col gap-[15px]">
           {/* Following List */}
-          <SideMenuFollowList />
+          <SideMenuFollowList id={session.user.id} />
           <div className="h-[1px] w-full bg-lightHover dark:bg-white/5"></div>
         </div>
       )) ||

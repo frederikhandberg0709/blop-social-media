@@ -161,7 +161,6 @@ const EditPost: React.FC = () => {
               placeholder="Write your post here..."
               value={content}
               onChange={handleTextChange}
-              // onChange={(e) => setContent(e.target.value)}
               className="border-dynamic my-[30px] min-h-[400px] w-full overflow-hidden rounded-xl border-2 border-blue-500/30 bg-transparent p-[15px] outline-none transition duration-200 ease-in-out hover:border-blue-500/75 focus:border-blue-500/75"
             />
 
@@ -212,7 +211,7 @@ const EditPost: React.FC = () => {
               <PostTemplate
                 id={session?.user.id || ""}
                 user={session?.user}
-                reatedAt={new Date().toISOString()}
+                createdAt={new Date().toISOString()}
                 updatedAt={new Date().toISOString()}
                 timestamp={new Date().toISOString()}
                 title={title}

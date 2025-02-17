@@ -17,7 +17,7 @@ export async function GET(
     const following = await prisma.follow.findMany({
       where: { followerId: userId },
       include: {
-        following: {
+        followedUser: {
           select: {
             id: true,
             username: true,
@@ -32,7 +32,7 @@ export async function GET(
       return NextResponse.json([]);
     }
 
-    const followingUsers = following.map((f) => f.following);
+    const followingUsers = following.map((f) => f.followedUser);
 
     return NextResponse.json(followingUsers);
   } catch (error) {

@@ -33,8 +33,8 @@ model User {
   profilePicture   String?
   profileBanner    String?
   bio              String?
-  following        Follow[]        @relation("following")
-  followers        Follow[]        @relation("followers")
+  followedBy       Follow[]        @relation("UserFollowers")
+  following        Follow[]        @relation("UserFollowing")
   posts            Post[]
   comments         Comment[]
   postLikes        PostLike[]
@@ -170,13 +170,15 @@ model PostRevision {
 }
 
 model Follow {
-  followerId  String
-  followingId String
-  follower    User     @relation("followers", fields: [followerId], references: [id])
-  following   User     @relation("following", fields: [followingId], references: [id])
-  createdAt   DateTime @default(now()) @db.Timestamptz()
+  follower   User   @relation("UserFollowing", fields: [followerId], references: [id])
+  followerId String
 
-  @@id([followerId, followingId])
+  followedUser   User   @relation("UserFollowers", fields: [followedUserId], references: [id])
+  followedUserId String
+
+  createdAt DateTime @default(now()) @db.Timestamptz()
+
+  @@id([followerId, followedUserId])
 }
 
 model LinkedAccount {

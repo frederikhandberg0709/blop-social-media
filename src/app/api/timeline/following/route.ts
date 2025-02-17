@@ -14,9 +14,9 @@ export async function GET(request: NextRequest) {
     // Get the IDs of users that the current user follows
     const following = await prisma.follow.findMany({
       where: { followerId: userId },
-      select: { followingId: true },
+      select: { followedUserId: true },
     });
-    const followingIds = following.map((f) => f.followingId);
+    const followingIds = following.map((f) => f.followedUserId);
 
     // Fetch posts from followed users
     const posts = await prisma.post.findMany({
