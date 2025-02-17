@@ -3,13 +3,11 @@
 import { useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import PrimaryButton from "@/components/buttons/PrimaryButton";
 import PostHistory from "@/components/PostHistory";
-import useUserColor from "@/hooks/useUserColor";
 import PostTemplate from "@/components/post/PostTemplate";
-import DangerButton from "@/components/buttons/DangerButton";
 import { useUpdatePost } from "@/hooks/api/posts/useUpdatePost";
 import { usePost } from "@/hooks/api/posts/usePost";
+import Button from "@/components/buttons/Button";
 
 const EditPost: React.FC = () => {
   const { id } = useParams();
@@ -22,13 +20,6 @@ const EditPost: React.FC = () => {
   const [initialContent, setInitialContent] = useState<string>("");
   const [characterCount, setCharacterCount] = useState<number>(0);
   const [wordCount, setWordCount] = useState<number>(0);
-  const borderColor = useUserColor();
-  const [isPostTitleFocused, setIsPostTitleFocused] = useState<boolean>(false);
-  const [isPostTitleHovered, setIsPostTitleHovered] = useState<boolean>(false);
-  const [isPostContentFocused, setIsPostContentFocused] =
-    useState<boolean>(false);
-  const [isPostContentHovered, setIsPostContentHovered] =
-    useState<boolean>(false);
   const [view, setView] = useState<"preview" | "history">("preview");
 
   const {
@@ -36,21 +27,12 @@ const EditPost: React.FC = () => {
     isPending: isLoadingPost,
     error: postError,
   } = usePost({ postId });
+
   const {
     mutate: updatePost,
     isPending: isUpdatingPost,
     error: updatePostError,
   } = useUpdatePost();
-
-  const handlePostTitleFocus = () => setIsPostTitleFocused(true);
-  const handlePostTitleBlur = () => setIsPostTitleFocused(false);
-  const handlePostTitleMouseOver = () => setIsPostTitleHovered(true);
-  const handlePostTitleMouseOut = () => setIsPostTitleHovered(false);
-
-  const handlePostContentFocus = () => setIsPostContentFocused(true);
-  const handlePostContentBlur = () => setIsPostContentFocused(false);
-  const handlePostContentMouseOver = () => setIsPostContentHovered(true);
-  const handlePostContentMouseOut = () => setIsPostContentHovered(false);
 
   useEffect(() => {
     if (post) {
@@ -84,16 +66,6 @@ const EditPost: React.FC = () => {
         },
       },
     );
-  };
-
-  const calculateTitleBorderColor = () => {
-    if (isPostTitleFocused || isPostTitleHovered) return borderColor;
-    return `${borderColor}33`; // 20% opacity
-  };
-
-  const calculateTextBorderColor = () => {
-    if (isPostContentFocused || isPostContentHovered) return borderColor;
-    return `${borderColor}33`; // 20% opacity
   };
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -183,30 +155,14 @@ const EditPost: React.FC = () => {
               placeholder="Title of post (optional)..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="border-dynamic mt-[30px] w-full rounded-xl border-2 bg-transparent p-[15px] outline-none transition duration-300 ease-in-out"
-              style={{
-                borderColor: calculateTitleBorderColor(),
-                borderWidth: "2px",
-              }}
-              onFocus={handlePostTitleFocus}
-              onBlur={handlePostTitleBlur}
-              onMouseOver={handlePostTitleMouseOver}
-              onMouseOut={handlePostTitleMouseOut}
+              className="border-dynamic mt-[30px] w-full rounded-xl border-2 border-blue-500/30 bg-transparent p-[15px] outline-none transition duration-200 ease-in-out hover:border-blue-500/75 focus:border-blue-500/75"
             />
             <textarea
               placeholder="Write your post here..."
               value={content}
               onChange={handleTextChange}
               // onChange={(e) => setContent(e.target.value)}
-              className="border-dynamic my-[30px] min-h-[400px] w-full overflow-hidden rounded-xl border-2 bg-transparent p-[15px] outline-none transition duration-150 ease-in-out"
-              style={{
-                borderColor: calculateTextBorderColor(),
-                borderWidth: "2px",
-              }}
-              onFocus={handlePostContentFocus}
-              onBlur={handlePostContentBlur}
-              onMouseOver={handlePostContentMouseOver}
-              onMouseOut={handlePostContentMouseOut}
+              className="border-dynamic my-[30px] min-h-[400px] w-full overflow-hidden rounded-xl border-2 border-blue-500/30 bg-transparent p-[15px] outline-none transition duration-200 ease-in-out hover:border-blue-500/75 focus:border-blue-500/75"
             />
 
             <div className="flex items-center justify-between gap-[30px]">
@@ -217,32 +173,36 @@ const EditPost: React.FC = () => {
                 <p className="text-white/50">Word count: {wordCount}</p>
               </div>
               <div className="flex gap-[30px]">
-                <PrimaryButton
+                <Button
                   onClick={handleUpdatePost}
                   disabled={
                     !isPostChanged() || !content.trim() || isUpdatingPost
                   }
                 >
                   {isUpdatingPost ? "Updating..." : "Update Post"}
-                </PrimaryButton>
-                <DangerButton>Cancel</DangerButton>
+                </Button>
+                <Button variant="danger" onClick={() => router.back()}>
+                  Cancel
+                </Button>
               </div>
             </div>
           </div>
           <div className="h-[1px] w-full bg-white/5"></div>
           <div className="flex gap-5">
-            <PrimaryButton
+            <Button
+              variant="secondary"
               onClick={() => setView("preview")}
               className={view === "preview" ? "opacity-100" : "opacity-50"}
             >
               Preview Post
-            </PrimaryButton>
-            <PrimaryButton
+            </Button>
+            <Button
+              variant="secondary"
               onClick={() => setView("history")}
               className={view === "history" ? "opacity-100" : "opacity-50"}
             >
-              Post History
-            </PrimaryButton>
+              Post Revisions
+            </Button>
           </div>
           {view === "preview" ? (
             <div>

@@ -77,14 +77,6 @@ export async function PUT(req: NextRequest) {
         return NextResponse.json({ error: "Post not found" }, { status: 404 });
       }
 
-      await prisma.postRevision.create({
-        data: {
-          postId,
-          title: currentPost.title,
-          content: currentPost.content,
-        },
-      });
-
       await tx.postRevision.create({
         data: {
           postId,
