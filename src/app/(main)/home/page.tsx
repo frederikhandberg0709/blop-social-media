@@ -1,5 +1,6 @@
 "use client";
 
+import FiltersDropdownMenu from "@/components/menus/FiltersDropdownMenu";
 import PostTemplate from "@/components/post/PostTemplate";
 import { useHomeTimeline } from "@/hooks/api/timelines/useHomeTimeline";
 
@@ -16,9 +17,7 @@ const Home: React.FC = () => {
         <div className="flex w-[800px] flex-col gap-[15px]">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-semibold">HOME</h1>
-            <button className="rounded-md px-[15px] py-[5px] font-medium text-primaryGray transition duration-150 ease-in-out hover:bg-primaryBlue hover:text-black dark:hover:text-white">
-              Filters
-            </button>
+            <FiltersDropdownMenu />
           </div>
 
           {isPendingTimeline && <p>Loading posts...</p>}

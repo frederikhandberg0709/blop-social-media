@@ -54,7 +54,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, currentUserId }) => {
         <div className="mt-[350px] flex w-[800px] flex-col gap-[30px]">
           <div>
             <div className="flex items-center gap-[50px]">
-              {/* Profile picture */}
               <ProfilePicture
                 src={user.profilePicture}
                 size={130}

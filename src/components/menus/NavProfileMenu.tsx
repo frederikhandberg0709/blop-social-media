@@ -1,4 +1,4 @@
-import { UserProps } from "@/types/user";
+import { UserProps } from "@/types/components/user";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -20,6 +20,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // TODO: Replace with custom hook
   useEffect(() => {
     const fetchLinkedAccounts = async () => {
       if (session?.user?.id) {
@@ -42,6 +43,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
     fetchLinkedAccounts();
   }, [session]);
 
+  // TODO: Replace with custom hook
   const switchToAccount = async (accountId: string) => {
     setIsLoading(true);
     setError(null);
@@ -195,7 +197,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
         My Profile
       </Link>
       <Link
-        href={"my-bookmarks"}
+        href={"/my-bookmarks"}
         className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 font-medium transition duration-150 ease-in-out active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
           (currentPage === "/my-bookmarks" &&
             "fill-black text-black dark:fill-white dark:text-white") ||

@@ -4,6 +4,7 @@ import { useFollowingTimeline } from "@/hooks/api/timelines/useFollowingTimeline
 import PostTemplate from "@/components/post/PostTemplate";
 import { useFollowingCount } from "@/hooks/api/follow/useFollowing";
 import { useSession } from "next-auth/react";
+import FiltersDropdownMenu from "@/components/menus/FiltersDropdownMenu";
 
 const Following: React.FC = () => {
   const { data: session } = useSession();
@@ -24,9 +25,7 @@ const Following: React.FC = () => {
         <div className="flex w-[800px] flex-col gap-[15px]">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-semibold">FOLLOWING</h1>
-            <button className="rounded-md border border-transparent px-[15px] py-[5px] font-medium text-black/50 transition duration-150 ease-in-out hover:border-blue-500/50 hover:bg-black/10 hover:text-black dark:text-white/50 dark:hover:bg-white/10 dark:hover:text-white">
-              Filters
-            </button>
+            <FiltersDropdownMenu />
           </div>
 
           {isPendingTimeline && <p>Loading posts...</p>}
