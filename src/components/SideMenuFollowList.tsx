@@ -4,47 +4,38 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ProfilePicture from "./ProfilePicture";
+import {
+  useFollowing,
+  useFollowingCount,
+} from "@/hooks/api/follow/useFollowing";
 
-interface User {
+interface SideMenuFollowListProps {
   id: string;
-  username: string;
-  profileName?: string;
-  profilePicture?: string;
 }
 
-export default function SideMenuFollowList() {
+export default function SideMenuFollowList({ id }: SideMenuFollowListProps) {
   const { data: session } = useSession();
-  const [following, setFollowing] = useState<User[]>([]);
   const [showAll, setShowAll] = useState(false);
   const pathname = usePathname();
   const currentPage = pathname;
 
-  useEffect(() => {
-    if (!session) return;
+  const { data: followingCount } = useFollowingCount({ userId: id });
 
-    const fetchFollowing = async () => {
-      try {
-        const response = await fetch(
-          `/api/following?userId=${session.user.id}`,
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch following list");
-        }
-        const data = await response.json();
-        setFollowing(data);
-      } catch (error) {
-        console.error("Error fetching following list:", error);
-      }
-    };
-
-    fetchFollowing();
-  }, [session]);
+  const { data: following, isPending: isPendingFollowing } = useFollowing({
+    userId: id,
+  });
 
   if (!session) {
     return <p>Loading...</p>;
   }
 
-  const displayedUsers = showAll ? following : following.slice(0, 10);
+  if (isPendingFollowing) {
+    return <p>Loading following list...</p>;
+  }
+
+  const displayedUsers = showAll ? following : following?.slice(0, 10);
+
+  const count = followingCount?.count || 0;
 
   return (
     <div>
@@ -52,11 +43,15 @@ export default function SideMenuFollowList() {
         <h1 className="pl-[20px] text-sm font-bold text-primaryGray">
           FOLLOWING
         </h1>
-        <p className="text-sm text-primaryGray">{following.length}</p>
+        <p className="text-sm text-primaryGray">{count}</p>
       </div>
       <div className="flex flex-col gap-[5px]">
-        {displayedUsers
-          .map((user) => (
+        {!following || following.length === 0 ? (
+          <p className="pl-[20px] text-sm text-primaryGray">
+            Not following anyone yet
+          </p>
+        ) : (
+          displayedUsers?.map((user) => (
             <Link
               key={user.id}
               href={`/profile/${user.username}`}
@@ -74,9 +69,9 @@ export default function SideMenuFollowList() {
               {user.profileName || user.username}
             </Link>
           ))
-          .slice(0, 10)}
+        )}
       </div>
-      {following.length > 10 && (
+      {count > 10 && (
         <button
           onClick={() => setShowAll(!showAll)}
           className="mt-4 self-center rounded-lg text-primaryBlue hover:text-hoverBlue hover:underline"
