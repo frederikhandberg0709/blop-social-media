@@ -4,12 +4,13 @@ BLOP is a social network I created as a portfolio project, designed to closely m
 
 ## Project Features
 
-### Posts and Interactions
+### Posts & Interactions
 
 - **Publish posts** with text, images, or videos.
 - **Comment on posts** to engage in discussions.
 - **Reply to comments**, allowing direct responses.
 - **Nested replies** (similar to Reddit) for deeper conversations.
+- **Quote a single or multiple posts** to reference specific content in responses.
 
 ### Account & Profile Management
 
@@ -33,6 +34,19 @@ BLOP is a social network I created as a portfolio project, designed to closely m
 - **Mute users** to hide their content.
 - **Block users** to prevent interaction.
 - **Filter content** by blocking specific words, hiding any content containing them.
+
+## Future Development
+
+- **Search functionality:** Implement robust search capabilities allowing users to find posts by keywords, hashtags, and usernames.
+- **Filter functionality for timeline:** Enhance the user experience with multiple filtering options:
+
+  - **Recent**: Chronological display of posts with newest content first.
+  - **Recommended**: Personalized feed based on user interests and interaction history.
+  - **Trending**: Show popular content gaining significant engagement across the platform within customizable timeframes (hourly, daily, weekly).
+
+  ## Lessons Learned
+
+- **Authentication Approach**: This project used Next Auth, but I will be using Better Auth for future projects. Next Auth intentionally complicates email/username and password authentication by making poor documentation to encourage OAuth adoption.
 
 ## Getting Started
 
