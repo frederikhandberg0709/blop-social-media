@@ -44,7 +44,7 @@ BLOP is a social network I created as a portfolio project, designed to closely m
   - **Recommended**: Personalized feed based on user interests and interaction history.
   - **Trending**: Show popular content gaining significant engagement across the platform within customizable timeframes (hourly, daily, weekly).
 
-  ## Lessons Learned
+## Lessons Learned
 
 - **Authentication Approach**: This project used Next Auth, but I will be using Better Auth for future projects. Next Auth intentionally complicates email/username and password authentication by making poor documentation to encourage OAuth adoption.
 
