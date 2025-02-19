@@ -10,6 +10,7 @@ import NavSearchResults from "./NavSearchResults";
 import { Tooltip } from "../Tooltip";
 import { useSession } from "next-auth/react";
 import ProfilePicture from "../ProfilePicture";
+import ButtonLink from "../buttons/ButtonLink";
 
 const MainNavBar: React.FC = () => {
   const [isNavSideMenuVisible, setIsNavSideMenuVisible] = useState(false);
@@ -233,18 +234,12 @@ const MainNavBar: React.FC = () => {
           </div>
           {!isLoggedIn && (
             <div className="flex items-center gap-[30px]">
-              <Link
-                href={"/login"}
-                className="rounded-xl border-[3px] border-blue-500 px-4 py-2 text-center font-semibold text-black transition-all duration-150 ease-in-out hover:border-blue-700 hover:bg-blue-700 hover:text-white dark:text-white"
-              >
+              <ButtonLink href={"/login"} variant="primary_outline">
                 Login
-              </Link>
-              <Link
-                href={"/create-account"}
-                className="rounded-xl bg-blue-500 px-4 py-2 text-center font-semibold text-white transition-all duration-150 ease-in-out hover:bg-blue-700"
-              >
+              </ButtonLink>
+              <ButtonLink href={"/create-account"} className="min-h-[46px]">
                 Create Account
-              </Link>
+              </ButtonLink>
             </div>
           )}
           {isLoggedIn && (

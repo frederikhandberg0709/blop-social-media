@@ -1,7 +1,15 @@
 import LoginForm from "./LoginForm";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
 
-const LogInPage = () => {
+export default async function LoginPage() {
+  const session = await getServerSession();
+
+  if (session) {
+    redirect("/home");
+  }
+
   return (
     <div className="mt-[150px] flex w-full flex-col items-center justify-center">
       <div className="w-fit">
@@ -29,6 +37,4 @@ const LogInPage = () => {
       </div>
     </div>
   );
-};
-
-export default LogInPage;
+}

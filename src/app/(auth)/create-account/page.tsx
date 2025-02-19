@@ -7,7 +7,7 @@ export default async function CreateAccountPage() {
   const session = await getServerSession();
 
   if (session) {
-    redirect("/");
+    redirect("/home");
   }
 
   return (
