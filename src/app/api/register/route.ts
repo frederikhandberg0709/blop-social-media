@@ -47,6 +47,17 @@ export async function POST(request: Request) {
       );
     }
 
+    const existingEmail = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingEmail) {
+      return NextResponse.json(
+        { error: "Email is already registered" },
+        { status: 400 },
+      );
+    }
+
     const existingUser = await prisma.user.findUnique({
       where: { username },
     });

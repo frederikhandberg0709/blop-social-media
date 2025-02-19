@@ -43,6 +43,7 @@ export const authOptions: NextAuthOptions = {
           user.password,
           credentials.password,
         );
+
         if (!isPasswordValid) {
           console.log("Invalid password");
           return null;
@@ -67,7 +68,6 @@ export const authOptions: NextAuthOptions = {
             profileName: user.profileName,
             profilePicture: user.profilePicture,
             profileBanner: user.profileBanner,
-            color: user.color,
           };
         }
         return null;
@@ -83,7 +83,6 @@ export const authOptions: NextAuthOptions = {
         token.profileName = user.profileName;
         token.profilePicture = user.profilePicture;
         token.profileBanner = user.profileBanner;
-        token.color = user.color;
       }
 
       // Fetch fresh user data on every JWT refresh
@@ -109,7 +108,6 @@ export const authOptions: NextAuthOptions = {
             profileName: true,
             profilePicture: true,
             profileBanner: true,
-            color: true,
           },
         });
 
@@ -119,7 +117,6 @@ export const authOptions: NextAuthOptions = {
           token.profileName = switchToUser.profileName;
           token.profilePicture = switchToUser.profilePicture;
           token.profileBanner = switchToUser.profileBanner;
-          token.color = switchToUser.color;
         }
       } else {
         // Fetch fresh user data on every JWT refresh
@@ -131,7 +128,6 @@ export const authOptions: NextAuthOptions = {
             profileName: true,
             profilePicture: true,
             profileBanner: true,
-            color: true,
           },
         });
 
@@ -140,7 +136,6 @@ export const authOptions: NextAuthOptions = {
           token.profileName = freshUser.profileName;
           token.profilePicture = freshUser.profilePicture;
           token.profileBanner = freshUser.profileBanner;
-          token.color = freshUser.color;
         }
       }
 

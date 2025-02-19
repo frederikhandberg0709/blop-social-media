@@ -3,6 +3,8 @@ import { prisma } from "@/db/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
+// Get a user
+
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
 
@@ -22,6 +24,7 @@ export async function GET(req: NextRequest) {
         bio: true,
         profilePicture: true,
         profileBanner: true,
+        email: true,
       },
     });
 

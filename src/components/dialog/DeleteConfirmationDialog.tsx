@@ -1,14 +1,17 @@
 import { createPortal } from "react-dom";
 import Button from "../buttons/Button";
 import { useEffect } from "react";
+import { AlertTriangle } from "lucide-react";
+import { twMerge } from "tailwind-merge";
 
 interface DialogProps {
   isOpen: boolean;
   onClose: () => void;
+  className?: string;
   children: React.ReactNode;
 }
 
-export function Dialog({ isOpen, onClose, children }: DialogProps) {
+export function Dialog({ isOpen, onClose, className, children }: DialogProps) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -37,7 +40,12 @@ export function Dialog({ isOpen, onClose, children }: DialogProps) {
         onClick={onClose}
       />
       {/* Dialog */}
-      <div className="relative z-50 w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900">
+      <div
+        className={twMerge(
+          "relative z-50 w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900",
+          className,
+        )}
+      >
         {children}
       </div>
     </div>,
@@ -65,11 +73,13 @@ export default function DeleteConfirmationDialog({
   return (
     <Dialog isOpen={isOpen} onClose={onClose}>
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          {title}
-        </h2>
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="h-6 w-6 flex-shrink-0 text-red-500" />
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            {title}
+          </h2>
+        </div>
         <p className="text-gray-600 dark:text-gray-300">{text}</p>
-        {/* TODO: Show error message? */}
         <div className="flex justify-end gap-3">
           <Button variant="secondary" onClick={onClose} disabled={isLoading}>
             Cancel
