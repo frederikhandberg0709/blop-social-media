@@ -46,7 +46,8 @@ BLOP is a social network I created as a portfolio project, designed to closely m
 
 ## Lessons Learned
 
-- **Authentication Approach**: This project used Next Auth, but I will be using Better Auth for future projects. Next Auth intentionally complicates email/username and password authentication by making poor documentation to encourage OAuth adoption.
+- **Authentication Approach**: This project uses Next Auth, but I will be using Better Auth for future projects. Next Auth intentionally complicates email/username and password authentication by making poor documentation to encourage OAuth adoption.
+- **Allow Quoting Comments:** Currently, only posts can be quoted. Expanding this functionality to comments and replies would enhance engagement by allowing users to reference and build upon specific discussions.
 
 ## Getting Started
 
