@@ -10,7 +10,7 @@ const validateUsername = (username: string) => {
 const validatePassword = (password: string) => {
   // Password must be at least 8 characters long and contain at least one special character
   const regex =
-    /^(?=.*[!@#$%^&*(),.?":{}|<>])[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]{8,}$/;
+    /^(?=.*[!@#$%^&*()_,.?":{}|<>])[a-zA-Z0-9!@#$%^&*()_,.?":{}|<>]{8,}$/;
   return regex.test(password);
 };
 

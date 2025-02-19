@@ -3,6 +3,13 @@
 import { FormEvent, useState } from "react";
 import Input from "@/components/inputs/FloatingInput";
 import { PasswordInput } from "@/components/inputs/PasswordInput";
+import {
+  getPasswordErrorMessage,
+  getPasswordMatchErrorMessage,
+  validateEmail,
+  validatePassword,
+  validateUsername,
+} from "@/utils/accountValidation";
 
 export default function RegistrationForm() {
   const [email, setEmail] = useState<string>("");
@@ -15,27 +22,6 @@ export default function RegistrationForm() {
   const areFieldsEmpty = [email, username, password, confirmPassword].some(
     (field) => field.trim() === "",
   );
-
-  const validateEmail = (value: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(value);
-  };
-
-  const validateUsername = (value: string) => {
-    const regex = /^[a-z0-9-_]+$/; // Only lowercase letters, numbers, dash, and underscore
-    return regex.test(value);
-  };
-
-  const validatePassword = (value: string) => {
-    const minLength = 8;
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
-
-    return value.length >= minLength && hasSpecialChar;
-  };
-
-  const validateConfirmPassword = (value: string) => {
-    return password === value;
-  };
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -90,26 +76,26 @@ export default function RegistrationForm() {
     setSuccessMessage("");
 
     if (!validateEmail(email)) {
-      setError("Please enter a valid email address.");
+      setError("Please enter a valid email address");
       return;
     }
 
     if (!validateUsername(username)) {
       setError(
-        "Username can only contain lowercase letters, numbers, dashes, and underscores.",
+        "Username can only contain lowercase letters, numbers, dashes, and underscores",
       );
       return;
     }
 
-    if (!validatePassword(password)) {
-      setError(
-        "Password must be at least 8 characters long and contain at least one special character.",
-      );
+    const passwordError = getPasswordErrorMessage(password);
+    if (passwordError) {
+      setError(passwordError);
       return;
     }
 
-    if (!validateConfirmPassword(confirmPassword)) {
-      setError("Passwords do not match.");
+    const matchError = getPasswordMatchErrorMessage(password, confirmPassword);
+    if (matchError) {
+      setError(matchError);
       return;
     }
 
@@ -186,23 +172,7 @@ export default function RegistrationForm() {
         {error && <p className="text-red-500">{error}</p>}
         {successMessage && <p className="text-green-500">{successMessage}</p>}
       </div>
-      {/* <div className="w-full">
-        <p className="text-[17px] font-semibold">Password Strength</p>
-        <p>Must contain at least:</p>
-        <div className="flex gap-[10px]">
-          ✅<p>One uppercase letter</p>
-        </div>
-        <div className="flex gap-[10px]">
-          ❌<p>One lowercase letter</p>
-        </div>
-        <p>One number</p>
-        <p>One special character</p>
-      </div> */}
-      {/* <input
-        type="password"
-        placeholder="Confirm Password"
-        className="mt-[20px] px-[20px] py-[12px] w-[400px] rounded-xl text-white bg-white/10 hover:bg-white/20 focus:bg-white/20 transition duration-200 ease-in-out outline-none"
-      /> */}
+
       <button
         type="submit"
         disabled={!!error || areFieldsEmpty}

@@ -14,14 +14,6 @@ const Appearance: React.FC = () => {
           <ThemeDropdown />
         </div>
       </div>
-      <div>
-        <h2 className="mt-10 text-[20px] font-semibold">Accent Color</h2>
-        <p className="mt-2">
-          Choose an accent color to personalize the look and feel of your
-          interface. This color will be used for highlights and other prominent
-          elements.
-        </p>
-      </div>
     </div>
   );
 };
