@@ -22,6 +22,7 @@ BLOP is a social network I created as a portfolio project, designed to closely m
 - **Change email** associated with the account.
 - **Reset password** for account security.
 - **Link multiple accounts** for seamless switching between them.
+- **Delete user account** with secure confirmation and complete data purging.
 
 ### Content Management
 
@@ -44,10 +45,12 @@ BLOP is a social network I created as a portfolio project, designed to closely m
   - **Recommended**: Personalized feed based on user interests and interaction history.
   - **Trending**: Show popular content gaining significant engagement across the platform within customizable timeframes (hourly, daily, weekly).
 
+- **Allow Quoting Comments:** Currently, only posts can be quoted. Expanding this functionality to comments and replies would enhance engagement by allowing users to reference and build upon specific discussions.
+- **Notification system:** A real-time notification system should be implemented. Users should be able to subscribe to receiving certain types of notifications, such as when a profile publishes a new post. Socket.IO could possibly be used to implement this functionality.
+
 ## Lessons Learned
 
 - **Authentication Approach**: This project uses Next Auth, but I will be using Better Auth for future projects. Next Auth intentionally complicates email/username and password authentication by making poor documentation to encourage OAuth adoption.
-- **Allow Quoting Comments:** Currently, only posts can be quoted. Expanding this functionality to comments and replies would enhance engagement by allowing users to reference and build upon specific discussions.
 
 ## Getting Started
 
