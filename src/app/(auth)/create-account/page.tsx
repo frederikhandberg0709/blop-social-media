@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import RegistrationForm from "./RegistrationForm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import ButtonLink from "@/components/buttons/ButtonLink";
 
 export default async function CreateAccountPage() {
   const session = await getServerSession();
@@ -12,7 +13,7 @@ export default async function CreateAccountPage() {
 
   return (
     <div className="mt-[150px] flex w-full flex-col items-center justify-center">
-      <div className="w-fit">
+      <div className="w-[400px]">
         <h1 className="text-center text-3xl font-semibold">Create Account</h1>
 
         <RegistrationForm />
@@ -21,12 +22,9 @@ export default async function CreateAccountPage() {
           <h2 className="text-[20px] font-semibold">
             Already have an account?
           </h2>
-          <Link
-            href="/login"
-            className="relative bottom-0 rounded-xl px-4 py-2 font-semibold text-blue-500 transition-all duration-150 ease-in-out hover:bottom-1 hover:bg-blue-600 hover:text-white hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]"
-          >
+          <ButtonLink href="/login" variant="primary_glow">
             Login
-          </Link>
+          </ButtonLink>
         </div>
       </div>
     </div>

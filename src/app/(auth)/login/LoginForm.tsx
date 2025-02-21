@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import FloatingInput from "@/components/inputs/FloatingInput";
 import { PasswordInput } from "@/components/inputs/PasswordInput";
+import Button from "@/components/buttons/Button";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -82,7 +83,7 @@ export default function LoginForm() {
       </div>
       <div className="mt-2 w-full text-end">
         <Link
-          href={"#"}
+          href={"/reset-password"}
           className="text-[13px] font-semibold hover:text-blue-500 hover:underline"
         >
           Forgot password?
@@ -91,13 +92,14 @@ export default function LoginForm() {
 
       {error && <p className="mt-3 text-red-500">{error}</p>}
 
-      <button
+      <Button
         type="submit"
+        variant="primary_glow"
         disabled={!!error || areFieldsEmpty || isLoading}
-        className={`relative bottom-0 mt-[30px] rounded-xl bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-150 ease-in-out ${!!error || areFieldsEmpty ? "cursor-not-allowed opacity-50" : "opacity-100 hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]"}`}
+        className={`mt-8 bg-blue-600 text-white ${!!error || areFieldsEmpty ? "cursor-not-allowed opacity-50 hover:bottom-0 hover:shadow-none" : "opacity-100 hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]"}`}
       >
         Login
-      </button>
+      </Button>
     </form>
   );
 }

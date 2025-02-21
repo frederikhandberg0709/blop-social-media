@@ -10,6 +10,7 @@ import {
   validatePassword,
   validateUsername,
 } from "@/utils/accountValidation";
+import Button from "@/components/buttons/Button";
 
 export default function RegistrationForm() {
   const [email, setEmail] = useState<string>("");
@@ -173,13 +174,14 @@ export default function RegistrationForm() {
         {successMessage && <p className="text-green-500">{successMessage}</p>}
       </div>
 
-      <button
+      <Button
         type="submit"
+        variant="primary_glow"
         disabled={!!error || areFieldsEmpty}
-        className={`relative bottom-0 mt-[30px] rounded-xl bg-blue-600 px-4 py-2 font-semibold text-white transition-all duration-150 ease-in-out ${!!error || areFieldsEmpty ? "cursor-not-allowed opacity-50" : "opacity-100 hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]"}`}
+        className={`mt-8 bg-blue-600 text-white ${!!error || areFieldsEmpty ? "cursor-not-allowed opacity-50 hover:bottom-0 hover:shadow-none" : "opacity-100 hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]"}`}
       >
         Register
-      </button>
+      </Button>
     </form>
   );
 }

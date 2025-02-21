@@ -3,7 +3,13 @@ import { LoaderCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "danger" | "warning" | "ghost";
+  variant?:
+    | "primary"
+    | "primary_glow"
+    | "secondary"
+    | "danger"
+    | "warning"
+    | "ghost";
   size?: "sm" | "md" | "lg";
   rounded?: "none" | "sm" | "md" | "full";
   isLoading?: boolean;
@@ -30,6 +36,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const variants = {
       primary:
         "text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-500 dark:hover:bg-blue-600 dark:active:bg-blue-700",
+      primary_glow:
+        "relative bottom-0 font-semibold text-blue-500 transition-all duration-150 ease-in-out hover:bottom-1 hover:bg-blue-600 hover:text-white hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]",
       secondary:
         "bg-gray-200 text-gray-900 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600",
       danger:

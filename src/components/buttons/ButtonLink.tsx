@@ -8,6 +8,7 @@ interface ButtonLinkProps {
   variant?:
     | "primary"
     | "primary_outline"
+    | "primary_glow"
     | "secondary"
     | "danger"
     | "warning"
@@ -46,6 +47,8 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
         "text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-500 dark:hover:bg-blue-600 dark:active:bg-blue-700",
       primary_outline:
         "border-[3px] border-blue-600 hover:border-blue-700 hover:bg-blue-700 active:border-blue-800 active:bg-blue-800 dark:text-blue-500 dark:hover:text-white dark:border-blue-500 dark:hover:border-blue-600 dark:hover:bg-blue-600 dark:active:border-blue-700 dark:active:bg-blue-700",
+      primary_glow:
+        "relative bottom-0 rounded-xl font-semibold text-blue-500 transition-all duration-150 ease-in-out hover:bottom-1 hover:bg-blue-600 hover:text-white hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]",
       secondary:
         "bg-gray-200 text-gray-900 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600",
       danger:

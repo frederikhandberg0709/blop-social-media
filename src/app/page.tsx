@@ -1,20 +1,12 @@
 "use client";
 
-import MainNavBar from "@/components/menus/MainNavBar";
-import Home from "./(main)/home/page";
-import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-export default function Test() {
-  const { data: session, status } = useSession();
+export default function Start() {
+  const router = useRouter();
 
-  if (!session) {
-    return (
-      <>
-        <div className="mt-[70px]">
-          {/* <MainNavBar /> */}
-          {/* <Home /> */}
-        </div>
-      </>
-    );
-  }
+  useEffect(() => {
+    router.push("/home");
+  }, [router]);
 }
