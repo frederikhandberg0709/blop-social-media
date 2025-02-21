@@ -3,7 +3,11 @@
 import Button from "@/components/buttons/Button";
 import FloatingInput from "@/components/inputs/FloatingInput";
 import { PasswordInput } from "@/components/inputs/PasswordInput";
-import { useUpdatePassword } from "@/hooks/api/account/useUpdatePassword";
+import { useResetPassword } from "@/hooks/api/account/useResetPassword";
+import {
+  getPasswordErrorMessage,
+  getPasswordMatchErrorMessage,
+} from "@/utils/accountValidation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -15,7 +19,7 @@ export default function ResetPasswordForm() {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState<string>("");
 
-  const updatePassword = useUpdatePassword();
+  const resetPassword = useResetPassword();
 
   const areFieldsEmpty = [identifier, newPassword, confirmNewPassword].some(
     (field) => field.trim() === "",
@@ -23,6 +27,7 @@ export default function ResetPasswordForm() {
 
   const handleIdentifierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIdentifier(e.target.value);
+    setError("");
   };
 
   const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,16 +46,24 @@ export default function ResetPasswordForm() {
     setError("");
     setSuccessMessage("");
 
-    // TODO: Make sure passwords follow requirements
-    if (newPassword !== confirmNewPassword) {
-      setError("Passwords do not match");
+    const passwordError = getPasswordErrorMessage(newPassword);
+    if (passwordError) {
+      setError(passwordError);
+      return;
+    }
+
+    const matchError = getPasswordMatchErrorMessage(
+      newPassword,
+      confirmNewPassword,
+    );
+    if (matchError) {
+      setError(matchError);
       return;
     }
 
     try {
-      await updatePassword.mutateAsync({
+      await resetPassword.mutateAsync({
         identifier,
-        currentPassword: "",
         newPassword,
       });
 
@@ -72,7 +85,7 @@ export default function ResetPasswordForm() {
           name="email"
           value={identifier}
           onChange={handleIdentifierChange}
-          disabled={updatePassword.isPending}
+          disabled={resetPassword.isPending}
           required
         />
 
@@ -81,7 +94,7 @@ export default function ResetPasswordForm() {
           name="newPassword"
           value={newPassword}
           onChange={handleNewPasswordChange}
-          disabled={updatePassword.isPending}
+          disabled={resetPassword.isPending}
         />
 
         <PasswordInput
@@ -89,7 +102,7 @@ export default function ResetPasswordForm() {
           name="confirmNewPassword"
           value={confirmNewPassword}
           onChange={handleConfirmNewPasswordChange}
-          disabled={updatePassword.isPending}
+          disabled={resetPassword.isPending}
         />
       </div>
 
@@ -102,10 +115,10 @@ export default function ResetPasswordForm() {
         type="submit"
         variant="primary_glow"
         onClick={handleSubmit}
-        disabled={!!error || areFieldsEmpty || updatePassword.isPending}
-        className={`mt-8 bg-blue-600 text-white ${!!error || areFieldsEmpty || updatePassword.isPending ? "cursor-not-allowed opacity-50 hover:bottom-0 hover:shadow-none" : "opacity-100 hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]"}`}
+        disabled={!!error || areFieldsEmpty || resetPassword.isPending}
+        className={`mt-8 bg-blue-600 text-white ${!!error || areFieldsEmpty || resetPassword.isPending ? "cursor-not-allowed opacity-50 hover:bottom-0 hover:shadow-none" : "opacity-100 hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]"}`}
       >
-        {updatePassword.isPending ? "Resetting..." : "Reset Password"}
+        {resetPassword.isPending ? "Resetting..." : "Reset Password"}
       </Button>
     </form>
   );
