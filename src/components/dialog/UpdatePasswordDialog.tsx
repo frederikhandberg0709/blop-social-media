@@ -134,12 +134,21 @@ export default function UpdatePasswordDialog({
         </div>
 
         <div className="mt-4 flex justify-end gap-3">
-          <Button variant="primary" onClick={handleUpdatePassword}>
-            Update Password
-          </Button>
-
           <Button variant="danger" onClick={onClose}>
             Cancel
+          </Button>
+
+          <Button
+            variant="primary"
+            onClick={handleUpdatePassword}
+            disabled={
+              updatePasswordMutation.isPending ||
+              !currentPassword ||
+              !newPassword ||
+              !confirmNewPassword
+            }
+          >
+            Update Password
           </Button>
         </div>
       </div>

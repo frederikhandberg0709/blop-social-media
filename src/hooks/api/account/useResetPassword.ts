@@ -1,6 +1,6 @@
-// For resetting a user's password who is not logged in
-
 import { useMutation } from "@tanstack/react-query";
+
+// For resetting a user's password who is not logged in
 
 export const useResetPassword = () => {
   return useMutation({

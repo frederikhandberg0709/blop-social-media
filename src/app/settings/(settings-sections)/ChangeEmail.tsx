@@ -1,23 +1,42 @@
+import Button from "@/components/buttons/Button";
+import UpdateEmailDialog from "@/components/dialog/UpdateEmailDialog";
+import { useUser } from "@/hooks/api/users/useUser";
+import { useState } from "react";
+
 const ChangeEmail: React.FC = () => {
+  const [isUpdateEmailDialogOpen, setIsUpdateEmailDialogOpen] = useState(false);
+
+  const { data: user } = useUser();
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold">Change Email</h1>
+    <>
+      <div>
+        <h1 className="text-3xl font-bold">Change Email</h1>
 
-      <p className="mt-4">
-        Here you can update your email address. Your new email address will be
-        used for logging in.
-      </p>
+        <p className="mt-4">
+          Here you can update your email address. Your new email address will be
+          used for logging in.
+        </p>
 
-      <div className="mt-4">
-        <p>Your Current Email</p>
-        {/* TODO: Fetch account email */}
-        <p className="text-[18px] font-semibold">example@email.com</p>
+        <div className="mt-4">
+          <p className="text-sm text-white/50">Your Current Email</p>
+          <p className="text-[18px] font-semibold">{user?.email}</p>
+        </div>
+
+        <Button
+          variant="primary"
+          onClick={() => setIsUpdateEmailDialogOpen(true)}
+          className="mt-4"
+        >
+          Change Email
+        </Button>
       </div>
 
-      <button className="relative bottom-0 mt-6 rounded-xl bg-blue-600 px-4 py-2 text-white transition-all duration-150 ease-in-out hover:bottom-1 hover:shadow-[0_5px_40px_10px_rgb(37,99,235,0.5)]">
-        Change Email
-      </button>
-    </div>
+      <UpdateEmailDialog
+        isOpen={isUpdateEmailDialogOpen}
+        onClose={() => setIsUpdateEmailDialogOpen(false)}
+      />
+    </>
   );
 };
 
