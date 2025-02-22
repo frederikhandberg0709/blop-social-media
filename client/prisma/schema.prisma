@@ -241,7 +241,6 @@ model NotificationHistory {
 
   @@index([userId, createdAt(sort: Desc)])
   @@index([fromUserId])
-  @@map("notification_history")
 }
 
 model ProfileNotificationSettings {
@@ -259,5 +258,4 @@ model ProfileNotificationSettings {
 
   @@unique([userId, targetProfileId])
   @@index([userId])
-  @@map("profile_notification_settings")
 }

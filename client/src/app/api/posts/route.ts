@@ -52,7 +52,6 @@ export async function POST(request: NextRequest) {
   const { userId, title, content } = await request.json();
 
   try {
-    // Validate that userId is provided
     if (!userId) {
       return NextResponse.json(
         { error: "User ID is required" },
@@ -60,7 +59,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if the user exists
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
@@ -69,7 +67,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid user ID" }, { status: 400 });
     }
 
-    // Validate that content is present and not empty
     if (!content || content.trim() === "") {
       return NextResponse.json(
         { error: "Content field is mandatory and cannot be empty" },
@@ -77,12 +74,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Extract quoted post IDs from the content
     const quotedPostIds = extractQuotedPostIds(content);
 
-    // Use a transaction to ensure all operations are performed atomically
     const post = await prisma.$transaction(async (prisma) => {
-      // Create the new post
       const newPost = await prisma.post.create({
         data: {
           userId,
@@ -91,7 +85,6 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Create QuotedPost entries and update quote counts
       if (quotedPostIds.length > 0) {
         await Promise.all(
           quotedPostIds.map(async (quotedPostId: string) => {
@@ -108,6 +101,54 @@ export async function POST(request: NextRequest) {
             });
           }),
         );
+      }
+
+      const usersToNotify = await prisma.profileNotificationSettings.findMany({
+        where: {
+          targetProfileId: userId,
+          OR: [
+            { notificationType: "ALL" },
+            {
+              notificationType: "SPECIFIC",
+              notifyNewPosts: true,
+            },
+          ],
+        },
+        select: {
+          userId: true,
+        },
+      });
+
+      await prisma.notificationHistory.createMany({
+        data: usersToNotify.map(({ userId: recipientId }) => ({
+          userId: recipientId,
+          fromUserId: userId,
+          notificationType: "NEW_POST",
+          content: "New post published",
+          metaData: {
+            postId: newPost.id,
+            postTitle: title || "Untitled",
+          },
+        })),
+      });
+
+      try {
+        await fetch("http://localhost:4000/notify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userIds: usersToNotify.map((u) => u.userId),
+            notification: {
+              type: "NEW_POST",
+              postId: newPost.id,
+              postTitle: title || "Untitled",
+            },
+          }),
+        });
+      } catch (error) {
+        console.error("Failed to send socket notification:", error);
       }
 
       return newPost;
