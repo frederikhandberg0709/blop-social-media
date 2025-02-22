@@ -1,9 +1,10 @@
 "use client";
 
-import { initSocket } from "@/lib/socket";
+import { useNotifications } from "@/hooks/api/notifications/useNotifications";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Check } from "lucide-react";
 
 interface Notification {
   id: string;
@@ -18,33 +19,9 @@ interface Notification {
 }
 
 const NotificationPanel = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const { data: session } = useSession();
-
-  useEffect(() => {
-    if (!session?.user?.id) return;
-
-    fetch("/api/notifications")
-      .then((res) => res.json())
-      .then((data) => {
-        setNotifications(data);
-        setUnreadCount(data.filter((n: Notification) => !n.isRead).length);
-      });
-
-    const socket = initSocket();
-
-    socket.emit("authenticate", session.user.id);
-
-    socket.on("notification", (newNotification: Notification) => {
-      setNotifications((prev) => [newNotification, ...prev]);
-      setUnreadCount((prev) => prev + 1);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [session]);
+  const { data: notifications = [] } = useNotifications();
+  const queryClient = useQueryClient();
 
   const markAsRead = async (notificationId: string) => {
     try {
@@ -56,14 +33,8 @@ const NotificationPanel = () => {
         body: JSON.stringify({ notificationIds: [notificationId] }),
       });
 
-      setNotifications((prev) =>
-        prev.map((notification) =>
-          notification.id === notificationId
-            ? { ...notification, isRead: true }
-            : notification,
-        ),
-      );
-      setUnreadCount((prev) => Math.max(0, prev - 1));
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["notificationCount"] });
     } catch (error) {
       console.error("Failed to mark notification as read:", error);
     }
@@ -83,37 +54,37 @@ const NotificationPanel = () => {
         body: JSON.stringify({ notificationIds: unreadIds }),
       });
 
-      setNotifications((prev) =>
-        prev.map((notification) => ({ ...notification, isRead: true })),
-      );
-      setUnreadCount(0);
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["notificationCount"] });
     } catch (error) {
-      console.error("Failed to mark all notifications as read:", error);
+      console.error("Failed to mark all as read:", error);
     }
   };
+
+  if (!session?.user?.id) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col">
       <div className="flex justify-between px-[20px]">
         <div className="flex items-center gap-[10px]">
           <h1 className="text-[15px] font-bold text-white/50">NOTIFICATIONS</h1>
-          <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full bg-red-700 font-bold">
-            {unreadCount > 0 && (
+          {/* {unreadCount > 0 && (
               <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full bg-red-700 font-bold">
                 {unreadCount}
               </div>
-            )}
-          </div>
+            )} */}
         </div>
         <div className="flex items-center gap-2">
-          {unreadCount > 0 && (
+          {/* {unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
               className="text-sm text-white/50 transition-colors hover:text-white"
             >
-              Mark all as read
+              <Check />
             </button>
-          )}
+          )} */}
 
           <Link
             href={"#"}
@@ -132,7 +103,7 @@ const NotificationPanel = () => {
       </div>
 
       <div className="mt-4 flex flex-col space-y-2">
-        {notifications.map((notification) => (
+        {notifications.map((notification: Notification) => (
           <div
             key={notification.id}
             onClick={() => !notification.isRead && markAsRead(notification.id)}

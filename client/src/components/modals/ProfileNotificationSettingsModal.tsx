@@ -1,4 +1,4 @@
-import { useProfileNotificationSettings } from "@/hooks/api/useProfileNotificationSettings";
+import { useProfileNotificationSettings } from "@/hooks/api/notifications/useProfileNotificationSettings";
 import { ProfileNotificationSettingsProps } from "@/types/NotificationProps";
 import { NextApiResponse } from "next";
 import { useEffect, useRef, useState } from "react";
@@ -96,7 +96,7 @@ const ProfileNotificationSettingsModal = ({
     <div className="fixed bottom-0 left-0 right-0 top-0 z-40 flex h-full w-full items-center justify-center bg-black/50">
       <div
         ref={modalRef}
-        className="w-[300px] rounded-xl border-2 border-darkBorder bg-black pt-2 transition duration-150 ease-in-out hover:border-darkBorderHover"
+        className="border-darkBorder hover:border-darkBorderHover w-[300px] rounded-xl border-2 bg-black pt-2 transition duration-150 ease-in-out"
       >
         <h1 className="text-center font-semibold">
           Profile Notification Settings

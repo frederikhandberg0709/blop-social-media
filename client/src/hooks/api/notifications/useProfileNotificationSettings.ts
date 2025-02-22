@@ -19,7 +19,7 @@ export function useProfileNotificationSettings(targetProfileId: string) {
     queryKey,
     queryFn: async () => {
       const response = await fetch(
-        `/api/profile-notification-settings/${targetProfileId}`,
+        `/api/notifications/profile-notification-settings/${targetProfileId}`,
       );
       if (!response.ok) {
         throw new Error("Failed to fetch profile notification settings");
@@ -55,13 +55,16 @@ export function useProfileNotificationSettings(targetProfileId: string) {
 
   const mutation = useMutation({
     mutationFn: async (settings: ProfileNotificationSettingsProps) => {
-      const response = await fetch("/api/profile-notification-settings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "/api/notifications/profile-notification-settings",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(settings),
         },
-        body: JSON.stringify(settings),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to save profile notification settings");

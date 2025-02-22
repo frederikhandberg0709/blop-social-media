@@ -11,6 +11,9 @@ import { Tooltip } from "../Tooltip";
 import { useSession } from "next-auth/react";
 import ProfilePicture from "../ProfilePicture";
 import ButtonLink from "../buttons/ButtonLink";
+import { useNotificationCount } from "@/hooks/api/notifications/useNotificationCount";
+import { initSocket } from "@/lib/socket";
+import { useQueryClient } from "@tanstack/react-query";
 
 const MainNavBar: React.FC = () => {
   const [isNavSideMenuVisible, setIsNavSideMenuVisible] = useState(false);
@@ -31,6 +34,21 @@ const MainNavBar: React.FC = () => {
   const profileMenuButtonRef = useRef<HTMLButtonElement>(null);
 
   const { data: session, status } = useSession();
+
+  const { data: unreadCount = 0 } = useNotificationCount();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const socket = initSocket();
+
+    socket.on("notification", () => {
+      queryClient.invalidateQueries({ queryKey: ["notificationCount"] });
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [queryClient]);
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);
@@ -174,7 +192,7 @@ const MainNavBar: React.FC = () => {
           >
             <Link
               href="/home"
-              className="text-[30px] font-bold text-primaryGray transition duration-150 ease-in-out hover:text-black active:text-primaryBlue dark:text-primaryGray dark:hover:text-white dark:active:text-primaryBlue"
+              className="text-primaryGray active:text-primaryBlue dark:text-primaryGray dark:active:text-primaryBlue text-[30px] font-bold transition duration-150 ease-in-out hover:text-black dark:hover:text-white"
             >
               BLOP!
             </Link>
@@ -186,7 +204,7 @@ const MainNavBar: React.FC = () => {
             >
               <button
                 onClick={toggleNavSideMenu}
-                className="h-[45px] w-[45px] rounded-full fill-primaryGray p-[5px] transition duration-150 ease-in-out hover:bg-lightHover hover:fill-black active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:hover:fill-white dark:active:bg-darkActive dark:active:fill-primaryBlue"
+                className="fill-primaryGray hover:bg-lightHover active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:active:bg-darkActive dark:active:fill-primaryBlue h-[45px] w-[45px] rounded-full p-[5px] transition duration-150 ease-in-out hover:fill-black dark:hover:fill-white"
               >
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M4 18h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zm0-5h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zM3 7c0 .55.45 1 1 1h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1z" />
@@ -203,7 +221,7 @@ const MainNavBar: React.FC = () => {
             tabIndex={-1}
             className={`relative cursor-text rounded-full border-2 outline-none transition-all duration-300 ease-in-out min-[830px]:h-[45px] min-[830px]:w-[300px] ${
               isSearchFocused
-                ? "border-blue-500 bg-white bg-opacity-10 stroke-black dark:stroke-white min-[830px]:w-[700px]"
+                ? "border-blue-500 bg-white bg-opacity-10 stroke-black min-[830px]:w-[700px] dark:stroke-white"
                 : "bg-white stroke-gray-500 hover:border-gray-800 hover:bg-opacity-10 hover:stroke-black dark:border-gray-900 dark:bg-opacity-[5%] dark:hover:stroke-white"
             }`}
           >
@@ -248,7 +266,7 @@ const MainNavBar: React.FC = () => {
               {/* Create Post */}
               <Tooltip text={"Create Post"} position="bottom" offset="60">
                 <Link href={"/create-post"} className="rounded-full">
-                  <div className="flex size-10 items-center justify-center rounded-full fill-primaryGray p-[7px] transition duration-150 ease-in-out hover:bg-lightHover hover:fill-black active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:hover:fill-white dark:active:bg-darkActive dark:active:fill-primaryBlue">
+                  <div className="fill-primaryGray hover:bg-lightHover active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:active:bg-darkActive dark:active:fill-primaryBlue flex size-10 items-center justify-center rounded-full p-[7px] transition duration-150 ease-in-out hover:fill-black dark:hover:fill-white">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -272,8 +290,13 @@ const MainNavBar: React.FC = () => {
                 <button
                   onClick={toggleNotificationPanel}
                   ref={notificationButtonRef}
-                  className="size-10 rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black active:fill-primaryBlue dark:fill-white/50 dark:hover:bg-white/10 dark:hover:fill-white dark:active:fill-primaryBlue"
+                  className="active:fill-primaryBlue dark:active:fill-primaryBlue relative size-10 rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black dark:fill-white/50 dark:hover:bg-white/10 dark:hover:fill-white"
                 >
+                  {unreadCount > 0 && (
+                    <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </div>
+                  )}
                   <svg
                     viewBox="0 0 36 36"
                     xmlns="http://www.w3.org/2000/svg"
@@ -304,7 +327,7 @@ const MainNavBar: React.FC = () => {
       </nav>
       {isNavSideMenuVisible && (
         <div
-          className={`fixed left-[20px] top-[90px] z-50 flex w-[250px] flex-col rounded-2xl border-2 border-lightBorder bg-white p-[10px] transition duration-150 ease-in-out hover:border-lightBorderHover dark:border-darkBorder dark:bg-black dark:hover:border-darkBorderHover ${
+          className={`border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover fixed left-[20px] top-[90px] z-50 flex w-[250px] flex-col rounded-2xl border-2 bg-white p-[10px] transition duration-150 ease-in-out dark:bg-black ${
             isNavSideMenuAnimating ? "navsidemenu-open" : "navsidemenu"
           }`}
         >
@@ -327,7 +350,7 @@ const MainNavBar: React.FC = () => {
       {isNotificationPanelVisible && (
         <div
           ref={notificationPanelRef}
-          className={`fixed right-[20px] top-[90px] z-50 w-[350px] rounded-[10px] border-2 border-lightBorder bg-black p-[10px] transition duration-150 ease-in-out hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover ${
+          className={`border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover fixed right-[20px] top-[90px] z-50 w-[350px] rounded-[10px] border-2 bg-black p-[10px] transition duration-150 ease-in-out ${
             isNotificationPanelAnimating
               ? "notification-panel-open"
               : "notification-panel"
@@ -339,7 +362,7 @@ const MainNavBar: React.FC = () => {
       {isProfileMenuVisible && (
         <div
           ref={profileMenuRef}
-          className={`fixed right-[20px] top-[90px] z-50 w-[280px] rounded-2xl border-2 border-lightBorder bg-white p-[10px] transition duration-150 ease-in-out hover:border-lightBorderHover dark:border-darkBorder dark:bg-black dark:hover:border-darkBorderHover ${
+          className={`border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover fixed right-[20px] top-[90px] z-50 w-[280px] rounded-2xl border-2 bg-white p-[10px] transition duration-150 ease-in-out dark:bg-black ${
             isProfileMenuAnimating ? "profile-menu-open" : "profile-menu"
           }`}
         >

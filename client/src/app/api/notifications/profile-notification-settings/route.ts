@@ -1,8 +1,8 @@
 import { prisma } from "@/db/prisma";
 import { ProfileNotificationSettingsProps } from "@/types/NotificationProps";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 // export async function GET(req: NextRequest) {
 //   const session = await getServerSession(authOptions);
