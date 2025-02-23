@@ -14,6 +14,15 @@ export async function GET(request: Request) {
       where: {
         userId: userId,
       },
+      include: {
+        fromUser: {
+          select: {
+            username: true,
+            profileName: true,
+            profilePicture: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: "desc",
       },

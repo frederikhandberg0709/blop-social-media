@@ -1,5 +1,8 @@
 import { prisma } from "@/db/prisma";
-import { ProfileNotificationSettingsProps } from "@/types/NotificationProps";
+import {
+  NotificationSettingType,
+  ProfileNotificationSettingsProps,
+} from "@/types/components/notification";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
@@ -35,7 +38,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (body.mainOption === "disable") {
+    if (body.mainOption === NotificationSettingType.DISABLE) {
       await prisma.profileNotificationSettings.deleteMany({
         where: {
           userId: session.user.id,
@@ -82,7 +85,11 @@ export async function POST(req: NextRequest) {
 function isValidNotificationSettings(
   settings: any,
 ): settings is ProfileNotificationSettingsProps {
-  const validMainOptions = ["all", "specific", "disable"];
+  const validMainOptions = [
+    NotificationSettingType.ALL,
+    NotificationSettingType.SPECIFIC,
+    NotificationSettingType.DISABLE,
+  ];
 
   return (
     typeof settings === "object" &&

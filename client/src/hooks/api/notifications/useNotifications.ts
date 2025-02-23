@@ -12,7 +12,10 @@ export const useNotifications = () => {
       const response = await fetch(
         `/api/notifications?userId=${session.user.id}`,
       );
-      return response.json();
+      const notifications = await response.json();
+
+      return notifications;
+      //   return response.json();
     },
     enabled: !!session?.user?.id,
   });

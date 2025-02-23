@@ -1,4 +1,7 @@
-import { ProfileNotificationSettingsProps } from "@/types/NotificationProps";
+import {
+  NotificationSettingType,
+  ProfileNotificationSettingsProps,
+} from "@/types/components/notification";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -8,7 +11,7 @@ export function useProfileNotificationSettings(targetProfileId: string) {
 
   const [localSettings, setLocalSettings] =
     useState<ProfileNotificationSettingsProps>({
-      mainOption: "disable",
+      mainOption: NotificationSettingType.DISABLE,
       newPost: false,
       reply: false,
       share: false,
@@ -29,7 +32,7 @@ export function useProfileNotificationSettings(targetProfileId: string) {
 
       if (data) {
         return {
-          mainOption: data.notificationType.toLowerCase(),
+          mainOption: data.notificationType,
           newPost: data.notifyNewPosts,
           reply: data.notifyReplies,
           share: data.notifyShares,

@@ -5,18 +5,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Check } from "lucide-react";
-
-interface Notification {
-  id: string;
-  content: string;
-  notificationType: "NEW_POST" | "REPLY";
-  isRead: boolean;
-  createdAt: string;
-  metaData: {
-    postId: string;
-    postTitle: string;
-  };
-}
+import {
+  Notification,
+  NotificationTypes,
+} from "@/types/components/notification";
 
 const NotificationPanel = () => {
   const { data: session } = useSession();
@@ -111,12 +103,32 @@ const NotificationPanel = () => {
               !notification.isRead ? "bg-white/5" : ""
             } transition-colors hover:bg-white/10`}
           >
-            <p className="text-white/90">{notification.content}</p>
-            {notification.metaData?.postTitle && (
-              <p className="mt-1 text-sm text-white/50">
-                {notification.metaData.postTitle}
-              </p>
-            )}
+            <div className="flex gap-3">
+              <img
+                src={notification.fromUser.profilePicture}
+                alt=""
+                className="h-[30px] w-[30px] rounded-full"
+              />
+
+              <div className="flex flex-col">
+                <span className="font-bold text-white/90">
+                  {notification.fromUser.profileName ||
+                    notification.fromUser.username}
+                </span>
+
+                <span className="text-sm text-white/70">
+                  {notification.notificationType === NotificationTypes.NEW_POST
+                    ? "New post published"
+                    : "Replied to your post"}
+                </span>
+
+                {notification.metaData?.postTitle && (
+                  <p className="mt-1 text-sm text-white/50">
+                    {notification.metaData.postTitle}
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         ))}
       </div>

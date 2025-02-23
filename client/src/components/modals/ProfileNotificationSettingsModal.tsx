@@ -1,9 +1,8 @@
 import { useProfileNotificationSettings } from "@/hooks/api/notifications/useProfileNotificationSettings";
-import { ProfileNotificationSettingsProps } from "@/types/NotificationProps";
-import { NextApiResponse } from "next";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Author from "../Author";
 import { UserProps } from "@/types/components/user";
+import { NotificationSettingType } from "@/types/components/notification";
 
 const ProfileNotificationSettingsModal = ({
   isOpen,
@@ -47,15 +46,15 @@ const ProfileNotificationSettingsModal = ({
       targetProfileId: userProfileId,
     };
 
-    if (option === "all") {
+    if (option === NotificationSettingType.ALL) {
       newSettings.newPost = true;
       newSettings.reply = true;
       newSettings.share = true;
-    } else if (option === "specific") {
+    } else if (option === NotificationSettingType.SPECIFIC) {
       if (!settings.newPost && !settings.reply && !settings.share) {
         newSettings.newPost = true;
       }
-    } else if (option === "disable") {
+    } else if (option === NotificationSettingType.DISABLE) {
       newSettings.newPost = false;
       newSettings.reply = false;
       newSettings.share = false;
@@ -79,7 +78,7 @@ const ProfileNotificationSettingsModal = ({
     updateLocalSettings({
       ...settings,
       targetProfileId: userProfileId,
-      mainOption: "specific",
+      mainOption: NotificationSettingType.SPECIFIC,
       [option]: newValue,
     });
   };
@@ -114,8 +113,10 @@ const ProfileNotificationSettingsModal = ({
             <label className="flex items-center space-x-3">
               <input
                 type="radio"
-                checked={settings.mainOption === "all"}
-                onChange={() => handleMainOptionChange("all")}
+                checked={settings.mainOption === NotificationSettingType.ALL}
+                onChange={() =>
+                  handleMainOptionChange(NotificationSettingType.ALL)
+                }
                 className="h-4 w-4 text-blue-600"
               />
               <span className="select-none">All notifications</span>
@@ -125,14 +126,18 @@ const ProfileNotificationSettingsModal = ({
               <label className="flex items-center space-x-3">
                 <input
                   type="radio"
-                  checked={settings.mainOption === "specific"}
-                  onChange={() => handleMainOptionChange("specific")}
+                  checked={
+                    settings.mainOption === NotificationSettingType.SPECIFIC
+                  }
+                  onChange={() =>
+                    handleMainOptionChange(NotificationSettingType.SPECIFIC)
+                  }
                   className="h-4 w-4 text-blue-600"
                 />
                 <span className="select-none">Specific notifications</span>
               </label>
 
-              {settings.mainOption === "specific" && (
+              {settings.mainOption === NotificationSettingType.SPECIFIC && (
                 <div className="ml-7 flex flex-col gap-2">
                   <label className="flex items-center space-x-3">
                     <input
@@ -172,8 +177,12 @@ const ProfileNotificationSettingsModal = ({
             <label className="flex items-center space-x-3">
               <input
                 type="radio"
-                checked={settings.mainOption === "disable"}
-                onChange={() => handleMainOptionChange("disable")}
+                checked={
+                  settings.mainOption === NotificationSettingType.DISABLE
+                }
+                onChange={() =>
+                  handleMainOptionChange(NotificationSettingType.DISABLE)
+                }
                 className="h-4 w-4 text-blue-600"
               />
               <span>Disable notifications</span>

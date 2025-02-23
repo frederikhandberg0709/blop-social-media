@@ -39,16 +39,31 @@ const MainNavBar: React.FC = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    if (status !== "authenticated" || !session?.user?.id) return;
+
     const socket = initSocket();
+
+    socket.on("connect", () => {
+      console.log("Socket connected, authenticating with ID:", session.user.id);
+      socket.emit("authenticate", session.user.id);
+    });
 
     socket.on("notification", () => {
       queryClient.invalidateQueries({ queryKey: ["notificationCount"] });
     });
 
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Socket disconnected");
+    });
+
     return () => {
       socket.disconnect();
     };
-  }, [queryClient]);
+  }, [session?.user?.id, status, queryClient]);
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);
