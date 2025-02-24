@@ -82,7 +82,7 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
     );
 
     const content = (
-      <span className="flex items-center justify-center gap-2">
+      <span className="flex items-center justify-center gap-2 text-center">
         {isLoading && <LoaderCircle className="h-4 w-4 animate-spin" />}
         {!isLoading && leftIcon}
         {children}

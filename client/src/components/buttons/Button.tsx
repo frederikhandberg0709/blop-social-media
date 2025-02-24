@@ -74,7 +74,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
       >
-        <span className="flex items-center justify-center gap-2">
+        <span className="flex items-center justify-center gap-2 text-center">
           {isLoading && <LoaderCircle className="h-4 w-4 animate-spin" />}
           {!isLoading && leftIcon}
           {children}

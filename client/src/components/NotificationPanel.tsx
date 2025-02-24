@@ -9,11 +9,32 @@ import {
   Notification,
   NotificationTypes,
 } from "@/types/components/notification";
+import { initSocket } from "@/lib/socket";
+import { useEffect } from "react";
 
 const NotificationPanel = () => {
   const { data: session } = useSession();
   const { data: notifications = [] } = useNotifications();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    const socket = initSocket();
+
+    socket.on("connect", () => {
+      socket.emit("authenticate", session.user.id);
+    });
+
+    socket.on("notification", (data) => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["notificationCount"] });
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [session?.user?.id, queryClient]);
 
   const markAsRead = async (notificationId: string) => {
     try {
