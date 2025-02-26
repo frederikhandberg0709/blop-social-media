@@ -1,6 +1,11 @@
 ## BLOP
 
 BLOP is a social network I created as a portfolio project, designed to closely mirror the functionality of modern social media platforms. My goal was to make it as realistic and feature-rich as possible, providing users with an experience they would expect from today’s social networks.
+## Project Structure
+
+The project is structured as follows:
+- `/client`: NextJS application.
+- `/server`: Express server with Socket.IO for real-time notifications.
 
 ## Project Features
 
@@ -30,15 +35,17 @@ BLOP is a social network I created as a portfolio project, designed to closely m
 - **Edit posts, comments, and replies**, with a revision history to track changes.
 - **Delete posts, comments, and replies** to remove unwanted content.
 
-### Moderation Tools
+### Notification System
 
-- **Mute users** to hide their content.
-- **Block users** to prevent interaction.
-- **Filter content** by blocking specific words, hiding any content containing them.
+- **Real-time notifications** implemented using Socket.IO.
+- Currently sends notifications when users publish new posts to users who have subscribed to receiving notifications from that specific user.
+- Live updates delivered instantly to the user interface.
+- Subscription-based notification model allowing users to control which updates they receive.
 
 ## Future Development
 
 - **Search functionality:** Implement robust search capabilities allowing users to find posts by keywords, hashtags, and usernames.
+
 - **Filter functionality for timeline:** Enhance the user experience with multiple filtering options:
 
   - **Recent**: Chronological display of posts with newest content first.
@@ -46,7 +53,20 @@ BLOP is a social network I created as a portfolio project, designed to closely m
   - **Trending**: Show popular content gaining significant engagement across the platform within customizable timeframes (hourly, daily, weekly).
 
 - **Allow Quoting Comments:** Currently, only posts can be quoted. Expanding this functionality to comments and replies would enhance engagement by allowing users to reference and build upon specific discussions.
-- **Notification system:** A real-time notification system should be implemented. Users should be able to subscribe to receiving certain types of notifications, such as when a profile publishes a new post. Socket.IO could possibly be used to implement this functionality.
+
+- **Expanded notification types:** Enhance the notification system to include additional notification types:
+
+  - Likes on posts and comments
+  - New comments and replies
+  - Mentions in posts and comments
+
+- **Direct media uploads:** Currently, the platform only supports rendering media through pasted links. Future development should include direct upload capabilities for images and videos.
+
+- **Moderation tools:** Implement user-focused moderation capabilities:
+
+  - Mute users to hide their content.
+  - Block users to prevent interaction.
+  - Filter content by blocking specific words, hiding any content containing them.
 
 ## Lessons Learned
 
@@ -79,10 +99,16 @@ Option 2: Download ZIP
 
 **Step 2: Install Dependencies**
 
+Install dependencies for both client and server:
+
 ```bash
+# Install client dependencies
+cd client
 npm install
-# or
-yarn install
+
+# Install client dependencies
+cd server
+npm install
 ```
 
 **Step 3: Set up Environment Variables**
@@ -105,9 +131,10 @@ Note: If you're using cloud providers like AWS, you'll need to use the credentia
 
 **Step 4: Initialize Database**
 
-Run the following command in a terminal:
+Run the following command in a terminal from the client directory:
 
-```zsh
+```bash
+cd client
 npx prisma migrate dev --name init
 ```
 
@@ -115,8 +142,16 @@ This command creates and applies a database migration based on the Prisma schema
 
 **Step 5: Run Development Server**
 
-Run the following command in a terminal:
+Start both the client and server:
 
-```zsh
+```bash
+# Terminal 1 - Start the server
+cd server
+npm run dev
+
+# Terminal 2 - Start the client
+cd client
 npm run dev
 ```
+
+The client will be available at http://localhost:3000 and the server at http://localhost:4000.
