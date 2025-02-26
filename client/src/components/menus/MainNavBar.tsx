@@ -14,6 +14,7 @@ import ButtonLink from "../buttons/ButtonLink";
 import { useNotificationCount } from "@/hooks/api/notifications/useNotificationCount";
 import { initSocket } from "@/lib/socket";
 import { useQueryClient } from "@tanstack/react-query";
+import { Search } from "lucide-react";
 
 const MainNavBar: React.FC = () => {
   const [isNavSideMenuVisible, setIsNavSideMenuVisible] = useState(false);
@@ -25,9 +26,7 @@ const MainNavBar: React.FC = () => {
   const [isProfileMenuVisible, setIsProfileMenuVisible] = useState(false);
   const [isProfileMenuAnimating, setIsProfileMenuAnimating] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
-  // const searchInputRef = useRef<HTMLInputElement>(null);
   const notificationPanelRef = useRef<HTMLDivElement>(null);
   const notificationButtonRef = useRef<HTMLButtonElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
@@ -146,7 +145,6 @@ const MainNavBar: React.FC = () => {
   };
 
   const handleSearchFocusInput = () => {
-    // searchInputRef.current?.focus();
     searchContainerRef.current?.querySelector("input")?.focus();
   };
 
@@ -162,8 +160,6 @@ const MainNavBar: React.FC = () => {
       setIsSearchFocused(false);
     }
   };
-
-  const toggleIsSearching = () => {};
 
   const toggleNotificationPanel = () => {
     if (isNotificationPanelVisible) {
@@ -198,7 +194,7 @@ const MainNavBar: React.FC = () => {
   return (
     <>
       <nav className="fixed left-0 right-0 top-0 z-[99] flex w-full items-center justify-center bg-white px-[50px] dark:bg-black">
-        <div className="flex w-full items-center justify-between py-[10px]">
+        <div className="flex w-full items-center justify-between py-2.5">
           {/* Branding & menu button */}
           <div
             className={`flex items-center gap-[30px] ${
@@ -207,7 +203,7 @@ const MainNavBar: React.FC = () => {
           >
             <Link
               href="/home"
-              className="text-primaryGray active:text-primaryBlue dark:text-primaryGray dark:active:text-primaryBlue text-[30px] font-bold transition duration-150 ease-in-out hover:text-black dark:hover:text-white"
+              className="text-primaryGray active:text-primaryBlue dark:text-primaryGray dark:active:text-primaryBlue text-3xl font-bold transition duration-150 ease-in-out hover:text-black max-[831px]:text-white dark:hover:text-white dark:max-[831px]:text-white"
             >
               BLOP!
             </Link>
@@ -219,7 +215,7 @@ const MainNavBar: React.FC = () => {
             >
               <button
                 onClick={toggleNavSideMenu}
-                className="fill-primaryGray hover:bg-lightHover active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:active:bg-darkActive dark:active:fill-primaryBlue h-[45px] w-[45px] rounded-full p-[5px] transition duration-150 ease-in-out hover:fill-black dark:hover:fill-white"
+                className="fill-primaryGray hover:bg-lightHover active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:active:bg-darkActive dark:active:fill-primaryBlue h-[45px] w-[45px] rounded-full p-[5px] transition duration-150 ease-in-out hover:fill-black max-[831px]:fill-white dark:hover:fill-white"
               >
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M4 18h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zm0-5h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zM3 7c0 .55.45 1 1 1h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1z" />
@@ -227,117 +223,108 @@ const MainNavBar: React.FC = () => {
               </button>
             </Tooltip>
           </div>
-          {/* Search */}
+          {/* Search (Functionality not implemented) */}
           <div
             onClick={handleSearchFocusInput}
             ref={searchContainerRef}
             onFocus={handleSearchFocus}
             onBlur={handleSearchBlur}
             tabIndex={-1}
-            className={`relative cursor-text rounded-full border-2 outline-none transition-all duration-300 ease-in-out min-[830px]:h-[45px] min-[830px]:w-[300px] ${
+            className={`relative h-[45px] w-[300px] cursor-text rounded-full border-2 outline-none transition-all duration-300 ease-in-out max-[830px]:hidden ${
               isSearchFocused
-                ? "border-blue-500 bg-white bg-opacity-10 stroke-black min-[830px]:w-[700px] dark:stroke-white"
-                : "bg-white stroke-gray-500 hover:border-gray-800 hover:bg-opacity-10 hover:stroke-black dark:border-gray-900 dark:bg-opacity-[5%] dark:hover:stroke-white"
+                ? "border-blue-500 bg-white bg-opacity-10 text-black min-[830px]:w-[700px] dark:text-white"
+                : "bg-white text-gray-500 hover:border-gray-800 hover:bg-opacity-10 hover:text-black dark:border-gray-900 dark:bg-opacity-[5%] dark:hover:text-white"
             }`}
           >
             <div className="absolute flex h-full w-full items-center gap-[10px] pl-[15px]">
-              <svg
-                width="25"
-                height="25"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                className="stroke-2"
-              >
-                <path
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m21 21l-4.343-4.343m0 0A8 8 0 1 0 5.343 5.343a8 8 0 0 0 11.314 11.314Z"
-                />
-              </svg>
+              <Search className="size-6 stroke-2" />
               <input
-                // ref={searchInputRef}
-                // onFocus={handleSearchFocus}
-                // onBlur={handleSearchBlur}
                 type="text"
                 placeholder="Search..."
                 className="h-full w-full bg-transparent placeholder-gray-500 outline-none"
               />
             </div>
           </div>
-          {!isLoggedIn && (
-            <div className="flex items-center gap-[30px]">
-              <ButtonLink href={"/login"} variant="primary_outline">
-                Login
-              </ButtonLink>
-              <ButtonLink href={"/create-account"} className="min-h-[46px]">
-                Create Account
-              </ButtonLink>
+
+          <div className="flex items-center gap-7">
+            <div className="hover:bg-lightHover active:bg-lightActive active:text-primaryBlue dark:hover:bg-darkHover dark:active:bg-darkActive dark:active:fill-primaryBlue rounded-full p-[7px] transition duration-150 ease-in-out min-[831px]:hidden">
+              <Search className="size-6 stroke-2" />
             </div>
-          )}
-          {isLoggedIn && (
-            /* Create Post, Notifications, DMs, & Profile menu */
-            <div className="flex w-[200px] items-center justify-end gap-5">
-              {/* Create Post */}
-              <Tooltip text={"Create Post"} position="bottom" offset="60">
-                <Link href={"/create-post"} className="rounded-full">
-                  <div className="fill-primaryGray hover:bg-lightHover active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:active:bg-darkActive dark:active:fill-primaryBlue flex size-10 items-center justify-center rounded-full p-[7px] transition duration-150 ease-in-out hover:fill-black dark:hover:fill-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      className="size-[35px]"
-                    >
-                      <path d="M12 4a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5a1 1 0 0 1 1-1z" />
-                    </svg>
-                  </div>
-                </Link>
-              </Tooltip>
-              {/* Notification button */}
-              <Tooltip
-                text={
-                  isNotificationPanelVisible
-                    ? "Close Notifications"
-                    : "Notifications"
-                }
-                position="bottom"
-                offset="60"
-              >
-                <button
-                  onClick={toggleNotificationPanel}
-                  ref={notificationButtonRef}
-                  className="active:fill-primaryBlue dark:active:fill-primaryBlue relative size-10 rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black dark:fill-white/50 dark:hover:bg-white/10 dark:hover:fill-white"
-                >
-                  {unreadCount > 0 && (
-                    <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
-                      {unreadCount > 9 ? "9+" : unreadCount}
+
+            {!isLoggedIn && (
+              <div className="flex items-center gap-7">
+                <ButtonLink href={"/login"} variant="primary_outline">
+                  Login
+                </ButtonLink>
+                <ButtonLink href={"/create-account"} className="min-h-[46px]">
+                  Create Account
+                </ButtonLink>
+              </div>
+            )}
+            {isLoggedIn && (
+              /* Create Post, Notifications, DMs, & Profile menu */
+              <div className="flex items-center justify-end gap-5 min-[831px]:w-[200px]">
+                {/* Create Post */}
+                <Tooltip text={"Create Post"} position="bottom" offset="60">
+                  <Link href={"/create-post"} className="rounded-full">
+                    <div className="fill-primaryGray hover:bg-lightHover active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:active:bg-darkActive dark:active:fill-primaryBlue flex size-10 items-center justify-center rounded-full p-[7px] transition duration-150 ease-in-out hover:fill-black max-[831px]:fill-white dark:hover:fill-white">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        className="size-[35px]"
+                      >
+                        <path d="M12 4a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2h-6v6a1 1 0 1 1-2 0v-6H5a1 1 0 1 1 0-2h6V5a1 1 0 0 1 1-1z" />
+                      </svg>
                     </div>
-                  )}
-                  <svg
-                    viewBox="0 0 36 36"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="m-auto size-6"
+                  </Link>
+                </Tooltip>
+                {/* Notification button */}
+                <Tooltip
+                  text={
+                    isNotificationPanelVisible
+                      ? "Close Notifications"
+                      : "Notifications"
+                  }
+                  position="bottom"
+                  offset="60"
+                >
+                  <button
+                    onClick={toggleNotificationPanel}
+                    ref={notificationButtonRef}
+                    className="active:fill-primaryBlue dark:active:fill-primaryBlue dark:fill-primaryGray relative size-10 rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black max-[831px]:fill-white dark:hover:bg-white/10 dark:hover:fill-white max-[831px]:dark:fill-white"
                   >
-                    <path
-                      d="m32.85 28.13l-.34-.3A14.37 14.37 0 0 1 30 24.9a12.63 12.63 0 0 1-1.35-4.81v-4.94A10.81 10.81 0 0 0 19.21 4.4V3.11a1.33 1.33 0 1 0-2.67 0v1.31a10.81 10.81 0 0 0-9.33 10.73v4.94a12.63 12.63 0 0 1-1.35 4.81a14.4 14.4 0 0 1-2.47 2.93l-.34.3v2.82h29.8Z"
-                      className="clr-i-solid clr-i-solid-path-1"
-                    />
-                    <path
-                      d="M15.32 32a2.65 2.65 0 0 0 5.25 0Z"
-                      className="clr-i-solid clr-i-solid-path-2"
-                    />
-                    <path fill="none" d="M0 0h36v36H0z" />
-                  </svg>
+                    {unreadCount > 0 && (
+                      <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </div>
+                    )}
+                    <svg
+                      viewBox="0 0 36 36"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="m-auto size-6"
+                    >
+                      <path
+                        d="m32.85 28.13l-.34-.3A14.37 14.37 0 0 1 30 24.9a12.63 12.63 0 0 1-1.35-4.81v-4.94A10.81 10.81 0 0 0 19.21 4.4V3.11a1.33 1.33 0 1 0-2.67 0v1.31a10.81 10.81 0 0 0-9.33 10.73v4.94a12.63 12.63 0 0 1-1.35 4.81a14.4 14.4 0 0 1-2.47 2.93l-.34.3v2.82h29.8Z"
+                        className="clr-i-solid clr-i-solid-path-1"
+                      />
+                      <path
+                        d="M15.32 32a2.65 2.65 0 0 0 5.25 0Z"
+                        className="clr-i-solid clr-i-solid-path-2"
+                      />
+                      <path fill="none" d="M0 0h36v36H0z" />
+                    </svg>
+                  </button>
+                </Tooltip>
+                {/* Profile menu button */}
+                <button onClick={toggleProfileMenu} ref={profileMenuButtonRef}>
+                  <ProfilePicture
+                    src={session?.user.profilePicture}
+                    alt={`${session?.user.profileName}'s profile picture`}
+                  />
                 </button>
-              </Tooltip>
-              {/* Profile menu button */}
-              <button onClick={toggleProfileMenu} ref={profileMenuButtonRef}>
-                <ProfilePicture
-                  src={session?.user.profilePicture}
-                  alt={`${session?.user.profileName}'s profile picture`}
-                />
-              </button>
-            </div>
-          )}
+              </div>
+            )}
+          </div>
         </div>
       </nav>
       {isNavSideMenuVisible && (
