@@ -4,17 +4,19 @@ import { useNotifications } from "@/hooks/api/notifications/useNotifications";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import {
   Notification,
   NotificationTypes,
 } from "@/types/components/notification";
 import { initSocket } from "@/lib/socket";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ProfilePicture from "./ProfilePicture";
 
 const NotificationPanel = () => {
   const { data: session } = useSession();
-  const { data: notifications = [] } = useNotifications();
+  const { data: notifications = [], isPending: isNotificationsPending } =
+    useNotifications();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -98,37 +100,35 @@ const NotificationPanel = () => {
               <Check />
             </button>
           )} */}
-
-          <Link
-            href={"#"}
-            className="rounded-full fill-white/50 p-[7px] transition duration-150 ease-in-out hover:bg-white/10 hover:fill-white active:fill-blue-500"
-          >
-            <svg
-              width="25"
-              height="25"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M19.5 12c0-.23-.01-.45-.03-.68l1.86-1.41c.4-.3.51-.86.26-1.3l-1.87-3.23a.987.987 0 0 0-1.25-.42l-2.15.91c-.37-.26-.76-.49-1.17-.68l-.29-2.31c-.06-.5-.49-.88-.99-.88h-3.73c-.51 0-.94.38-1 .88l-.29 2.31c-.41.19-.8.42-1.17.68l-2.15-.91c-.46-.2-1-.02-1.25.42L2.41 8.62c-.25.44-.14.99.26 1.3l1.86 1.41a7.343 7.343 0 0 0 0 1.35l-1.86 1.41c-.4.3-.51.86-.26 1.3l1.87 3.23c.25.44.79.62 1.25.42l2.15-.91c.37.26.76.49 1.17.68l.29 2.31c.06.5.49.88.99.88h3.73c.5 0 .93-.38.99-.88l.29-2.31c.41-.19.8-.42 1.17-.68l2.15.91c.46.2 1 .02 1.25-.42l1.87-3.23c.25-.44.14-.99-.26-1.3l-1.86-1.41c.03-.23.04-.45.04-.68zm-7.46 3.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5s3.5 1.57 3.5 3.5s-1.57 3.5-3.5 3.5z" />
-            </svg>
-          </Link>
         </div>
       </div>
 
       <div className="mt-4 flex flex-col space-y-2">
+        {isNotificationsPending && (
+          <div className="flex items-center justify-center gap-2">
+            <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full font-bold">
+              <Loader2 className="animate-spin" />
+            </div>
+            <p className="text-sm">Loading notifications...</p>
+          </div>
+        )}
+
         {notifications.map((notification: Notification) => (
           <div
             key={notification.id}
             onClick={() => !notification.isRead && markAsRead(notification.id)}
             className={`px-[20px] py-3 ${
               !notification.isRead ? "bg-white/5" : ""
-            } transition-colors hover:bg-white/10`}
+            } rounded-md transition-colors hover:bg-white/10 active:bg-white/20`}
           >
             <div className="flex gap-3">
-              <img
+              <ProfilePicture
                 src={notification.fromUser.profilePicture}
-                alt=""
-                className="h-[30px] w-[30px] rounded-full"
+                alt={
+                  notification.fromUser.profileName ||
+                  notification.fromUser.username
+                }
+                size={30}
               />
 
               <div className="flex flex-col">

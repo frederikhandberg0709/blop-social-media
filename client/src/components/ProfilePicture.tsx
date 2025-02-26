@@ -18,14 +18,18 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
   className = "",
 }) => {
   return (
-    <Image
-      src={src || DEFAULT_PROFILE_PICTURE}
-      alt={alt}
-      width={size}
-      height={size}
-      className={`rounded-full object-cover ${className}`}
-      unoptimized
-    />
+    <div
+      className={`relative overflow-hidden rounded-full ${className}`}
+      style={{ width: `${size}px`, height: `${size}px` }}
+    >
+      <Image
+        src={src || DEFAULT_PROFILE_PICTURE}
+        alt={alt}
+        fill
+        className="object-cover"
+        unoptimized
+      />
+    </div>
   );
 };
 
