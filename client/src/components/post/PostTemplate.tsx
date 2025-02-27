@@ -220,11 +220,11 @@ const PostTemplate: React.FC<Post> = (props) => {
   };
 
   return (
-    <div className="w-[90%] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-2xl sm:border sm:p-[15px]">
+    <div className="border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover w-[90%] transition duration-200 sm:w-[800px] sm:rounded-2xl sm:border sm:p-[15px]">
       <div className="flex flex-col gap-[10px]">
         {/* Only show if post is shared */}
         {isShared && sharedPost && (
-          <p className="text-sm text-primaryGray">
+          <p className="text-primaryGray text-sm">
             Shared by{" "}
             <Link
               href={`/profile/${sharedPost.sharedBy.username}`}
@@ -272,7 +272,6 @@ const PostTemplate: React.FC<Post> = (props) => {
           <div className="flex items-center gap-[15px]">
             <div className="text-right text-[15px] text-gray-500">
               {formatDate(!post.updatedAt ? post.createdAt : post.updatedAt)}
-              {/* {formatDate(post.timestamp)} */}
             </div>
             {/* Dropdown menu */}
             <PostDropdownMenu
@@ -315,8 +314,8 @@ const PostTemplate: React.FC<Post> = (props) => {
         <div className="mt-2.5 flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-semibold">Comments</h2>
-            <span className="text-xl font-bold text-primaryGray">·</span>
-            <p className="text-xl text-primaryGray">
+            <span className="text-primaryGray text-xl font-bold">·</span>
+            <p className="text-primaryGray text-xl">
               {commentsData?.comments.length || 0}
             </p>
           </div>
@@ -357,7 +356,7 @@ const PostTemplate: React.FC<Post> = (props) => {
               </Link>
               <Link
                 href={`/send-comment/${post.id}`}
-                className="rounded-full bg-blue-600 px-2 py-1 text-sm font-semibold text-white transition duration-150 ease-in-out hover:bg-hoverBlue"
+                className="hover:bg-hoverBlue rounded-full bg-blue-600 px-2 py-1 text-sm font-semibold text-white transition duration-150 ease-in-out"
               >
                 Send a comment?
               </Link>

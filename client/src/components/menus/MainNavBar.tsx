@@ -4,7 +4,7 @@ import Link from "next/link";
 import NavSideBar from "./NavSideBar";
 import { useEffect, useRef, useState } from "react";
 import NavProfileMenu from "./NavProfileMenu";
-import NotificationPanel from "../NotificationPanel";
+import NotificationPanel from "../notification-panel/NotificationPanel";
 import "./panel-animations.css";
 import NavSearchResults from "./NavSearchResults";
 import { Tooltip } from "../Tooltip";
