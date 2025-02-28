@@ -68,7 +68,7 @@ const NotificationItem = ({
               </span>
 
               <span className="text-sm text-gray-500">
-                {notification.fromUser.username}
+                @{notification.fromUser.username}
               </span>
             </Link>
 

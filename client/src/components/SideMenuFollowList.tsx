@@ -40,14 +40,14 @@ export default function SideMenuFollowList({ id }: SideMenuFollowListProps) {
   return (
     <div>
       <div className="flex items-center gap-4 pb-[10px]">
-        <h1 className="pl-[20px] text-sm font-bold text-primaryGray">
+        <h1 className="text-primaryGray pl-[20px] text-sm font-bold">
           FOLLOWING
         </h1>
-        <p className="text-sm text-primaryGray">{count}</p>
+        <p className="text-primaryGray text-sm">{count}</p>
       </div>
       <div className="flex flex-col gap-[5px]">
         {!following || following.length === 0 ? (
-          <p className="pl-[20px] text-sm text-primaryGray">
+          <p className="text-primaryGray pl-[20px] text-sm">
             Not following anyone yet
           </p>
         ) : (
@@ -55,7 +55,7 @@ export default function SideMenuFollowList({ id }: SideMenuFollowListProps) {
             <Link
               key={user.id}
               href={`/profile/${user.username}`}
-              className={`flex items-center gap-[10px] rounded-xl px-[20px] py-[10px] text-[17px] transition duration-150 ease-in-out hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
+              className={`hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive text-md flex items-center gap-2.5 overflow-hidden whitespace-nowrap rounded-xl px-[20px] py-2.5 transition duration-150 ease-in-out ${
                 (currentPage === `/profile/${user.username}` &&
                   "text-black dark:text-white") ||
                 "text-primaryGray hover:text-black dark:hover:text-white"
@@ -66,7 +66,9 @@ export default function SideMenuFollowList({ id }: SideMenuFollowListProps) {
                 size={30}
                 alt={`${user.profileName}'s profile picture`}
               />
-              {user.profileName || user.username}
+              <span className="overflow-hidden text-ellipsis">
+                {user.profileName || user.username}
+              </span>
             </Link>
           ))
         )}
@@ -74,7 +76,7 @@ export default function SideMenuFollowList({ id }: SideMenuFollowListProps) {
       {count > 10 && (
         <button
           onClick={() => setShowAll(!showAll)}
-          className="mt-4 self-center rounded-lg text-primaryBlue hover:text-hoverBlue hover:underline"
+          className="text-primaryBlue hover:text-hoverBlue mt-4 self-center rounded-lg hover:underline"
         >
           {showAll ? "Show less" : "Show more"}
         </button>

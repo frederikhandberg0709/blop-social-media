@@ -15,7 +15,6 @@ export const useNotifications = () => {
       const notifications = await response.json();
 
       return notifications;
-      //   return response.json();
     },
     enabled: !!session?.user?.id,
   });

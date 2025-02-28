@@ -46,6 +46,54 @@ export async function DELETE(request: NextRequest) {
 
       const userPostIds = userPosts.map((post) => post.id);
 
+      await tx.postShare.deleteMany({
+        where: { postId: { in: userPostIds } },
+      });
+
+      await tx.postShare.deleteMany({
+        where: { userId },
+      });
+
+      await tx.postLike.deleteMany({
+        where: { postId: { in: userPostIds } },
+      });
+
+      await tx.postLike.deleteMany({
+        where: { userId },
+      });
+
+      await tx.commentShare.deleteMany({
+        where: {
+          comment: {
+            postId: { in: userPostIds },
+          },
+        },
+      });
+
+      await tx.commentShare.deleteMany({
+        where: { userId },
+      });
+
+      await tx.commentLike.deleteMany({
+        where: {
+          comment: {
+            postId: { in: userPostIds },
+          },
+        },
+      });
+
+      await tx.commentLike.deleteMany({
+        where: { userId },
+      });
+
+      await tx.comment.deleteMany({
+        where: { postId: { in: userPostIds } },
+      });
+
+      await tx.comment.deleteMany({
+        where: { userId },
+      });
+
       await tx.quotedPost.deleteMany({
         where: {
           OR: [
@@ -55,10 +103,6 @@ export async function DELETE(request: NextRequest) {
         },
       });
 
-      await tx.comment.deleteMany({
-        where: { userId },
-      });
-
       await tx.follow.deleteMany({
         where: {
           OR: [{ followerId: userId }, { followedUserId: userId }],
@@ -66,22 +110,6 @@ export async function DELETE(request: NextRequest) {
       });
 
       await tx.bookmark.deleteMany({
-        where: { userId },
-      });
-
-      await tx.postLike.deleteMany({
-        where: { userId },
-      });
-
-      await tx.commentLike.deleteMany({
-        where: { userId },
-      });
-
-      await tx.postShare.deleteMany({
-        where: { userId },
-      });
-
-      await tx.commentShare.deleteMany({
         where: { userId },
       });
 

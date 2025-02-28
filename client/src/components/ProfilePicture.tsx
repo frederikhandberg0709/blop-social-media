@@ -19,13 +19,14 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({
 }) => {
   return (
     <div
-      className={`relative overflow-hidden rounded-full ${className}`}
+      className={`relative flex-shrink-0 overflow-hidden rounded-full ${className}`}
       style={{ width: `${size}px`, height: `${size}px` }}
     >
       <Image
         src={src || DEFAULT_PROFILE_PICTURE}
         alt={alt}
-        fill
+        width={size}
+        height={size}
         className="object-cover"
         unoptimized
       />
