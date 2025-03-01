@@ -325,10 +325,10 @@ const PostTemplate: React.FC<Post> = (props) => {
                 href={`/profile/${session?.user.username}`}
                 className="group flex items-center gap-[10px]"
               >
-                <img
-                  src={session?.user.profilePicture || ""}
+                <ProfilePicture
+                  src={session?.user.profilePicture}
                   alt={`${session?.user.profileName}'s profile picture`}
-                  className="h-[40px] w-[40px] rounded-full object-cover"
+                  size={40}
                 />
                 <div className="flex flex-col gap-[1px]">
                   {/* If user has profile name */}

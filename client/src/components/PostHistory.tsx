@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { usePostRevisions } from "@/hooks/api/posts/usePostRevisions";
+import { Loader2 } from "lucide-react";
 
 interface PostRevision {
   id: string;
@@ -14,31 +15,24 @@ interface PostHistoryProps {
 }
 
 const PostHistory: React.FC<PostHistoryProps> = ({ postId }) => {
-  const [revisions, setRevisions] = useState<PostRevision[]>([]);
-
-  useEffect(() => {
-    const fetchRevisions = async () => {
-      try {
-        const response = await fetch(`/api/post-revisions?postId=${postId}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch post revisions");
-        }
-        const data = await response.json();
-        setRevisions(data);
-      } catch (error) {
-        console.error("Error fetching post revisions:", error);
-      }
-    };
-
-    fetchRevisions();
-  }, [postId]);
+  const { data: revisions, isPending: isLoadingRevisions } = usePostRevisions({
+    postId,
+  });
 
   return (
     <div>
       <h2 className="mb-[20px] font-bold text-white/50">Post History</h2>
-      {revisions.length > 0 ? (
+
+      {isLoadingRevisions && (
+        <div className="flex items-center justify-center">
+          <Loader2 className="animate-spin" />
+          <p>Loading post revisions...</p>
+        </div>
+      )}
+
+      {!isLoadingRevisions && revisions && revisions.length > 0 ? (
         <ul>
-          {revisions.map((revision) => (
+          {revisions.map((revision: PostRevision) => (
             <li key={revision.id} className="border-b border-gray-200 py-2">
               <h3 className="font-semibold">{revision.title}</h3>
               <p>{revision.content}</p>
