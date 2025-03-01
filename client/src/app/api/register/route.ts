@@ -76,12 +76,15 @@ export async function POST(request: Request) {
         email,
         username,
         password: hashedPassword,
+        profilePicture:
+          "https://raw.githubusercontent.com/frederikhandberg0709/blop-social-media/refs/heads/main/default_profile_picture.png",
       },
       select: {
         id: true,
         email: true,
         username: true,
         createdAt: true,
+        profilePicture: true,
       },
     });
 
