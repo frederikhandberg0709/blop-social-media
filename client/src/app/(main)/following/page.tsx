@@ -34,7 +34,9 @@ const Following: React.FC = () => {
           )}
 
           {followingCountData?.count === 0 && (
-            <p>You are not following anyone.</p>
+            <p className="text-primaryGray text-center">
+              You are not following anyone.
+            </p>
           )}
 
           {timelineData?.posts.map((post) => (

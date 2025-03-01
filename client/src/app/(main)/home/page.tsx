@@ -25,6 +25,10 @@ const Home: React.FC = () => {
             <p className="text-red-500">{timelineError.message}</p>
           )}
 
+          {timelineData?.posts.length === 0 && (
+            <p className="text-primaryGray text-center">No posts found.</p>
+          )}
+
           {timelineData?.posts.map((post) => (
             <PostTemplate key={post.id} {...post} />
           ))}
