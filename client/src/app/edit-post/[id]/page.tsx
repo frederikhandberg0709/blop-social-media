@@ -8,6 +8,7 @@ import PostTemplate from "@/components/post/PostTemplate";
 import { useUpdatePost } from "@/hooks/api/posts/useUpdatePost";
 import { usePost } from "@/hooks/api/posts/usePost";
 import Button from "@/components/buttons/Button";
+import { UserProps } from "@/types/components/user";
 
 const EditPost: React.FC = () => {
   const { id } = useParams();
@@ -210,7 +211,7 @@ const EditPost: React.FC = () => {
               </h1>
               <PostTemplate
                 id={session?.user.id || ""}
-                user={session?.user}
+                user={session?.user as UserProps}
                 createdAt={new Date().toISOString()}
                 updatedAt={new Date().toISOString()}
                 timestamp={new Date().toISOString()}
@@ -218,6 +219,7 @@ const EditPost: React.FC = () => {
                 content={parseTextWithEnhancements(content)}
                 initialLikesCount={0}
                 userLiked={false}
+                type="original"
               />
             </div>
           ) : (
