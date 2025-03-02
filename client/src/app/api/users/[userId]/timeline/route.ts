@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: { userId: string } },
 ) {
   try {
-    const { userId } = params;
+    const { userId } = await params;
     const session = await getServerSession(authOptions);
     const searchParams = request.nextUrl.searchParams;
     const cursor = searchParams.get("cursor");

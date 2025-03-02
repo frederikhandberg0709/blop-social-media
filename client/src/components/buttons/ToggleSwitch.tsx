@@ -24,7 +24,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
           style={{ top: "3px", left: checked ? "27px" : "4px" }}
         />
       </div>
-      <span className="text-md select-none">{label}</span>
+      <span className="select-none text-base">{label}</span>
     </label>
   );
 };

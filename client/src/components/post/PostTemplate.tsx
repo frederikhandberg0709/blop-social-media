@@ -363,7 +363,7 @@ const PostTemplate: React.FC<Post> = (props) => {
             </div>
             <div className="mt-5 flex w-full flex-col gap-5">
               {commentsData?.comments?.length === 0 ? (
-                <p className="text-md text-gray-500">No comments yet...</p>
+                <p className="text-base text-gray-500">No comments yet...</p>
               ) : (
                 commentsData?.comments.map((comment) => (
                   <CommentTemplate

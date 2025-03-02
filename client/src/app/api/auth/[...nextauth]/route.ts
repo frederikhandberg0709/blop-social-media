@@ -150,7 +150,6 @@ export const authOptions: NextAuthOptions = {
           | string
           | undefined;
         session.user.profileBanner = token.profileBanner as string | undefined;
-        session.user.color = token.color as string | undefined;
       }
       return session;
     },

@@ -55,7 +55,7 @@ export default function SideMenuFollowList({ id }: SideMenuFollowListProps) {
             <Link
               key={user.id}
               href={`/profile/${user.username}`}
-              className={`hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive text-md flex items-center gap-2.5 overflow-hidden whitespace-nowrap rounded-xl px-[20px] py-2.5 transition duration-150 ease-in-out ${
+              className={`hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive flex items-center gap-2.5 overflow-hidden whitespace-nowrap rounded-xl px-[20px] py-2.5 text-base transition duration-150 ease-in-out ${
                 (currentPage === `/profile/${user.username}` &&
                   "text-black dark:text-white") ||
                 "text-primaryGray hover:text-black dark:hover:text-white"

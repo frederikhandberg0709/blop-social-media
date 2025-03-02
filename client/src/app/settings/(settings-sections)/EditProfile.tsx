@@ -15,11 +15,6 @@ interface User {
   profileBanner?: string;
 }
 
-const DEFAULT_PROFILE_PICTURE =
-  "https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortFlat&accessoriesType=Sunglasses&hairColor=BrownDark&facialHairType=Blank&clotheType=Hoodie&clotheColor=Black&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light";
-const DEFAULT_PROFILE_BANNER =
-  "https://pbs.twimg.com/profile_banners/994250907826245635/1569352839/1080x360";
-
 const EditProfile: React.FC = () => {
   const { data: session, update } = useSession();
   const [user, setUser] = useState<User | null>(null);
@@ -33,7 +28,6 @@ const EditProfile: React.FC = () => {
   const [profileBanner, setProfileBanner] = useState<string>("");
   const [isProfileBannerChanged, setIsProfileBannerChanged] =
     useState<boolean>(false);
-  const [newProfileBannerUrl, setNewProfileBannerUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
 
   const updateProfileMutation = useUpdateProfile();
@@ -248,7 +242,7 @@ const EditProfile: React.FC = () => {
             </div>
           </div>
           <img
-            src={profileBanner || DEFAULT_PROFILE_BANNER}
+            src={profileBanner}
             alt=""
             className="mt-5 h-[300px] max-w-[1000px] rounded-3xl"
           />
@@ -257,7 +251,7 @@ const EditProfile: React.FC = () => {
           <div className="flex flex-col gap-2">
             <p className="text-xl font-semibold">Profile Information</p>
 
-            <p className="mt-3 text-primaryGray">Profile Name</p>
+            <p className="text-primaryGray mt-3">Profile Name</p>
             <input
               type="text"
               value={profileName}

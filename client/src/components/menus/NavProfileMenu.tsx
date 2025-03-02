@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ProfilePicture from "../ProfilePicture";
+import { useLinkedAccounts } from "@/hooks/api/account/useLinkedAccounts";
+import { useSwitchAccount } from "@/hooks/api/account/useSwitchAccount";
 
 interface NavProfileMenuProps {
   user: UserProps;
@@ -13,68 +15,41 @@ interface NavProfileMenuProps {
 const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
   const { data: session, update } = useSession();
   const router = useRouter();
-  const [linkedAccounts, setLinkedAccounts] = useState<UserProps[]>([]);
   const pathname = usePathname();
   const currentPage = pathname;
   const [view, setView] = useState<"menu" | "switch">("menu");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // TODO: Replace with custom hook
-  useEffect(() => {
-    const fetchLinkedAccounts = async () => {
-      if (session?.user?.id) {
-        try {
-          const response = await fetch(
-            `/api/linked-accounts?userId=${session.user.id}`,
-          );
-          if (response.ok) {
-            const accounts = await response.json();
-            setLinkedAccounts(accounts);
-          } else {
-            console.error("Failed to fetch linked accounts");
-          }
-        } catch (error) {
-          console.error("Error fetching linked accounts:", error);
-        }
-      }
-    };
+  const { linkedAccounts, isPending: isLinkedAccountsPending } =
+    useLinkedAccounts();
 
-    fetchLinkedAccounts();
-  }, [session]);
+  const {
+    mutate: switchAccount,
+    isPending: isSwitchingAccount,
+    error: switchAccountError,
+  } = useSwitchAccount();
 
-  // TODO: Replace with custom hook
-  const switchToAccount = async (accountId: string) => {
+  const handleSwitchToAccount = async (accountId: string) => {
     setIsLoading(true);
     setError(null);
+
     try {
-      const response = await fetch("/api/switch-account", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      switchAccount(accountId, {
+        onSuccess: () => {
+          closeMenu();
+          router.push("/home");
         },
-        body: JSON.stringify({ linkedAccountId: accountId }),
+        onError: (error) => {
+          setError(error.message);
+          setIsLoading(false);
+        },
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to switch account");
-      }
-
-      await update({
-        switchToUserId: accountId,
-      });
-
-      closeMenu();
-      router.push("/home");
-
-      window.location.reload();
     } catch (error) {
       console.error("Error switching account:", error);
       setError(
         error instanceof Error ? error.message : "An unexpected error occurred",
       );
-    } finally {
       setIsLoading(false);
     }
   };
@@ -102,7 +77,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
       <div className="flex gap-5">
         <button
           onClick={() => setView("menu")}
-          className="flex w-full gap-2.5 rounded-xl px-2.5 py-2.5 font-bold text-black/50 transition duration-150 ease-in-out hover:bg-lightHover hover:text-black active:bg-lightActive dark:text-white/50 dark:hover:bg-darkHover dark:hover:text-white dark:active:bg-darkActive"
+          className="hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive flex w-full gap-2.5 rounded-xl px-2.5 py-2.5 font-bold text-black/50 transition duration-150 ease-in-out hover:text-black dark:text-white/50 dark:hover:text-white"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -119,24 +94,26 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
         </button>
       </div>
       {isLoading && <p>Switching account...</p>}
-      {linkedAccounts.length > 0 ? (
+      {isLinkedAccountsPending ? (
+        <p>Loading accounts...</p>
+      ) : linkedAccounts && linkedAccounts.length > 0 ? (
         linkedAccounts.map((account) => (
           <button
             key={account.id}
-            onClick={() => switchToAccount(account.id)}
-            disabled={isLoading}
-            className="flex items-center gap-[12px] rounded-xl p-2.5 transition duration-150 ease-in-out hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive"
+            onClick={() => handleSwitchToAccount(account.id)}
+            disabled={isLoading || isSwitchingAccount}
+            className="hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive flex items-center gap-[12px] rounded-xl p-2.5 transition duration-150 ease-in-out"
           >
             <ProfilePicture
               src={account.profilePicture}
-              alt={account.username}
+              alt={`${account.username}'s profile picture`}
               size={40}
             />
             <div>
-              <p className="text-[15px] font-bold">
+              <p className="text-base font-bold">
                 {account.profileName || account.username}
               </p>
-              <p className="text-[14px] text-gray-500">@{account.username}</p>
+              <p className="text-sm text-gray-500">@{account.username}</p>
             </div>
           </button>
         ))
@@ -145,7 +122,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
       )}
       <Link
         href={"/link-account"}
-        className="text-md rounded-md bg-gradient-to-b from-blue-500 to-blue-900 py-3 text-center font-semibold text-white hover:from-blue-700 hover:to-blue-900"
+        className="rounded-md bg-gradient-to-b from-blue-500 to-blue-900 py-3 text-center text-base font-semibold text-white hover:from-blue-700 hover:to-blue-900"
       >
         Link New Account
       </Link>
@@ -157,7 +134,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
       <Link
         href={`/profile/${user.username}`}
         onClick={closeMenu}
-        className="group flex items-center gap-[12px] rounded-xl p-2.5 transition duration-150 ease-in-out hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive"
+        className="hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive group flex items-center gap-[12px] rounded-xl p-2.5 transition duration-150 ease-in-out"
       >
         <ProfilePicture
           src={user.profilePicture}
@@ -166,7 +143,6 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
         />
         <div className="group">
           <p className="text-[15px] font-bold group-hover:text-blue-500">
-            {/* {user.profileName || user.username} */}
             {displayName()}
           </p>
           <p className="text-[14px] text-gray-500">@{user.username}</p>
@@ -176,10 +152,10 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
       <Link
         href={`/profile/${user.username}`}
         onClick={closeMenu}
-        className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 font-medium transition duration-150 ease-in-out active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
+        className={`active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 font-medium transition duration-150 ease-in-out ${
           (currentPage === `/profile/${session?.user.username}` &&
             "fill-black text-black dark:fill-white dark:text-white") ||
-          "fill-black/50 text-black/50 hover:bg-lightHover hover:fill-black hover:text-black dark:fill-white/50 dark:text-white/50 dark:hover:fill-white dark:hover:text-white"
+          "hover:bg-lightHover fill-black/50 text-black/50 hover:fill-black hover:text-black dark:fill-white/50 dark:text-white/50 dark:hover:fill-white dark:hover:text-white"
         }`}
       >
         <svg
@@ -198,10 +174,10 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
       </Link>
       <Link
         href={"/my-bookmarks"}
-        className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 font-medium transition duration-150 ease-in-out active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
+        className={`active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 font-medium transition duration-150 ease-in-out ${
           (currentPage === "/my-bookmarks" &&
             "fill-black text-black dark:fill-white dark:text-white") ||
-          "fill-primaryGray text-primaryGray hover:bg-lightHover hover:fill-black hover:text-black dark:text-primaryGray dark:hover:fill-white dark:hover:text-white"
+          "fill-primaryGray text-primaryGray hover:bg-lightHover dark:text-primaryGray hover:fill-black hover:text-black dark:hover:fill-white dark:hover:text-white"
         }`}
       >
         <svg
@@ -219,7 +195,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
       </Link>
       <button
         onClick={handleSwitchAccount}
-        className="flex gap-2.5 rounded-xl px-2.5 py-2.5 font-medium text-primaryGray transition duration-150 ease-in-out hover:bg-lightHover hover:text-black active:bg-lightActive dark:hover:bg-darkHover dark:hover:text-white dark:active:bg-darkActive"
+        className="text-primaryGray hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive flex gap-2.5 rounded-xl px-2.5 py-2.5 font-medium transition duration-150 ease-in-out hover:text-black dark:hover:text-white"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -237,10 +213,10 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
       <Link
         href={"/settings"}
         onClick={closeMenu}
-        className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 font-medium transition duration-150 ease-in-out active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive ${
+        className={`active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 font-medium transition duration-150 ease-in-out ${
           (currentPage === "/settings" &&
             "fill-black text-black dark:fill-white dark:text-white") ||
-          "fill-primaryGray text-primaryGray hover:bg-lightHover hover:fill-black hover:text-black dark:text-primaryGray dark:hover:fill-white dark:hover:text-white"
+          "fill-primaryGray text-primaryGray hover:bg-lightHover dark:text-primaryGray hover:fill-black hover:text-black dark:hover:fill-white dark:hover:text-white"
         }`}
       >
         <svg
@@ -255,7 +231,7 @@ const NavProfileMenu: React.FC<NavProfileMenuProps> = ({ user, closeMenu }) => {
       </Link>
       <button
         onClick={logout}
-        className="flex items-center gap-2.5 rounded-xl fill-primaryGray px-2.5 py-2.5 font-medium text-primaryGray transition duration-150 ease-in-out hover:bg-lightHover hover:fill-black hover:text-black active:bg-lightActive dark:hover:bg-darkHover dark:hover:fill-white dark:hover:text-white dark:active:bg-darkActive"
+        className="fill-primaryGray text-primaryGray hover:bg-lightHover active:bg-lightActive dark:hover:bg-darkHover dark:active:bg-darkActive flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 font-medium transition duration-150 ease-in-out hover:fill-black hover:text-black dark:hover:fill-white dark:hover:text-white"
       >
         <svg
           width="25"

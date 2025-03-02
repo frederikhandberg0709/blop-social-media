@@ -109,13 +109,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, currentUserId }) => {
               </div>
             </div>
             {/* Profile name */}
-            <p className="mt-[10px] text-[20px] font-bold">
+            <p className="text-xl font-bold">
               {user.profileName || user.username}
             </p>
             {/* Username */}
-            <p className="text-[15px] opacity-50">@{user.username}</p>
+            <p className="text-base opacity-50">@{user.username}</p>
             {/* Description */}
-            <p className="mt-[10px] text-[15px]">{user.bio}</p>
+            <p className="mt-2.5 whitespace-pre-wrap text-base">{user.bio}</p>
           </div>
           {/* Profile stats */}
           <div className="flex gap-[30px]">

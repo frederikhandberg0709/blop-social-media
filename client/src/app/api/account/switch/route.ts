@@ -49,7 +49,6 @@ export async function POST(req: NextRequest) {
         profileName: true,
         profilePicture: true,
         profileBanner: true,
-        color: true,
       },
     });
 
