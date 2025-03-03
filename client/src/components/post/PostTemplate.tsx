@@ -286,7 +286,6 @@ const PostTemplate: React.FC<Post> = (props) => {
         <div className="flex flex-col gap-1">
           {post.title && <h1 className="text-xl font-bold">{post.title}</h1>}
           {renderContent()}
-          {/* <p className="text-base leading-normal">{parsedContent}</p> */}
         </div>
         <PostActionButtons
           likesCount={likesData?.likesCount ?? post.initialLikesCount}

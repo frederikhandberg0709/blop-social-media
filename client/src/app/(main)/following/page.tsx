@@ -39,9 +39,6 @@ const Following: React.FC = () => {
             </p>
           )}
 
-          {/* {timelineData?.posts.map((post) => (
-            <PostTemplate key={post.id} {...post} />
-          ))} */}
           {timelineData?.posts && timelineData.posts.length > 0
             ? timelineData.posts.map((post) => (
                 <PostTemplate key={post.id} {...post} />

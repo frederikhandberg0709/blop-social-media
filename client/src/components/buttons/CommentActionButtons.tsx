@@ -4,7 +4,9 @@ interface CommentActionButtonsProps {
   likesCount: number;
   commentsCount: number;
   onCommentClick: () => void;
+  shareLabel: string;
   sharesCount: number;
+  onShareClick: () => void;
   liked: boolean;
   onLike: () => void;
   onUnlike: () => void;
@@ -14,7 +16,9 @@ const CommentActionButtons: React.FC<CommentActionButtonsProps> = ({
   likesCount,
   commentsCount,
   onCommentClick,
+  shareLabel,
   sharesCount,
+  onShareClick,
   liked,
   onLike,
   onUnlike,
@@ -58,8 +62,11 @@ const CommentActionButtons: React.FC<CommentActionButtonsProps> = ({
           <span className="select-none text-sm">{commentsCount}</span>
         </button>
       </Tooltip>
-      <Tooltip text={"Share"} position="top" offset="40">
-        <button className="flex w-[90px] cursor-pointer items-center justify-center gap-[5px] rounded-full fill-green-500 py-[3px] transition-colors duration-200 hover:bg-green-500/25 active:bg-green-500/50">
+      <Tooltip text={shareLabel} position="top" offset="40">
+        <button
+          onClick={onShareClick}
+          className="flex w-[90px] cursor-pointer items-center justify-center gap-[5px] rounded-full fill-green-500 py-[3px] transition-colors duration-200 hover:bg-green-500/25 active:bg-green-500/50"
+        >
           {/* Share icon */}
           <svg
             width="20"

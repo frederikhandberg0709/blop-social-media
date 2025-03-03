@@ -4,7 +4,6 @@ import Link from "next/link";
 import { formatDate } from "@/utils/formattedDate";
 import { useEffect, useState } from "react";
 import CommentActionButtons from "./buttons/CommentActionButtons";
-import { useSession } from "next-auth/react";
 import React from "react";
 import CommentDropdownMenu from "./menus/CommentDropdownMenu";
 import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
@@ -14,7 +13,10 @@ import { useDeleteLike } from "@/hooks/api/likes/useDeleteLike";
 import { useCreateLike } from "@/hooks/api/likes/useCreateLike";
 import { useLikeCount } from "@/hooks/api/likes/useLikes";
 import ProfilePicture from "@/components/ProfilePicture";
-import AnimateHeight from "react-animate-height";
+import { useShareStatus } from "@/hooks/api/shares/useShareStatus";
+import { useCreateShare } from "@/hooks/api/shares/useCreateShare";
+import { useDeleteShare } from "@/hooks/api/shares/useDeleteShare";
+import { useShareCount } from "@/hooks/api/shares/useShares";
 
 export default function CommentTemplate({
   id,
@@ -32,9 +34,7 @@ export default function CommentTemplate({
   children = [],
   nestingLevel = 0,
 }: CommentProps & { nestingLevel?: number }) {
-  const { data: session } = useSession();
   const router = useRouter();
-  const [sharesCount, setSharesCount] = useState<number>(0);
   const [showDeepReplies, setShowDeepReplies] = useState<boolean>(false);
 
   const {
@@ -52,6 +52,24 @@ export default function CommentTemplate({
     id: id,
   });
 
+  const { mutate: createShare, isPending: isCreatingShare } = useCreateShare();
+  const { mutate: deleteShare, isPending: isDeletingShare } = useDeleteShare();
+
+  const { data: shareStatus } = useShareStatus({
+    type: "comment",
+    id: id,
+  });
+
+  const { data: shareCount } = useShareCount({ id: id, type: "comment" });
+
+  const handleShareToggle = () => {
+    if (shareStatus?.hasShared) {
+      deleteShare({ id: id, type: "comment" });
+    } else {
+      createShare({ id: id, type: "comment" });
+    }
+  };
+
   const handleReplyClick = () => {
     router.push(`/send-reply/${id}?replyToId=${id}`);
   };
@@ -63,12 +81,9 @@ export default function CommentTemplate({
 
   const visibleReplies = showDeepReplies ? allReplies : allReplies;
 
-  const hasDeepReplies =
-    nestingLevel >= 3 && allReplies.length > 0 && !showDeepReplies;
-
   const indentClass =
     nestingLevel > 0
-      ? "ml-6 border-l-2 border-gray-600 dark:border-gray-700 pl-4"
+      ? "ml-4 border-l-2 border-gray-600 dark:border-gray-700 pl-4"
       : "";
 
   if (!user) {
@@ -77,7 +92,7 @@ export default function CommentTemplate({
 
   return (
     <div
-      className={`flex w-full flex-col gap-1 ${nestingLevel > 0 ? "mt-4" : ""}`}
+      className={`w-fill flex flex-col gap-1 ${nestingLevel > 0 ? `mt-2.5 ${indentClass}` : ""}`}
     >
       <div className="flex items-center justify-between">
         <Link
@@ -130,17 +145,18 @@ export default function CommentTemplate({
       <div className="mt-1">
         <CommentActionButtons
           likesCount={likesData?.likesCount ?? initialLikesCount}
-          // commentsCount={commentsCount}
           commentsCount={allReplies.length}
           onCommentClick={handleReplyClick}
-          sharesCount={sharesCount}
+          shareLabel={shareStatus?.hasShared ? "Unshare" : "Share"}
+          sharesCount={shareCount?.sharesCount ?? 0}
+          onShareClick={handleShareToggle}
           liked={likesData?.userLiked ?? userLiked}
           onLike={() => createLike({ type: "comment", id })}
           onUnlike={() => deleteLike({ type: "comment", id })}
         />
       </div>
       {allReplies.length > 0 && (
-        <div className={`mt-3 ${indentClass}`}>
+        <div className={`mt-2.5 ${indentClass}`}>
           {nestingLevel <= 2 &&
             visibleReplies.map((reply) => (
               <CommentTemplate

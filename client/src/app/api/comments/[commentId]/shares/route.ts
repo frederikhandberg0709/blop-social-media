@@ -3,8 +3,52 @@ import { prisma } from "@/db/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../auth/[...nextauth]/route";
 
-// Share comment
+// Check share status and count
 
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+    const userId = session.user.id;
+
+    const commentId = request.nextUrl.searchParams.get("commentId");
+    if (!commentId) {
+      return NextResponse.json(
+        { error: "Comment ID is required" },
+        { status: 400 },
+      );
+    }
+
+    const [share, shares] = await Promise.all([
+      prisma.commentShare.findFirst({
+        where: {
+          commentId,
+          userId,
+        },
+      }),
+      prisma.commentShare.count({
+        where: {
+          commentId,
+        },
+      }),
+    ]);
+
+    return NextResponse.json({
+      hasShared: !!share,
+      shareId: share?.id || null,
+      sharesCount: shares,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to check share status" },
+      { status: 500 },
+    );
+  }
+}
+
+// Share comment
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
