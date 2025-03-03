@@ -10,7 +10,8 @@ export interface CommentProps {
   content: string | React.ReactNode;
   imageContent?: string;
   videoContent?: string;
-  replies?: CommentProps[];
   initialLikesCount: number;
   userLiked: boolean;
+  replies?: CommentProps[];
+  children?: CommentProps[];
 }

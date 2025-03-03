@@ -60,11 +60,19 @@ const NotificationPanel = () => {
         <div className="flex items-center gap-2"></div>
       </div>
 
-      <NotificationsList
-        notifications={notifications}
-        isLoading={isNotificationsPending}
-        markAsRead={markAsRead}
-      />
+      {notifications.length > 0 ? (
+        <NotificationsList
+          notifications={notifications}
+          isLoading={isNotificationsPending}
+          markAsRead={markAsRead}
+        />
+      ) : (
+        <div className="flex h-[500px] items-center justify-center">
+          <h1 className="text-center text-[15px] font-bold text-white/50">
+            No notifications
+          </h1>
+        </div>
+      )}
     </div>
   );
 };

@@ -13,7 +13,7 @@ export function useComments(postId: string) {
 
       return response.json();
     },
-
+    enabled: !!postId,
     placeholderData: {
       comments: [],
     },

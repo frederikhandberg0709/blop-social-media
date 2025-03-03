@@ -44,7 +44,9 @@ const PostTemplate: React.FC<Post> = (props) => {
     data: commentsData,
     isPending: isPendingComments,
     error: commentsError,
-  } = useComments(post.id);
+  } = useComments(post?.id);
+
+  console.log(commentsData);
 
   const {
     mutate: createLike,
@@ -60,7 +62,7 @@ const PostTemplate: React.FC<Post> = (props) => {
 
   const { data: likesData } = useLikeCount({
     type: "post",
-    id: post.id,
+    id: post?.id,
   });
 
   const {
@@ -77,12 +79,12 @@ const PostTemplate: React.FC<Post> = (props) => {
 
   const { data: shareStatus } = useShareStatus({
     type: "post",
-    id: post.id,
+    id: post?.id,
   });
 
-  const { data: shareCount } = useShareCount({ id: post.id, type: "post" });
+  const { data: shareCount } = useShareCount({ id: post?.id, type: "post" });
 
-  const quotedPostIds = extractQuotedPostIds(post.content);
+  const quotedPostIds = extractQuotedPostIds(post?.content);
   const { posts: quotedPosts, isLoading } = usePosts({
     postIds: quotedPostIds,
     enabled: quotedPostIds.length > 0,
@@ -101,19 +103,19 @@ const PostTemplate: React.FC<Post> = (props) => {
   const handleShareToggle = async () => {
     if (shareStatus?.hasShared) {
       deleteShare({
-        id: post.id,
+        id: post?.id,
         shareId: shareStatus.shareId,
         type: "post",
       });
     } else {
-      createShare({ id: post.id, type: "post" });
+      createShare({ id: post?.id, type: "post" });
     }
   };
 
   const handleQuote = () => {
     setIsShareMenuOpen(false);
 
-    router.push(`/create-post?postId=${props.id}`);
+    router.push(`/create-post?postId=${props?.id}`);
   };
 
   useEffect(() => {
@@ -163,11 +165,11 @@ const PostTemplate: React.FC<Post> = (props) => {
   };
 
   const parsedContent =
-    typeof post.content === "string"
-      ? parseTextWithEnhancements(post.content, handleImageClick)
-      : post.content;
+    typeof post?.content === "string"
+      ? parseTextWithEnhancements(post?.content, handleImageClick)
+      : post?.content;
 
-  if (!post.user) {
+  if (!post?.user) {
     return null;
   }
 
@@ -177,7 +179,7 @@ const PostTemplate: React.FC<Post> = (props) => {
     }
 
     const originalContent =
-      typeof post.content === "string" ? post.content : "";
+      typeof post?.content === "string" ? post?.content : "";
 
     const regex = new RegExp(
       `${window.location.origin}/post/([a-zA-Z0-9-_]+)`,
@@ -378,6 +380,7 @@ const PostTemplate: React.FC<Post> = (props) => {
                     replies={comment.replies || []}
                     initialLikesCount={comment.initialLikesCount}
                     userLiked={comment.userLiked}
+                    children={comment.children || []}
                   />
                 ))
               )}

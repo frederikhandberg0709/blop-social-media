@@ -82,7 +82,7 @@ const CreatePost: React.FC = () => {
     id: session?.user.id || "",
     username: session?.user.username || "",
     profileName: session?.user.profileName || "",
-    profilePicture: session?.user.image || "",
+    profilePicture: session?.user.profilePicture || "",
     profileBanner: "",
     bio: "",
     followersCount: 0,

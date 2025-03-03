@@ -10,7 +10,7 @@ interface PostActionButtonsProps {
   liked: boolean;
   onLike: () => void;
   onUnlike: () => void;
-  shareButtonRef: React.RefObject<HTMLButtonElement | null>;
+  shareButtonRef: React.RefObject<HTMLButtonElement | null> | undefined;
 }
 
 const PostActionButtons: React.FC<PostActionButtonsProps> = ({

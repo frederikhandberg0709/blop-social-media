@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import Button from "@/components/buttons/Button";
+import { UserProps } from "@/types/components/user";
 
 interface SendCommentClientProps {
   postId: string;
@@ -35,7 +36,6 @@ export default function SendCommentClient({
 
   const createComment = useCreateComment();
 
-  const [likesCount, setLikesCount] = useState(post?.initialLikesCount ?? 0);
   const [liked, setLiked] = useState(post?.userLiked ?? false);
   const [commentTitle, setCommentTitle] = useState<string>("");
   const [commentContent, setCommentContent] = useState<string>("");
@@ -204,7 +204,7 @@ export default function SendCommentClient({
               />
             </div>
           </div>
-          <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
+          <div className="border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover flex w-[90%] flex-col gap-[10px] transition duration-200 sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
             {showPost && (
               <>
                 <div className="flex items-center justify-between">
@@ -243,11 +243,14 @@ export default function SendCommentClient({
                   </Link>
                   <div className="flex items-center gap-[15px]">
                     <div className="text-right text-[15px] text-gray-500">
-                      {/* {formatDate(post.timestamp)} */}
                       {timestamp}
                     </div>
                     {/* Dropdown menu */}
-                    <PostDropdownMenu id={post.id} />
+                    <PostDropdownMenu
+                      postId={post.id}
+                      authorId={post.user.id}
+                      authorUsername={post.user.username}
+                    />
                   </div>
                 </div>
                 <div className="flex flex-col gap-1">
@@ -261,6 +264,8 @@ export default function SendCommentClient({
                   commentsCount={post.commentsCount}
                   onCommentClick={() => {}}
                   sharesCount={0}
+                  onShareClick={() => {}}
+                  shareButtonRef={undefined}
                   liked={liked}
                   onLike={() => {}}
                   onUnlike={() => {}}
@@ -269,9 +274,9 @@ export default function SendCommentClient({
             )}
             <CommentTemplate
               id={session?.user.id || ""}
-              user={session?.user}
-              createdAt={formatDate(new Date().toISOString())}
-              updatedAt={formatDate(new Date().toISOString())}
+              user={session?.user as UserProps}
+              createdAt={new Date().toISOString()}
+              updatedAt={new Date().toISOString()}
               timestamp={new Date().toISOString()}
               title={commentTitle}
               content={parseTextWithEnhancements(commentContent, () => {})}

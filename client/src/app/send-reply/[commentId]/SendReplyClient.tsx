@@ -8,9 +8,10 @@ import useAutosizeTextArea from "@/hooks/useAutosizeTextArea";
 import { formatDate } from "@/utils/formattedDate";
 import { parseTextWithEnhancements } from "@/utils/parseTextWithEnhancements";
 import { useSession } from "next-auth/react";
-import { notFound, useRouter } from "next/navigation";
+import { notFound, useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import Button from "@/components/buttons/Button";
+import { UserProps } from "@/types/components/user";
 
 interface SendReplyClientProps {
   commentId: string;
@@ -19,6 +20,10 @@ interface SendReplyClientProps {
 export default function SendReplyClient({ commentId }: SendReplyClientProps) {
   const { data: session } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const replyToId = searchParams.get("replyToId") || commentId;
+
   const [replyTitle, setReplyTitle] = useState<string>("");
   const [replyContent, setReplyContent] = useState<string>("");
   const [characterCount, setCharacterCount] = useState<number>(0);
@@ -32,7 +37,7 @@ export default function SendReplyClient({ commentId }: SendReplyClientProps) {
     data: comment,
     isPending: isCommentPending,
     error: commentError,
-  } = useComment(commentId);
+  } = useComment(replyToId);
   const createComment = useCreateComment();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +62,7 @@ export default function SendReplyClient({ commentId }: SendReplyClientProps) {
     createComment.mutate(
       {
         postId: comment.postId,
-        parentId: comment.id,
+        parentId: replyToId,
         title: replyTitle || undefined,
         content: replyContent,
       },
@@ -142,7 +147,9 @@ export default function SendReplyClient({ commentId }: SendReplyClientProps) {
               </Button>
 
               {/* TODO: Show warning modal before cancelling */}
-              <Button onClick={() => router.back()}>Cancel</Button>
+              <Button variant="danger" onClick={() => router.back()}>
+                Cancel
+              </Button>
             </div>
           </div>
         </div>
@@ -162,7 +169,7 @@ export default function SendReplyClient({ commentId }: SendReplyClientProps) {
               />
             </div>
           </div>
-          <div className="flex w-[90%] flex-col gap-[10px] border-lightBorder transition duration-200 hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
+          <div className="border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover flex w-[90%] flex-col gap-[10px] transition duration-200 sm:w-[800px] sm:rounded-[15px] sm:border sm:p-[15px]">
             {showParentComment && comment && (
               <CommentTemplate
                 id={comment.id}
@@ -178,9 +185,9 @@ export default function SendReplyClient({ commentId }: SendReplyClientProps) {
             )}
             <CommentTemplate
               id={session?.user.id || ""}
-              user={session?.user}
-              createdAt={formatDate(new Date().toISOString())}
-              updatedAt={formatDate(new Date().toISOString())}
+              user={session?.user as UserProps}
+              createdAt={new Date().toISOString()}
+              updatedAt={new Date().toISOString()}
               timestamp={new Date().toISOString()}
               title={replyTitle}
               content={parseTextWithEnhancements(

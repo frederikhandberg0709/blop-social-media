@@ -15,7 +15,6 @@ export const useNotificationCount = () => {
       const data = await response.json();
       return data.count;
     },
-    // Don't fetch if no session
     enabled: !!session?.user?.id,
   });
 };

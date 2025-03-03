@@ -2,6 +2,7 @@ import { prisma } from "@/db/prisma";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../../auth/[...nextauth]/route";
+import { CommentProps } from "@/types/components/comment";
 
 // Get all commments for a post
 
@@ -14,10 +15,9 @@ export async function GET(
   const { postId } = await params;
 
   try {
-    const comments = await prisma.comment.findMany({
+    const allComments = await prisma.comment.findMany({
       where: {
         postId,
-        parentId: null, // Only get top-level comments just for now
       },
       include: {
         user: {
@@ -26,31 +26,6 @@ export async function GET(
             username: true,
             profileName: true,
             profilePicture: true,
-          },
-        },
-        replies: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                username: true,
-                profileName: true,
-                profilePicture: true,
-              },
-            },
-            likes: {
-              where: {
-                userId: userId || undefined,
-              },
-            },
-            _count: {
-              select: {
-                likes: true,
-              },
-            },
-          },
-          orderBy: {
-            createdAt: "desc",
           },
         },
         likes: {
@@ -70,26 +45,43 @@ export async function GET(
       },
     });
 
-    const formattedComments = comments.map((comment) => ({
-      id: comment.id,
-      user: comment.user,
-      title: comment.title,
-      content: comment.content,
-      createdAt: comment.createdAt,
-      updatedAt: comment.updatedAt,
-      replies: comment.replies.map((reply) => ({
-        ...reply,
-        initialLikesCount: reply._count.likes,
-        userLiked: reply.likes.length > 0,
-        _count: undefined,
-        likes: undefined,
-      })),
-      initialLikesCount: comment._count.likes,
-      repliesCount: comment._count.replies,
-      userLiked: comment.likes.length > 0,
-    }));
+    const commentMap = new Map();
+    const topLevelComments: CommentProps[] = [];
 
-    return NextResponse.json({ comments: formattedComments });
+    allComments.forEach((comment) => {
+      commentMap.set(comment.id, {
+        id: comment.id,
+        user: comment.user,
+        title: comment.title,
+        content: comment.content,
+        createdAt: comment.createdAt,
+        updatedAt: comment.updatedAt,
+        initialLikesCount: comment._count.likes,
+        repliesCount: comment._count.replies,
+        userLiked: comment.likes.length > 0,
+        children: [],
+      });
+    });
+
+    allComments.forEach((comment) => {
+      const commentObj = commentMap.get(comment.id);
+
+      if (comment.parentId === null) {
+        topLevelComments.push(commentObj);
+      } else {
+        const parentComment = commentMap.get(comment.parentId);
+        if (parentComment) {
+          parentComment.children.push(commentObj);
+        } else {
+          console.warn(
+            `Parent comment ${comment.parentId} not found for comment ${comment.id}`,
+          );
+          topLevelComments.push(commentObj);
+        }
+      }
+    });
+
+    return NextResponse.json({ comments: topLevelComments });
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch comments" },

@@ -16,7 +16,7 @@ const Following: React.FC = () => {
   } = useFollowingTimeline();
 
   const { data: followingCountData } = useFollowingCount({
-    userId: session?.user.id ?? "",
+    userId: session?.user?.id ?? "",
   });
 
   return (
@@ -39,9 +39,18 @@ const Following: React.FC = () => {
             </p>
           )}
 
-          {timelineData?.posts.map((post) => (
+          {/* {timelineData?.posts.map((post) => (
             <PostTemplate key={post.id} {...post} />
-          ))}
+          ))} */}
+          {timelineData?.posts && timelineData.posts.length > 0
+            ? timelineData.posts.map((post) => (
+                <PostTemplate key={post.id} {...post} />
+              ))
+            : !isPendingTimeline && (
+                <p className="text-primaryGray text-center">
+                  No posts available
+                </p>
+              )}
         </div>
       </div>
     </>
