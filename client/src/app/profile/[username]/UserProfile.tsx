@@ -89,7 +89,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, currentUserId }) => {
                         <svg
                           viewBox="0 0 36 36"
                           xmlns="http://www.w3.org/2000/svg"
-                          className="size-6 fill-white/50 group-hover:fill-white"
+                          className="size-6 fill-black/50 group-hover:fill-black dark:fill-white/50 dark:group-hover:fill-white"
                         >
                           <path
                             d="m32.85 28.13l-.34-.3A14.37 14.37 0 0 1 30 24.9a12.63 12.63 0 0 1-1.35-4.81v-4.94A10.81 10.81 0 0 0 19.21 4.4V3.11a1.33 1.33 0 1 0-2.67 0v1.31a10.81 10.81 0 0 0-9.33 10.73v4.94a12.63 12.63 0 0 1-1.35 4.81a14.4 14.4 0 0 1-2.47 2.93l-.34.3v2.82h29.8Z"
@@ -104,7 +104,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, currentUserId }) => {
                       </button>
                     </Tooltip>
 
-                    {/* TODO: Fix styling. Add TwMerge to the component. */}
                     <DropdownMenu menuItems={profileDropdownMenu} />
                   </div>
                 ) : null}
@@ -152,10 +151,10 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, currentUserId }) => {
             <button className="rounded-full bg-blue-500 px-[20px] py-[5px] transition duration-200 ease-in-out hover:bg-blue-600 active:scale-95 active:bg-blue-700">
               All
             </button>
-            <button className="rounded-full bg-slate-700 px-[20px] py-[5px] transition duration-200 ease-in-out hover:bg-slate-800 active:scale-95 active:bg-slate-900">
+            <button className="rounded-full bg-slate-400 px-[20px] py-[5px] transition duration-200 ease-in-out hover:bg-slate-500 active:scale-95 active:bg-slate-600 dark:bg-slate-700 dark:hover:bg-slate-800 dark:active:bg-slate-900">
               Pictures
             </button>
-            <button className="rounded-full bg-slate-700 px-[20px] py-[5px] transition duration-200 ease-in-out hover:bg-slate-800 active:scale-95 active:bg-slate-900">
+            <button className="rounded-full bg-slate-400 px-[20px] py-[5px] transition duration-200 ease-in-out hover:bg-slate-500 active:scale-95 active:bg-slate-600 dark:bg-slate-700 dark:hover:bg-slate-800 dark:active:bg-slate-900">
               Videos
             </button>
           </div>

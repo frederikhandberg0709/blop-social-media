@@ -168,8 +168,8 @@ export default function SendCommentClient({
           />
           <div className="flex items-center justify-between gap-[30px]">
             <div className="flex gap-[30px]">
-              <p className="text-white/50">Character count: {characterCount}</p>
-              <p className="text-white/50">Word count: {wordCount}</p>
+              <p className="text-gray-500">Character count: {characterCount}</p>
+              <p className="text-gray-500">Word count: {wordCount}</p>
             </div>
             <div className="flex gap-[30px]">
               {/* TODO: Implement save draft functionality */}
@@ -192,10 +192,10 @@ export default function SendCommentClient({
             </div>
           </div>
         </div>
-        <div className="h-[1px] w-full bg-white/5"></div>
+        <div className="h-[1px] w-full bg-black/5 dark:bg-white/5"></div>
         <div>
           <div className="mb-[20px] flex items-center justify-between">
-            <h1 className="text-xl font-bold text-white/50">Preview Comment</h1>
+            <h1 className="text-xl font-bold text-gray-500">Preview Comment</h1>
             <div className="opacity-50 transition-opacity duration-150 ease-in-out hover:opacity-100">
               <ToggleSwitch
                 label={<span className="text-sm font-semibold">Show post</span>}

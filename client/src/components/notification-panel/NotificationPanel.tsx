@@ -55,7 +55,7 @@ const NotificationPanel = () => {
     <div className="flex flex-col">
       <div className="flex justify-between px-[20px]">
         <div className="flex items-center gap-[10px]">
-          <h1 className="text-[15px] font-bold text-white/50">NOTIFICATIONS</h1>
+          <h1 className="text-[15px] font-bold">NOTIFICATIONS</h1>
         </div>
         <div className="flex items-center gap-2"></div>
       </div>
@@ -68,7 +68,7 @@ const NotificationPanel = () => {
         />
       ) : (
         <div className="flex h-[500px] items-center justify-center">
-          <h1 className="text-center text-[15px] font-bold text-white/50">
+          <h1 className="text-center text-[15px] font-bold text-gray-500">
             No notifications
           </h1>
         </div>

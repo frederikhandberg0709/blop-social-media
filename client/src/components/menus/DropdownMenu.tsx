@@ -39,7 +39,7 @@ export default function DropdownMenu({ menuItems }: DropdownMenuProps) {
         onClick={() => {
           setIsDropdownMenuOpen(!isDropdownMenuOpen);
         }}
-        className="cursor-pointer rounded-full fill-primaryGray stroke-primaryGray p-[5px] transition ease-in-out hover:bg-lightHover hover:fill-black hover:stroke-black active:bg-lightActive active:fill-primaryBlue active:stroke-primaryBlue dark:hover:bg-darkHover dark:hover:fill-white dark:hover:stroke-white dark:active:bg-darkActive dark:active:fill-primaryBlue dark:active:stroke-primaryBlue"
+        className="fill-primaryGray stroke-primaryGray hover:bg-lightHover active:bg-lightActive active:fill-primaryBlue active:stroke-primaryBlue dark:hover:bg-darkHover dark:active:bg-darkActive dark:active:fill-primaryBlue dark:active:stroke-primaryBlue cursor-pointer rounded-full p-[5px] transition ease-in-out hover:fill-black hover:stroke-black dark:hover:fill-white dark:hover:stroke-white"
       >
         <svg
           width="25"
@@ -56,7 +56,7 @@ export default function DropdownMenu({ menuItems }: DropdownMenuProps) {
         </svg>
       </button>
       <div
-        className={`absolute z-50 mt-[10px] flex w-[200px] flex-col rounded-xl border border-lightBorder bg-white transition duration-200 ease-in-out hover:border-lightBorderHover dark:border-darkBorder dark:bg-black dark:hover:border-darkBorderHover ${
+        className={`border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover absolute z-50 mt-[10px] flex w-[200px] flex-col rounded-xl border bg-white transition duration-200 ease-in-out dark:bg-black ${
           isDropdownMenuOpen ? "block" : "hidden"
         }`}
       >
@@ -65,7 +65,7 @@ export default function DropdownMenu({ menuItems }: DropdownMenuProps) {
             key={index}
             href={item.href}
             onClick={item.onClick}
-            className={`hover:bg-light-hover active:bg-light-active px-[20px] py-[10px] font-medium transition duration-200 ease-in-out dark:hover:bg-white/10 dark:active:bg-white/20 ${index === 0 ? "rounded-t-xl" : ""} ${index === menuItems.length - 1 ? "rounded-b-xl" : ""} ${item.className || "text-primaryGray hover:text-black dark:hover:text-white"}`}
+            className={`hover:bg-lightHover active:bg-lightActive px-[20px] py-[10px] font-medium transition duration-200 ease-in-out dark:hover:bg-white/10 dark:active:bg-white/20 ${index === 0 ? "rounded-t-xl" : ""} ${index === menuItems.length - 1 ? "rounded-b-xl" : ""} ${item.className || "text-primaryGray hover:text-black dark:hover:text-white"}`}
           >
             {item.icon && <span className="mr-2">{item.icon}</span>}
             {item.label}

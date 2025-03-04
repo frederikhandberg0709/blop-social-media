@@ -25,6 +25,7 @@ import { useShareStatus } from "@/hooks/api/shares/useShareStatus";
 import { useShareCount } from "@/hooks/api/shares/useShares";
 import { usePosts } from "@/hooks/api/posts/usePosts";
 import { extractQuotedPostIds } from "@/utils/extractQuotedPostIds";
+import countTotalComments from "@/utils/countTotalComments";
 
 const PostTemplate: React.FC<Post> = (props) => {
   const { data: session } = useSession();
@@ -289,7 +290,11 @@ const PostTemplate: React.FC<Post> = (props) => {
         </div>
         <PostActionButtons
           likesCount={likesData?.likesCount ?? post.initialLikesCount}
-          commentsCount={commentsData?.comments.length ?? 0}
+          commentsCount={
+            commentsData?.comments
+              ? countTotalComments(commentsData.comments)
+              : 0
+          }
           onCommentClick={() =>
             setCommentSectionHeight(commentSectionHeight === 0 ? "auto" : 0)
           }
@@ -317,7 +322,10 @@ const PostTemplate: React.FC<Post> = (props) => {
             <h2 className="text-xl font-semibold">Comments</h2>
             <span className="text-primaryGray text-xl font-bold">·</span>
             <p className="text-primaryGray text-xl">
-              {commentsData?.comments.length || 0}
+              {/* {commentsData?.comments.length || 0} */}
+              {commentsData?.comments
+                ? countTotalComments(commentsData.comments)
+                : 0}
             </p>
           </div>
           <div className="mt-3 flex flex-col items-start gap-2">

@@ -203,7 +203,7 @@ const MainNavBar: React.FC = () => {
           >
             <Link
               href="/home"
-              className="text-primaryGray active:text-primaryBlue dark:text-primaryGray dark:active:text-primaryBlue text-3xl font-bold transition duration-150 ease-in-out hover:text-black max-[831px]:text-white dark:hover:text-white dark:max-[831px]:text-white"
+              className="text-primaryGray active:text-primaryBlue dark:active:text-primaryBlue text-3xl font-bold transition duration-150 ease-in-out hover:text-black max-[831px]:text-black dark:hover:text-white dark:max-[831px]:text-white"
             >
               BLOP!
             </Link>
@@ -215,7 +215,7 @@ const MainNavBar: React.FC = () => {
             >
               <button
                 onClick={toggleNavSideMenu}
-                className="fill-primaryGray hover:bg-lightHover active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:active:bg-darkActive dark:active:fill-primaryBlue h-[45px] w-[45px] rounded-full p-[5px] transition duration-150 ease-in-out hover:fill-black max-[831px]:fill-white dark:hover:fill-white"
+                className="fill-primaryGray hover:bg-lightHover active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:active:bg-darkActive dark:active:fill-primaryBlue h-[45px] w-[45px] rounded-full p-[5px] transition duration-150 ease-in-out hover:fill-black max-[831px]:fill-black dark:hover:fill-white dark:max-[831px]:fill-white"
               >
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M4 18h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zm0-5h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1s.45 1 1 1zM3 7c0 .55.45 1 1 1h16c.55 0 1-.45 1-1s-.45-1-1-1H4c-.55 0-1 .45-1 1z" />
@@ -267,7 +267,7 @@ const MainNavBar: React.FC = () => {
                 {/* Create Post */}
                 <Tooltip text={"Create Post"} position="bottom" offset="60">
                   <Link href={"/create-post"} className="rounded-full">
-                    <div className="fill-primaryGray hover:bg-lightHover active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:active:bg-darkActive dark:active:fill-primaryBlue flex size-10 items-center justify-center rounded-full p-[7px] transition duration-150 ease-in-out hover:fill-black max-[831px]:fill-white dark:hover:fill-white">
+                    <div className="fill-primaryGray hover:bg-lightHover active:bg-lightActive active:fill-primaryBlue dark:hover:bg-darkHover dark:active:bg-darkActive dark:active:fill-primaryBlue flex size-10 items-center justify-center rounded-full p-[7px] transition duration-150 ease-in-out hover:fill-black max-[831px]:fill-black dark:hover:fill-white dark:max-[831px]:fill-white">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -291,7 +291,7 @@ const MainNavBar: React.FC = () => {
                   <button
                     onClick={toggleNotificationPanel}
                     ref={notificationButtonRef}
-                    className="active:fill-primaryBlue dark:active:fill-primaryBlue dark:fill-primaryGray relative size-10 rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black max-[831px]:fill-white dark:hover:bg-white/10 dark:hover:fill-white max-[831px]:dark:fill-white"
+                    className="active:fill-primaryBlue dark:active:fill-primaryBlue dark:fill-primaryGray relative size-10 rounded-full fill-black/50 p-[7px] transition duration-150 ease-in-out hover:bg-black/10 hover:fill-black max-[831px]:fill-black dark:hover:bg-white/10 dark:hover:fill-white max-[831px]:dark:fill-white"
                   >
                     {unreadCount > 0 && (
                       <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold text-white">
@@ -352,7 +352,7 @@ const MainNavBar: React.FC = () => {
       {isNotificationPanelVisible && (
         <div
           ref={notificationPanelRef}
-          className={`border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover fixed right-[20px] top-[90px] z-50 w-[350px] rounded-[10px] border-2 bg-black p-[10px] transition duration-150 ease-in-out ${
+          className={`border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover fixed right-[20px] top-[90px] z-50 w-[350px] rounded-[10px] border-2 bg-white p-[10px] transition duration-150 ease-in-out dark:bg-black ${
             isNotificationPanelAnimating
               ? "notification-panel-open"
               : "notification-panel"
@@ -361,7 +361,7 @@ const MainNavBar: React.FC = () => {
           <NotificationPanel />
         </div>
       )}
-      {isProfileMenuVisible && (
+      {isProfileMenuVisible && session?.user && (
         <div
           ref={profileMenuRef}
           className={`border-lightBorder hover:border-lightBorderHover dark:border-darkBorder dark:hover:border-darkBorderHover fixed right-[20px] top-[90px] z-50 w-[280px] rounded-2xl border-2 bg-white p-[10px] transition duration-150 ease-in-out dark:bg-black ${
@@ -369,16 +369,15 @@ const MainNavBar: React.FC = () => {
           }`}
         >
           <NavProfileMenu
-            user={
-              session?.user
-                ? {
-                    id: session.user.id,
-                    profilePicture: session.user.profilePicture || null,
-                    profileName: session.user.profileName || null,
-                    username: session.user.username || "unknown",
-                  }
-                : undefined
-            }
+            user={{
+              id: session.user.id,
+              profilePicture: session.user.profilePicture || null,
+              profileName: session.user.profileName || null,
+              username: session.user.username || "unknown",
+              followersCount: 0,
+              followingCount: 0,
+              postsCount: 0,
+            }}
             closeMenu={closeProfileMenu}
           />
         </div>

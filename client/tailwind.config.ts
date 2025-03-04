@@ -17,7 +17,7 @@ const config: Config = {
         darkHover: "#1A1A1A",
         darkActive: "#333",
         lightBorder: "#e5e7eb",
-        lightBorderHover: "##B5BAC3",
+        lightBorderHover: "#B5BAC3",
         darkBorder: "#111827",
         darkBorderHover: "#1f2937",
       },

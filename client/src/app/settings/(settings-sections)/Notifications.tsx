@@ -34,6 +34,9 @@ const Notifications: React.FC = () => {
       <h1 className="text-3xl font-bold">Notifications</h1>
       {/* Push Notifications */}
       <div className="mt-[30px] flex flex-col gap-[30px]">
+        <p className="mt-4 text-yellow-500">
+          This section has not been implemented yet.
+        </p>
         <div>
           <h2 className="text-[20px] font-semibold">Push Notifications</h2>
           <p className="mb-3 mt-2">

@@ -156,7 +156,7 @@ export default function CommentTemplate({
         />
       </div>
       {allReplies.length > 0 && (
-        <div className={`mt-2.5 ${indentClass}`}>
+        <div className="mt-2.5">
           {nestingLevel <= 2 &&
             visibleReplies.map((reply) => (
               <CommentTemplate

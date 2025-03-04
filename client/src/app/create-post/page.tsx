@@ -195,10 +195,10 @@ const CreatePost: React.FC = () => {
 
             <div className="flex items-center justify-between gap-[30px]">
               <div className="flex gap-[30px]">
-                <p className="text-white/50">
+                <p className="text-gray-500">
                   Character count: {characterCount}
                 </p>
-                <p className="text-white/50">Word count: {wordCount}</p>
+                <p className="text-gray-500">Word count: {wordCount}</p>
               </div>
               <div className="flex gap-[30px]">
                 {/* TODO: Implement save draft functionality */}
@@ -221,9 +221,9 @@ const CreatePost: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="h-[1px] w-full bg-white/5"></div>
+          <div className="h-[1px] w-full bg-black/5 dark:bg-white/5"></div>
           <div>
-            <h1 className="mb-[20px] font-bold text-white/50">
+            <h1 className="mb-[20px] font-bold text-gray-500">
               {postId ? "Preview Quote Post" : "Preview Post"}
             </h1>
             <PostTemplate

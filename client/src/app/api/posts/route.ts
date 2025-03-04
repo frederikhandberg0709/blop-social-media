@@ -33,9 +33,6 @@ export async function GET() {
         profilePicture: post.user.profilePicture,
         profileBanner: post.user.profileBanner,
         bio: post.user.bio,
-        // followersCount: post.user.followers,
-        // followingCount: post.user.followingCount,
-        // postsCount: post.user.postsCount,
       },
     }));
 

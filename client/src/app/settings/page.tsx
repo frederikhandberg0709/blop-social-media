@@ -58,9 +58,9 @@ const Settings: React.FC = () => {
                     className={`rounded-xl py-[10px] pl-[15px] ${
                       hoveredSection === section ||
                       (!hoveredSection && activeSection === section)
-                        ? "text-white"
-                        : "text-white/50"
-                    } transition duration-150 ease-in-out hover:bg-white/10 hover:text-white active:bg-white/20`}
+                        ? "text-black dark:text-white"
+                        : "text-gray-500"
+                    } transition duration-150 ease-in-out hover:bg-black/10 hover:text-black active:bg-black/20 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/20`}
                   >
                     {section
                       .replace("-", " ")

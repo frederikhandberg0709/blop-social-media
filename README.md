@@ -15,6 +15,7 @@ The project is structured as follows:
 - **Comment on posts** to engage in discussions.
 - **Reply to comments**, allowing direct responses.
 - **Nested replies** (similar to Reddit) for deeper conversations.
+- **Share** a post or comment.
 - **Quote a single or multiple posts** to reference specific content in responses.
 
 ### Account & Profile Management
@@ -32,7 +33,8 @@ The project is structured as follows:
 ### Content Management
 
 - **Save drafts** of posts, comments, and replies for later editing.
-- **Edit posts, comments, and replies**, with a revision history to track changes.
+- **Edit posts**, with a revision history to track changes.
+- **Unshare** a post or comment.
 - **Delete posts, comments, and replies** to remove unwanted content.
 
 ### Notification System
@@ -67,6 +69,8 @@ The project is structured as follows:
   - Mute users to hide their content.
   - Block users to prevent interaction.
   - Filter content by blocking specific words, hiding any content containing them.
+
+- **Edit comments and replies:** Implement functionality to edit comments and replies similar to how it works for editing posts.
 
 ## Lessons Learned
 
