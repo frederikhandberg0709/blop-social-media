@@ -1,6 +1,7 @@
 ## BLOP
 
 BLOP is a social network I created as a portfolio project, designed to closely mirror the functionality of modern social media platforms. My goal was to make it as realistic and feature-rich as possible, providing users with an experience they would expect from today’s social networks.
+
 ## Project Structure
 
 The project is structured as follows:
@@ -46,7 +47,7 @@ The project is structured as follows:
 
 ## Future Development
 
-- **Search functionality:** Implement robust search capabilities allowing users to find posts by keywords, hashtags, and usernames.
+- **Search functionality:** Implement search capabilities allowing users to find posts by keywords, hashtags, and usernames.
 
 - **Filter functionality for timeline:** Enhance the user experience with multiple filtering options:
 
@@ -72,9 +73,13 @@ The project is structured as follows:
 
 - **Edit comments and replies:** Implement functionality to edit comments and replies similar to how it works for editing posts.
 
+- **Fixing the hashtag bug:** When inserting a hashtag, it currently causes a line break. It should be possible to add multiple hashtags on the same line. This problem most likely has got something to do with my function called `parseTextWithEnhancements`.
+
 ## Lessons Learned
 
 - **Authentication Approach**: This project uses Next Auth, but I will be using Better Auth for future projects. Next Auth intentionally complicates email/username and password authentication by making poor documentation to encourage OAuth adoption.
+
+- **React Query**: I learned why it's very valuable to use a querying and mutations library such as React (Tanstack) Query that makes state management and refetching so much easier, instead of manually having to do it all with `useEffect`.
 
 ## Getting Started
 
